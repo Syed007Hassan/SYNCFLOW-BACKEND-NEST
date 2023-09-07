@@ -5,11 +5,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class UserService {
-  // constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
   ) {}
