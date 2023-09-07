@@ -20,5 +20,6 @@ import { PostgreSqlDataSource } from './config/ormConfig';
   ],
   controllers: [AppController],
   providers: [AppService],
+  exports: [ConfigModule],
 })
 export class AppModule {}

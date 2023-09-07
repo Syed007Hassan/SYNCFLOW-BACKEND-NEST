@@ -1,18 +1,32 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
-export type UserDocument = User & Document;
-
-@Schema()
+@Entity()
 export class User {
-  @Prop({ required: true })
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ nullable: false })
   name: string;
 
-  @Prop({ required: true })
+  @Column({ nullable: false, unique: true })
   email: string;
 
-  @Prop({ required: true })
+  @Column({ nullable: false })
   password: string;
-}
 
-export const UserSchema = SchemaFactory.createForClass(User);
+  // @OneToMany((type) => Comment, (comment) => comment.user)
+  // comments: Comment[];
+
+  // @BeforeInsert()
+  // async hashPasword() {
+  //   this.password = await bcrypt.hash(this.password, 10);
+  // }
+}

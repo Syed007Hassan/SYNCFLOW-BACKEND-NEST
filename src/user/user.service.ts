@@ -4,24 +4,31 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { InjectRepository } from '@nestjs/typeorm';
 @Injectable()
 export class UserService {
-  constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
+  // constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
+  constructor(
+    @InjectRepository(User) private readonly userRepo: Repository<User>,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const saltRounds = 10;
     const hash = bcrypt.hashSync(createUserDto.password, saltRounds);
-    const newUser = new this.userModel({
+    const newUser = await this.userRepo.create({
       ...createUserDto,
       password: hash,
     });
 
-    return newUser.save();
+    await this.userRepo.save(newUser);
+
+    return newUser;
   }
 
   async findAll() {
-    const users = await this.userModel.find().exec();
+    const users = await this.userRepo.find();
     if (!users) {
       throw new Error('No users found');
     }
@@ -29,7 +36,7 @@ export class UserService {
   }
 
   async findOneByEmail(email: string) {
-    const user = await this.userModel.findOne({ email }).exec();
+    const user = await this.userRepo.findOneBy({ email });
     return user;
   }
 
