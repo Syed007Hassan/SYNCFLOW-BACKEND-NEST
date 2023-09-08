@@ -4,8 +4,6 @@ import { UserController } from './user.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User } from './entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
-import { PostgreSqlDataSource } from 'src/config/ormConfig';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
