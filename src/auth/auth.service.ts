@@ -89,12 +89,13 @@ export class AuthService {
   }
 
   async verifyJwt(jwt: string) {
-    const { exp } = await this.jwtService.verifyAsync(jwt);
+    const payloadReturn = await this.jwtService.verifyAsync(jwt);
 
-    if (exp < Date.now()) {
-      throw new Error('Token expired');
-    }
+    //Check if token is expired
+    // if (payloadReturn.exp < Date.now()) {
+    //   throw new Error('Token expired');
+    // }
 
-    return { exp };
+    return payloadReturn;
   }
 }
