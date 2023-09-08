@@ -52,6 +52,17 @@ export class AuthController {
     }
   }
 
+  @Post('loginEmployer')
+  @HttpCode(HttpStatus.OK)
+  async loginEmployer(@Body() loginUserDto: LoginUserDto) {
+    try {
+      const user = await this.authService.loginEmployer(loginUserDto);
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
   @Post('verify-jwt')
   @HttpCode(HttpStatus.OK)
   async verifyJwt(@Body() payload: { jwt: string }) {
