@@ -16,7 +16,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { ExistingUserDto } from 'src/user/dto/existing-user.dto';
 import { LoginUserDto } from 'src/user/dto/login-user.dto';
 import { JwtGuard } from './guard/auth.guard';
-@ApiTags('auth')
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -25,6 +25,16 @@ export class AuthController {
   async create(@Body() existingUserDto: ExistingUserDto) {
     try {
       const user = await this.authService.registerUser(existingUserDto);
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Post('registerEmployer')
+  async createEmployer(@Body() existingUserDto: ExistingUserDto) {
+    try {
+      const user = await this.authService.registerEmployer(existingUserDto);
       return { success: true, data: user };
     } catch (err) {
       return { success: false, message: err.message };

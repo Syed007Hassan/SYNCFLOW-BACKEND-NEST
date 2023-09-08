@@ -4,11 +4,13 @@ import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { EmployerService } from 'src/employer/employer.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
+    private employerService: EmployerService,
     private jwtService: JwtService,
   ) {}
 
@@ -18,6 +20,15 @@ export class AuthService {
       throw new Error('User already exists');
     }
     const newUser = await this.userService.create(user);
+    return { name: newUser.name, email: newUser.email };
+  }
+
+  async registerEmployer(user: ExistingUserDto) {
+    const findUser = await this.employerService.findOneByEmail(user.email);
+    if (findUser) {
+      throw new Error('User already exists');
+    }
+    const newUser = await this.employerService.create(user);
     return { name: newUser.name, email: newUser.email };
   }
 
