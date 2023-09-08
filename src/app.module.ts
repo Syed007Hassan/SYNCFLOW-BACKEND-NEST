@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { PostgreSqlDataSource } from './config/ormConfig';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EmployerModule } from './employer/employer.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     MongooseModule.forRoot(process.env.MONGODB_URI),
     AuthModule,
     UserModule,
+    EmployerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
