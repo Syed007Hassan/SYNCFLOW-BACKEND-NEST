@@ -16,7 +16,12 @@ async function bootstrap() {
 
   // Log each request
   app.use((req, res, next) => {
-    logger.log(`Request ${req.method} ${req.originalUrl}`);
+    logger.log(`Request: ${req.method} ${req.originalUrl} `);
+    res.on('finish', () => {
+      logger.log(
+        `Response:  ${req.method} ${req.originalUrl} ${res.statusCode}`,
+      );
+    });
     next();
   });
 
