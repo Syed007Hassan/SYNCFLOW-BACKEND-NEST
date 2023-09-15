@@ -43,6 +43,17 @@ export class AuthService {
     return { jwt };
   }
 
+  async loginEmployer(loginUserDto: LoginUserDto) {
+    const user = await this.validateEmployer(
+      loginUserDto.email,
+      loginUserDto.password,
+    );
+
+    const payload = { email: user.email, name: user.name };
+    const jwt = await this.jwtService.signAsync(payload);
+    return { jwt };
+  }
+
   async doesPasswordMatch(password: string, hashedPassword: string) {
     return bcrypt.compareSync(password, hashedPassword); // true
   }
@@ -62,13 +73,29 @@ export class AuthService {
     return { name: user.name, email: user.email };
   }
 
-  async verifyJwt(jwt: string) {
-    const { exp } = await this.jwtService.verifyAsync(jwt);
-
-    if (exp < Date.now()) {
-      throw new Error('Token expired');
+  async validateEmployer(email: string, password: string) {
+    const user = await this.employerService.findOneByEmail(email);
+    if (!user) {
+      throw new Error('User not found');
     }
+    const isPasswordMatching = await this.doesPasswordMatch(
+      password,
+      user.password,
+    );
+    if (!isPasswordMatching) {
+      throw new Error('Invalid credentials');
+    }
+    return { name: user.name, email: user.email };
+  }
 
-    return { exp };
+  async verifyJwt(jwt: string) {
+    const payloadReturn = await this.jwtService.verifyAsync(jwt);
+
+    //Check if token is expired
+    // if (payloadReturn.exp < Date.now()) {
+    //   throw new Error('Token expired');
+    // }
+
+    return payloadReturn;
   }
 }
