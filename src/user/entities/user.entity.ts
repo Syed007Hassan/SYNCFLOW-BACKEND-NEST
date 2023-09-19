@@ -22,7 +22,7 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, default: 'employee' })
   role: string;
 
   // @OneToMany((type) => Comment, (comment) => comment.user)

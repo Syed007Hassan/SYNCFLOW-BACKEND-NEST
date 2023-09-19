@@ -9,6 +9,7 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
@@ -16,6 +17,10 @@ import { ApiTags } from '@nestjs/swagger';
 import { ExistingUserDto } from 'src/user/dto/existing-user.dto';
 import { LoginUserDto } from 'src/user/dto/login-user.dto';
 import { JwtGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/role-auth.guard';
+import { Role } from './model/role.enum';
+import { HasRoles } from './decorators/has-roles.decorator';
+
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -76,7 +81,9 @@ export class AuthController {
 
   @UseGuards(JwtGuard)
   @Get('validateToken')
-  testRoute() {
-    return { success: true };
+  testRoute(@Request() req) {
+    // return { success: true };
+    console.log(req);
+    return req.user;
   }
 }
