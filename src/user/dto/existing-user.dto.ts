@@ -16,4 +16,8 @@ export class ExistingUserDto {
   @IsNotEmpty()
   @IsString()
   password: string;
+
+  @ApiProperty({ default: 'employee' })
+  @IsString()
+  role: string;
 }
