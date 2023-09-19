@@ -20,7 +20,7 @@ export class AuthService {
       throw new Error('User already exists');
     }
     const newUser = await this.userService.create(user);
-    return { name: newUser.name, email: newUser.email };
+    return { name: newUser.name, email: newUser.email, role: newUser.role };
   }
 
   async registerEmployer(user: ExistingUserDto) {
@@ -36,9 +36,10 @@ export class AuthService {
     const user = await this.validateUser(
       loginUserDto.email,
       loginUserDto.password,
+      loginUserDto.role,
     );
 
-    const payload = { email: user.email, name: user.name };
+    const payload = { email: user.email, name: user.name, role: user.role };
     const jwt = await this.jwtService.signAsync(payload);
     return { jwt };
   }
@@ -47,6 +48,7 @@ export class AuthService {
     const user = await this.validateEmployer(
       loginUserDto.email,
       loginUserDto.password,
+      loginUserDto.role,
     );
 
     const payload = { email: user.email, name: user.name };
@@ -58,7 +60,7 @@ export class AuthService {
     return bcrypt.compareSync(password, hashedPassword); // true
   }
 
-  async validateUser(email: string, password: string) {
+  async validateUser(email: string, password: string, role: string) {
     const user = await this.userService.findOneByEmail(email);
     if (!user) {
       throw new Error('User not found');
@@ -70,10 +72,10 @@ export class AuthService {
     if (!isPasswordMatching) {
       throw new Error('Invalid credentials');
     }
-    return { name: user.name, email: user.email };
+    return { name: user.name, email: user.email, role: role };
   }
 
-  async validateEmployer(email: string, password: string) {
+  async validateEmployer(email: string, password: string, role: string) {
     const user = await this.employerService.findOneByEmail(email);
     if (!user) {
       throw new Error('User not found');
@@ -85,7 +87,7 @@ export class AuthService {
     if (!isPasswordMatching) {
       throw new Error('Invalid credentials');
     }
-    return { name: user.name, email: user.email };
+    return { name: user.name, email: user.email, role: role };
   }
 
   async verifyJwt(jwt: string) {
