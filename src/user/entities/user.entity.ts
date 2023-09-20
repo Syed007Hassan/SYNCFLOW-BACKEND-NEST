@@ -29,7 +29,7 @@ export class User {
     array: true,
     default: [Role.Employee],
   })
-  public roles: Role[];
+  public role: Role[];
 
   // @OneToMany((type) => Comment, (comment) => comment.user)
   // comments: Comment[];
