@@ -23,13 +23,8 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
-  @Column({
-    type: 'enum',
-    enum: Role,
-    array: true,
-    default: [Role.Employee],
-  })
-  public role: Role[];
+  @Column({ nullable: true, default: Role.Employee })
+  role: string;
 
   // @OneToMany((type) => Comment, (comment) => comment.user)
   // comments: Comment[];

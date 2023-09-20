@@ -13,6 +13,7 @@ export class LoginUserDto {
   @IsString()
   password: string;
 
-  @ApiProperty({ enum: Role, default: [Role.Employee] })
-  role: Role[];
+  @ApiProperty({ default: Role.Employee })
+  @IsString()
+  role: string;
 }

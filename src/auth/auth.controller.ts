@@ -17,7 +17,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { ExistingUserDto } from 'src/user/dto/existing-user.dto';
 import { LoginUserDto } from 'src/user/dto/login-user.dto';
 import { JwtGuard } from './guards/jwt-auth.guard';
-import { RolesGuard } from './guards/role-auth.guard';
+import { RoleGuard } from './guards/role-auth.guard';
 import { Role } from './model/role.enum';
 import { HasRoles } from './decorators/has-roles.decorator';
 
@@ -79,11 +79,10 @@ export class AuthController {
     }
   }
 
-  @UseGuards(JwtGuard)
+  @HasRoles(Role.Employee)
+  @UseGuards(JwtGuard, RoleGuard)
   @Get('validateToken')
-  testRoute(@Request() req) {
-    // return { success: true };
-    console.log(req);
-    return req.user;
+  testRoute() {
+    return { success: true };
   }
 }

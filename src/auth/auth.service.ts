@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from '../user/dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { EmployerService } from 'src/employer/employer.service';
+import { Role } from './model/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -36,9 +37,10 @@ export class AuthService {
     const user = await this.validateUser(
       loginUserDto.email,
       loginUserDto.password,
+      loginUserDto.role,
     );
 
-    const payload = { email: user.email, name: user.name };
+    const payload = { email: user.email, name: user.name, role: user.role };
     const jwt = await this.jwtService.signAsync(payload);
     return { jwt };
   }
@@ -58,7 +60,7 @@ export class AuthService {
     return bcrypt.compareSync(password, hashedPassword); // true
   }
 
-  async validateUser(email: string, password: string) {
+  async validateUser(email: string, password: string, role: string) {
     const user = await this.userService.findOneByEmail(email);
     if (!user) {
       throw new Error('User not found');
@@ -70,7 +72,7 @@ export class AuthService {
     if (!isPasswordMatching) {
       throw new Error('Invalid credentials');
     }
-    return { name: user.name, email: user.email };
+    return { name: user.name, email: user.email, role: user.role };
   }
 
   async validateEmployer(email: string, password: string) {
