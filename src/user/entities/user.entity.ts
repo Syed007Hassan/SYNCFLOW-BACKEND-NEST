@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Role } from 'src/auth/model/role.enum';
 
 @Entity()
 export class User {
@@ -22,8 +23,13 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
-  @Column({ nullable: false, default: 'employee' })
-  role: string;
+  @Column({
+    type: 'enum',
+    enum: Role,
+    array: true,
+    default: [Role.Employee],
+  })
+  public roles: Role[];
 
   // @OneToMany((type) => Comment, (comment) => comment.user)
   // comments: Comment[];
