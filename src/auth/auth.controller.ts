@@ -20,6 +20,8 @@ import { RoleGuard } from './guards/role-auth.guard';
 import { Role } from './model/role.enum';
 import { HasRoles } from './decorators/has-roles.decorator';
 import { JwtDto } from './dto/jwt.dto';
+import { ExistingEmployerDto } from 'src/employer/dto/existing-employer.dto';
+import { LoginEmployerDto } from 'src/employer/dto/login-employer.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -37,7 +39,7 @@ export class AuthController {
   }
 
   @Post('registerEmployer')
-  async createEmployer(@Body() existingUserDto: ExistingUserDto) {
+  async createEmployer(@Body() existingUserDto: ExistingEmployerDto) {
     try {
       const user = await this.authService.registerEmployer(existingUserDto);
       return { success: true, data: user };
@@ -59,7 +61,7 @@ export class AuthController {
 
   @Post('loginEmployer')
   @HttpCode(HttpStatus.OK)
-  async loginEmployer(@Body() loginUserDto: LoginUserDto) {
+  async loginEmployer(@Body() loginUserDto: LoginEmployerDto) {
     try {
       const user = await this.authService.loginEmployer(loginUserDto);
       return { success: true, data: user };
@@ -79,6 +81,7 @@ export class AuthController {
     }
   }
 
+  //@HasRoles(Role.Employer) can be used if employer logged in generated its token
   @HasRoles(Role.Employee)
   @UseGuards(JwtGuard, RoleGuard)
   @Get('validateToken')

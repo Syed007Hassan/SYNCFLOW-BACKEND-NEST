@@ -6,6 +6,8 @@ import { LoginUserDto } from '../user/dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { EmployerService } from 'src/employer/employer.service';
 import { Role } from './model/role.enum';
+import { ExistingEmployerDto } from 'src/employer/dto/existing-employer.dto';
+import { LoginEmployerDto } from 'src/employer/dto/login-employer.dto';
 
 @Injectable()
 export class AuthService {
@@ -24,13 +26,13 @@ export class AuthService {
     return { name: newUser.name, email: newUser.email, role: newUser.role };
   }
 
-  async registerEmployer(user: ExistingUserDto) {
+  async registerEmployer(user: ExistingEmployerDto) {
     const findUser = await this.employerService.findOneByEmail(user.email);
     if (findUser) {
       throw new Error('User already exists');
     }
     const newUser = await this.employerService.create(user);
-    return { name: newUser.name, email: newUser.email };
+    return { name: newUser.name, email: newUser.email, role: newUser.role };
   }
 
   async login(loginUserDto: LoginUserDto) {
@@ -45,13 +47,14 @@ export class AuthService {
     return { jwt };
   }
 
-  async loginEmployer(loginUserDto: LoginUserDto) {
+  async loginEmployer(loginUserDto: LoginEmployerDto) {
     const user = await this.validateEmployer(
       loginUserDto.email,
       loginUserDto.password,
+      loginUserDto.role,
     );
 
-    const payload = { email: user.email, name: user.name };
+    const payload = { email: user.email, name: user.name, role: user.role };
     const jwt = await this.jwtService.signAsync(payload);
     return { jwt };
   }
@@ -75,7 +78,7 @@ export class AuthService {
     return { name: user.name, email: user.email, role: user.role };
   }
 
-  async validateEmployer(email: string, password: string) {
+  async validateEmployer(email: string, password: string, role: string) {
     const user = await this.employerService.findOneByEmail(email);
     if (!user) {
       throw new Error('User not found');
@@ -87,7 +90,7 @@ export class AuthService {
     if (!isPasswordMatching) {
       throw new Error('Invalid credentials');
     }
-    return { name: user.name, email: user.email };
+    return { name: user.name, email: user.email, role: user.role };
   }
 
   async verifyJwt(jwt: string) {
