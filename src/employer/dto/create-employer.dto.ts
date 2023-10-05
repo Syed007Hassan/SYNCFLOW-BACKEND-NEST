@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
-
+import { Role } from 'src/auth/model/role.enum';
 export class CreateEmployerDto {
   @ApiProperty()
   @IsNotEmpty()
@@ -16,4 +16,8 @@ export class CreateEmployerDto {
   @IsNotEmpty()
   @IsString()
   password: string;
+
+  @ApiProperty({ default: Role.Employer })
+  @IsString()
+  role: string;
 }
