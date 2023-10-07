@@ -43,9 +43,9 @@ export class EmployerController {
   }
 
   @Get('findOneByCompanyName/:companyName')
-  findOneByCompanyName(@Param('companyName') companyName: string) {
+  async findOneByCompanyName(@Param('companyName') companyName: string) {
     try {
-      const user = this.employerService.findOneByCompanyName(companyName);
+      const user = await this.employerService.findOneByCompanyName(companyName);
       return { success: true, data: user };
     } catch (err) {
       return { success: false, message: err.message };

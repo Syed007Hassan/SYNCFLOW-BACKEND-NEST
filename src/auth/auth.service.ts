@@ -35,7 +35,9 @@ export class AuthService {
     return {
       name: newUser.name,
       email: newUser.email,
-      companyName: newUser.companyName,
+      companyName:
+        newUser.companyName.charAt(0).toUpperCase() +
+        newUser.companyName.slice(1),
       phone: newUser.phone,
       role: newUser.role,
     };
@@ -104,7 +106,7 @@ export class AuthService {
     }
 
     const company = await this.employerService.findOneByCompanyName(
-      companyName.toLowerCase(),
+      companyName,
     );
     if (!company) {
       throw new Error('Company not found');
