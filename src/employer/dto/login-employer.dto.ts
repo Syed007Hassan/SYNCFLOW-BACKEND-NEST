@@ -12,6 +12,11 @@ export class LoginEmployerDto {
   @IsString()
   password: string;
 
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  companyName: string;
+
   @ApiProperty({ default: Role.Employer })
   @IsString()
   role: string;
