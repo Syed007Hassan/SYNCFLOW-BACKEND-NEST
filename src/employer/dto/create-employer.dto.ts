@@ -20,7 +20,7 @@ export class CreateEmployerDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  phone: string;
+  phone: number;
 
   @ApiProperty()
   @IsNotEmpty()

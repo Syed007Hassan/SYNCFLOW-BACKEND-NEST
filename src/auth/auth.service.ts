@@ -32,7 +32,13 @@ export class AuthService {
       throw new Error('User already exists');
     }
     const newUser = await this.employerService.create(user);
-    return { name: newUser.name, email: newUser.email, role: newUser.role };
+    return {
+      name: newUser.name,
+      email: newUser.email,
+      companyName: newUser.companyName,
+      phone: newUser.phone,
+      role: newUser.role,
+    };
   }
 
   async login(loginUserDto: LoginUserDto) {
@@ -51,6 +57,7 @@ export class AuthService {
     const user = await this.validateEmployer(
       loginUserDto.email,
       loginUserDto.password,
+      loginUserDto.companyName,
       loginUserDto.role,
     );
 
@@ -78,7 +85,12 @@ export class AuthService {
     return { name: user.name, email: user.email, role: user.role };
   }
 
-  async validateEmployer(email: string, password: string, role: string) {
+  async validateEmployer(
+    email: string,
+    password: string,
+    companyName: string,
+    role: string,
+  ) {
     const user = await this.employerService.findOneByEmail(email);
     if (!user) {
       throw new Error('User not found');
@@ -90,7 +102,23 @@ export class AuthService {
     if (!isPasswordMatching) {
       throw new Error('Invalid credentials');
     }
-    return { name: user.name, email: user.email, role: user.role };
+
+    const company = await this.employerService.findOneByCompanyName(
+      companyName.toLowerCase(),
+    );
+    if (!company) {
+      throw new Error('Company not found');
+    }
+    if (company.email !== email) {
+      throw new Error('Email does not belong to the company');
+    }
+
+    return {
+      name: user.name,
+      email: user.email,
+      companyName: companyName,
+      role: user.role,
+    };
   }
 
   async verifyJwt(jwt: string) {

@@ -24,7 +24,7 @@ export class Employer {
   password: string;
 
   @Column({ nullable: false })
-  phone: string;
+  phone: number;
 
   @Column({ nullable: false })
   companyName: string;

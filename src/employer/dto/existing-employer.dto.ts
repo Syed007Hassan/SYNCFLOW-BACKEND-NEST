@@ -21,7 +21,7 @@ export class ExistingEmployerDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  phone: string;
+  phone: number;
 
   @ApiProperty()
   @IsNotEmpty()

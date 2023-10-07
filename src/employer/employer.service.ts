@@ -41,6 +41,14 @@ export class EmployerService {
     return user;
   }
 
+  async findOneByCompanyName(companyName: string) {
+    const user = await this.employerRepo.findOneBy({ companyName });
+    if (!user) {
+      throw new Error('No user found by this company name');
+    }
+    return user;
+  }
+
   findOne(id: number) {
     const user = this.employerRepo.findOneBy({ id });
     return user;
