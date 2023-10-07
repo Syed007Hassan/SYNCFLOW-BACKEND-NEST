@@ -34,8 +34,8 @@ async function bootstrap() {
   });
 
   const config = new DocumentBuilder()
-    .setTitle('Nest Template API')
-    .setDescription('Reusable NestJS API template')
+    .setTitle('NEST FYP BACKEND')
+    .setDescription('SYNCFLOW RECRUITMENT SYSTEM API')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

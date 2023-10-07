@@ -23,6 +23,12 @@ export class Employer {
   @Column({ nullable: false })
   password: string;
 
+  @Column({ nullable: false })
+  phone: number;
+
+  @Column({ nullable: false })
+  companyName: string;
+
   @Column({ nullable: true, default: Role.Employer })
   role: string;
 

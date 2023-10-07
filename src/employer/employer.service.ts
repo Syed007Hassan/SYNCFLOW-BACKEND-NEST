@@ -41,6 +41,20 @@ export class EmployerService {
     return user;
   }
 
+  async findOneByCompanyName(companyName: string) {
+    const capitalizedCompanyName =
+      companyName.charAt(0).toUpperCase() + companyName.slice(1);
+    const user = await this.employerRepo.findOne({
+      where: { companyName: capitalizedCompanyName },
+    });
+
+    if (!user) {
+      throw new Error('No user found by this company name');
+    }
+
+    return user;
+  }
+
   findOne(id: number) {
     const user = this.employerRepo.findOneBy({ id });
     return user;
