@@ -19,8 +19,8 @@ services:
     networks:
       - backend_bridge
     volumes:
-      - .:/usr/src/app
-      - node_modules:/usr/src/app/node_modules
+      - ./${PWD}/node_modules:/usr/src/app/node_modules
+      - ./src:/usr/src/app/src
 
     restart: unless-stopped
     depends_on:
