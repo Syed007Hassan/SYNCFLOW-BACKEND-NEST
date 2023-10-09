@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { PostgreSqlDataSource } from './config/ormConfig';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployerModule } from './employer/employer.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { EmployerModule } from './employer/employer.module';
       isGlobal: true,
       envFilePath: `.env`,
     }),
+    CacheModule.register({ isGlobal: true }),
     TypeOrmModule.forRoot(PostgreSqlDataSource),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     AuthModule,
