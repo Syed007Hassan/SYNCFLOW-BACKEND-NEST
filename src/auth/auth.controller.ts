@@ -93,7 +93,6 @@ export class AuthController {
     return { success: true };
   }
 
-  @UseInterceptors(CacheInterceptor)
   @Get('/:id')
   async getPokemon(@Param('id') id: number) {
     try {

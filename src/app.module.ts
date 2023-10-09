@@ -9,6 +9,7 @@ import { PostgreSqlDataSource } from './config/ormConfig';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployerModule } from './employer/employer.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
@@ -16,7 +17,12 @@ import { CacheModule } from '@nestjs/cache-manager';
       isGlobal: true,
       envFilePath: `.env`,
     }),
-    CacheModule.register({ isGlobal: true }),
+    CacheModule.register({
+      isGlobal: true,
+      store: redisStore,
+      host: 'redis',
+      port: process.env.RD_PORT,
+    }),
     TypeOrmModule.forRoot(PostgreSqlDataSource),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     AuthModule,
