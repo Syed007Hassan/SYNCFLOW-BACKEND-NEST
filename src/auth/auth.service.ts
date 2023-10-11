@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ExistingUserDto } from 'src/user/dto/existing-user.dto';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
@@ -8,6 +8,9 @@ import { EmployerService } from 'src/employer/employer.service';
 import { Role } from './model/role.enum';
 import { ExistingEmployerDto } from 'src/employer/dto/existing-employer.dto';
 import { LoginEmployerDto } from 'src/employer/dto/login-employer.dto';
+import { HttpService } from '@nestjs/axios';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +18,8 @@ export class AuthService {
     private userService: UserService,
     private employerService: EmployerService,
     private jwtService: JwtService,
+    private readonly httpService: HttpService,
+    @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
   async registerUser(user: ExistingUserDto) {
@@ -63,7 +68,12 @@ export class AuthService {
       loginUserDto.role,
     );
 
-    const payload = { email: user.email, name: user.name, role: user.role };
+    const payload = {
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      companyName: user.companyName,
+    };
     const jwt = await this.jwtService.signAsync(payload);
     return { jwt };
   }
@@ -132,5 +142,23 @@ export class AuthService {
     // }
 
     return payloadReturn;
+  }
+
+  async getPokemon(id: number): Promise<string> {
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<{ name: string }>(
+      id.toString(),
+    );
+    if (cachedData) {
+      console.log(`Getting data from cache!`);
+      return `${cachedData.name}`;
+    }
+
+    // if not, call API and set the cache:
+    const { data } = await this.httpService.axiosRef.get(
+      `https://pokeapi.co/api/v2/pokemon/${id}`,
+    );
+    await this.cacheService.set(id.toString(), data);
+    return await `${data.name}`;
   }
 }

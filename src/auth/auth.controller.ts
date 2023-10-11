@@ -10,6 +10,8 @@ import {
   HttpStatus,
   UseGuards,
   Request,
+  Inject,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -22,6 +24,7 @@ import { HasRoles } from './decorators/has-roles.decorator';
 import { JwtDto } from './dto/jwt.dto';
 import { ExistingEmployerDto } from 'src/employer/dto/existing-employer.dto';
 import { LoginEmployerDto } from 'src/employer/dto/login-employer.dto';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -88,5 +91,15 @@ export class AuthController {
   @Get('validateToken')
   testRoute() {
     return { success: true };
+  }
+
+  @Get('/:id')
+  async getPokemon(@Param('id') id: number) {
+    try {
+      const data = await this.authService.getPokemon(id);
+      return { success: true, data: data };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 }

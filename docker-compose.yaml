@@ -7,6 +7,8 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
+    volumes:
+      - ./src:/usr/src/app/src
     ports:
       - 5000:5000
     environment:
@@ -16,15 +18,27 @@ services:
       - PG_PASSWORD=postgres
       - PG_DB=postgres
       - PG_PORT=5432
+      - RD_PORT=6379
     networks:
       - backend_bridge
-    volumes:
-      - .:/usr/src/app
-      - node_modules:/usr/src/app/node_modules
 
     restart: unless-stopped
     depends_on:
+      - redis
       - db
+
+  redis:
+    container_name: redis
+    image: redis
+    environment:
+      - RD_PORT=6379
+    ports:
+      - 6379:6379
+    networks:
+      - backend_bridge
+    restart: unless-stopped
+    volumes:
+      - redis:/data
 
   db:
     container_name: db
@@ -62,3 +76,5 @@ networks:
 volumes:
   pgdata: {}
   node_modules: {}
+  redis:
+    driver: local
