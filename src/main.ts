@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Logger } from '@nestjs/common';
 import * as dotenv from 'dotenv';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const logger = new Logger();
@@ -11,6 +12,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors();
+  app.use(helmet());
   dotenv.config();
   app.setGlobalPrefix('api');
 
@@ -36,7 +38,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('NEST FYP BACKEND')
     .setDescription('SYNCFLOW RECRUITMENT SYSTEM API')
-    .setVersion('1.0')
+    .setVersion('V-1.0')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
