@@ -26,6 +26,6 @@ RUN npm run build
 # npm run migration:run:js
 # npm run tenant:migration:run:js
 
-EXPOSE 5000
+
 #ENTRYPOINT ["/bin/sh","-c","npm run migration:run && npm run tenant:migration:run && npm run start:dev"]
 ENTRYPOINT ["/bin/sh", "-c", "npm run start:dev"]

@@ -7,6 +7,8 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
+    volumes:
+      - ./src:/usr/src/app/src
     ports:
       - 5000:5000
     environment:
@@ -19,9 +21,6 @@ services:
       - RD_PORT=6379
     networks:
       - backend_bridge
-    volumes:
-      - ./${PWD}/node_modules:/usr/src/app/node_modules
-      - ./src:/usr/src/app/src
 
     restart: unless-stopped
     depends_on:

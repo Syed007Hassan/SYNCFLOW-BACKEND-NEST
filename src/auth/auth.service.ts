@@ -68,7 +68,13 @@ export class AuthService {
       loginUserDto.role,
     );
 
-    const payload = { email: user.email, name: user.name, role: user.role };
+    //payload is the data that will be encrypted in the jwt token
+    const payload = {
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      companyName: user.companyName,
+    };
     const jwt = await this.jwtService.signAsync(payload);
     return { jwt };
   }
