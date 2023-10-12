@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployerModule } from './employer/employer.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
+import type { RedisClientOptions } from 'redis';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import * as redisStore from 'cache-manager-redis-store';
       isGlobal: true,
       store: redisStore,
       host: 'redis',
-      port: process.env.RD_PORT,
+      port: 6379,
     }),
     TypeOrmModule.forRoot(PostgreSqlDataSource),
     MongooseModule.forRoot(process.env.MONGODB_URI),

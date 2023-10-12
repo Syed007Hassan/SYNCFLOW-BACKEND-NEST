@@ -2,13 +2,11 @@ version: '3'
 
 services:
   nestapp:
-    container_name: nestapp
-    image: syed007hassan/nest_backend
+    container_name: nest-backend
+    image: nestjs
     build:
       dockerfile: Dockerfile
       context: .
-    volumes:
-      - ./src:/usr/src/app/src
     ports:
       - 5000:5000
     environment:
@@ -18,14 +16,16 @@ services:
       - PG_PASSWORD=postgres
       - PG_DB=postgres
       - PG_PORT=5432
-      - RD_PORT=6379
     networks:
       - backend_bridge
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
 
     restart: unless-stopped
     depends_on:
-      - redis
       - db
+      - redis
 
   redis:
     container_name: redis
@@ -75,6 +75,5 @@ networks:
 
 volumes:
   pgdata: {}
-  node_modules: {}
   redis:
     driver: local
