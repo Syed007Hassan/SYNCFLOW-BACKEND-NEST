@@ -21,7 +21,13 @@ export class CompanyService {
   }
 
   create(createCompanyDto: CreateCompanyDto) {
-    const newCompany = this.companyRepo.create(createCompanyDto);
+    const capitalizedCompanyName =
+      createCompanyDto.companyName.charAt(0).toUpperCase() +
+      createCompanyDto.companyName.slice(1);
+    const newCompany = this.companyRepo.create({
+      ...createCompanyDto,
+      companyName: capitalizedCompanyName,
+    });
     return this.companyRepo.save(newCompany);
   }
 
