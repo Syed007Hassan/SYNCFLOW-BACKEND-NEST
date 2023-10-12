@@ -17,6 +17,9 @@ export class CompanyService {
     const company = await this.companyRepo.findOne({
       where: { companyName: capitalizedCompanyName },
     });
+    if (!company) {
+      throw new Error('Company not found');
+    }
     return company;
   }
 

@@ -40,6 +40,9 @@ export class EmployerService {
 
   async findOneByEmail(email: string) {
     const user = await this.employerRepo.findOneBy({ email });
+    if (!user) {
+      throw new Error('Recruiter not found by this email');
+    }
     return user;
   }
 
@@ -63,8 +66,27 @@ export class EmployerService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateEmployerDto) {
-    return `This action updates a #${id} user`;
+  async update(updateUserDto: UpdateEmployerDto) {
+    const existingRecruiter = await this.employerRepo.findOneBy({
+      email: updateUserDto.email,
+    });
+
+    console.log(existingRecruiter + 'existingRecruiter');
+
+    if (!existingRecruiter) {
+      throw new Error('User not found');
+    }
+
+    const saltRounds = 10;
+    const hash = bcrypt.hashSync(updateUserDto.password, saltRounds);
+
+    const updatedRecruiter = {
+      ...existingRecruiter,
+      ...updateUserDto,
+      password: hash,
+    };
+
+    return await this.employerRepo.save(updatedRecruiter);
   }
 
   remove(id: number) {

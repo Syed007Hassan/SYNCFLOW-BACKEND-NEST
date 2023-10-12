@@ -27,9 +27,14 @@ export class CompanyController {
     }
   }
 
-  @Get()
-  findAll() {
-    return this.companyService.findAll();
+  @Get('findOneByName/:name')
+  async findOneByName(@Param('name') name: string) {
+    try {
+      const company = await this.companyService.findOneByName(name);
+      return { success: true, data: company };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Get('findOne/:id')
