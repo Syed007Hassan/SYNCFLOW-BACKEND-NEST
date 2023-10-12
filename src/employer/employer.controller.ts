@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
 } from '@nestjs/common';
 import { EmployerService } from './employer.service';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @ApiTags('Employer')
 @Controller('employer')
@@ -27,6 +29,7 @@ export class EmployerController {
     }
   }
 
+  @UseInterceptors(CacheInterceptor)
   @Get('findAll')
   async findAll() {
     try {

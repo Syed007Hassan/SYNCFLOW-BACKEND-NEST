@@ -6,9 +6,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtGuardStrategy } from './guards/jwt-auth.strategy';
 import { JwtGuard } from './guards/jwt-auth.guard';
 import { EmployerModule } from 'src/employer/employer.module';
+import { HttpModule, HttpService } from '@nestjs/axios';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
+    HttpModule,
     UserModule,
     EmployerModule,
     JwtModule.registerAsync({

@@ -32,6 +32,9 @@ export class Employer {
   @Column({ nullable: true, default: Role.Employer })
   role: string;
 
+  @Column({ nullable: true })
+  designation: string;
+
   // @OneToMany((type) => Comment, (comment) => comment.user)
   // comments: Comment[];
 
