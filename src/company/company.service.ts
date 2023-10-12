@@ -21,7 +21,8 @@ export class CompanyService {
   }
 
   create(createCompanyDto: CreateCompanyDto) {
-    return 'This action adds a new company';
+    const newCompany = this.companyRepo.create(createCompanyDto);
+    return this.companyRepo.save(newCompany);
   }
 
   findAll() {
