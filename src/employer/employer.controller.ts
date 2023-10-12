@@ -65,9 +65,14 @@ export class EmployerController {
     }
   }
 
-  @Patch('update/:id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateEmployerDto) {
-    return this.employerService.update(+id, updateUserDto);
+  @Patch('updateRecruiter')
+  async update(@Body() updateUserDto: UpdateEmployerDto) {
+    try {
+      const user = await this.employerService.update(updateUserDto);
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Delete('delete/:id')

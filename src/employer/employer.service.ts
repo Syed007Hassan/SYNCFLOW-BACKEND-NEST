@@ -3,19 +3,21 @@ import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Employer } from './entities/employer.entity';
+import { Recruiter } from './entities/employer.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CompanyService } from 'src/company/company.service';
 
 @Injectable()
 export class EmployerService {
   constructor(
-    @InjectRepository(Employer)
-    private readonly employerRepo: Repository<Employer>,
+    @InjectRepository(Recruiter)
+    private readonly employerRepo: Repository<Recruiter>,
+    private readonly companyService: CompanyService,
   ) {}
 
-  async create(createUserDto: CreateEmployerDto): Promise<Employer> {
+  async create(createUserDto: CreateEmployerDto): Promise<Recruiter> {
     const saltRounds = 10;
     const hash = bcrypt.hashSync(createUserDto.password, saltRounds);
     const newUser = await this.employerRepo.create({
@@ -38,21 +40,25 @@ export class EmployerService {
 
   async findOneByEmail(email: string) {
     const user = await this.employerRepo.findOneBy({ email });
+    if (!user) {
+      throw new Error('Recruiter not found by this email');
+    }
     return user;
   }
 
   async findOneByCompanyName(companyName: string) {
-    const capitalizedCompanyName =
-      companyName.charAt(0).toUpperCase() + companyName.slice(1);
-    const user = await this.employerRepo.findOne({
-      where: { companyName: capitalizedCompanyName },
+    const company = await this.companyService.findOneByName(companyName);
+    if (!company) {
+      throw new Error('Company not found');
+    }
+    const employer = await this.employerRepo.findOne({
+      where: { companyId: company.id },
     });
 
-    if (!user) {
-      throw new Error('No user found by this company name');
+    if (!employer) {
+      throw new Error('Employer not found');
     }
-
-    return user;
+    return employer;
   }
 
   findOne(id: number) {
@@ -60,8 +66,27 @@ export class EmployerService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateEmployerDto) {
-    return `This action updates a #${id} user`;
+  async update(updateUserDto: UpdateEmployerDto) {
+    const existingRecruiter = await this.employerRepo.findOneBy({
+      email: updateUserDto.email,
+    });
+
+    console.log(existingRecruiter + 'existingRecruiter');
+
+    if (!existingRecruiter) {
+      throw new Error('User not found');
+    }
+
+    const saltRounds = 10;
+    const hash = bcrypt.hashSync(updateUserDto.password, saltRounds);
+
+    const updatedRecruiter = {
+      ...existingRecruiter,
+      ...updateUserDto,
+      password: hash,
+    };
+
+    return await this.employerRepo.save(updatedRecruiter);
   }
 
   remove(id: number) {

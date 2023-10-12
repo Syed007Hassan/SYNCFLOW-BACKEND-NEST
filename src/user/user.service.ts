@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from './entities/user.entity';
+import { Applicant } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -12,10 +12,11 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) private readonly userRepo: Repository<User>,
+    @InjectRepository(Applicant)
+    private readonly userRepo: Repository<Applicant>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<Applicant> {
     const saltRounds = 10;
     const hash = bcrypt.hashSync(createUserDto.password, saltRounds);
     const newUser = await this.userRepo.create({
