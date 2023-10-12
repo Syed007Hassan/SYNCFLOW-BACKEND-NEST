@@ -28,6 +28,11 @@ export class ExistingEmployerDto {
   @IsString()
   companyName: string;
 
+  @ApiProperty({ default: 'HR' })
+  @IsNotEmpty()
+  @IsString()
+  designation: string;
+
   @ApiProperty({ default: Role.Employer })
   @IsString()
   role: string;

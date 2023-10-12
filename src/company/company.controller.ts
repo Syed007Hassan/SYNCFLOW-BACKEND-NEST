@@ -32,9 +32,14 @@ export class CompanyController {
     return this.companyService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.companyService.findOne(+id);
+  @Get('findOne/:id')
+  async findOne(@Param('id') id: string) {
+    try {
+      const company = await this.companyService.findOne(+id);
+      return { success: true, data: company };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Patch(':id')

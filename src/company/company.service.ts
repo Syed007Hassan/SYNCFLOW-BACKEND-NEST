@@ -29,8 +29,10 @@ export class CompanyService {
     return `This action returns all company`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} company`;
+  async findOne(id: number) {
+    const company = await this.companyRepo.findOneBy({ id });
+    console.log(company + 'company');
+    return company;
   }
 
   update(id: number, updateCompanyDto: UpdateCompanyDto) {
