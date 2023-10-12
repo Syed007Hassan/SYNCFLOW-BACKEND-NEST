@@ -2,8 +2,8 @@ version: '3'
 
 services:
   nestapp:
-    container_name: nestapp
-    image: syed007hassan/nest_backend
+    container_name: nestapp-test
+    image: nest_backend_test
     build:
       dockerfile: Dockerfile
       context: .
@@ -20,11 +20,25 @@ services:
       - backend_bridge
     volumes:
       - .:/usr/src/app
-      - node_modules:/usr/src/app/node_modules
+      - /usr/src/app/node_modules
 
     restart: unless-stopped
     depends_on:
       - db
+      - redis
+
+  redis:
+    container_name: redis
+    image: redis
+    environment:
+      - RD_PORT=6379
+    ports:
+      - 6379:6379
+    networks:
+      - backend_bridge
+    restart: unless-stopped
+    volumes:
+      - redis:/data
 
   db:
     container_name: db
@@ -61,4 +75,5 @@ networks:
 
 volumes:
   pgdata: {}
-  node_modules: {}
+  redis:
+    driver: local
