@@ -37,7 +37,6 @@ export class CompanyService {
 
   async findOne(id: number) {
     const company = await this.companyRepo.findOneBy({ id });
-    console.log(company + 'company');
     return company;
   }
 

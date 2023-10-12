@@ -71,29 +71,23 @@ export class AuthService {
     const user = await this.validateEmployer(
       loginUserDto.email,
       loginUserDto.password,
-      loginUserDto.companyName,
       loginUserDto.role,
     );
 
     const payload = {
       email: user.email,
       name: user.name,
+      companyId: user.companyId,
       role: user.role,
-      companyName: user.companyName,
     };
     const jwt = await this.jwtService.signAsync(payload);
     return { jwt };
   }
 
-  async validateEmployer(
-    email: string,
-    password: string,
-    companyName: string,
-    role: string,
-  ) {
+  async validateEmployer(email: string, password: string, role: string) {
     const user = await this.employerService.findOneByEmail(email);
     if (!user) {
-      throw new Error('User not found');
+      throw new Error('User not found with this email');
     }
     const isPasswordMatching = await this.doesPasswordMatch(
       password,
@@ -103,20 +97,16 @@ export class AuthService {
       throw new Error('Invalid credentials');
     }
 
-    const company = await this.employerService.findOneByCompanyName(
-      companyName,
-    );
+    const company = await this.companyService.findOne(user.companyId);
+
     if (!company) {
-      throw new Error('Company not found');
-    }
-    if (company.email !== email) {
-      throw new Error('Email does not belong to the company');
+      throw new Error('Company not found for this recruiter');
     }
 
     return {
       name: user.name,
       email: user.email,
-      companyName: companyName,
+      companyId: user.companyId,
       role: user.role,
     };
   }
