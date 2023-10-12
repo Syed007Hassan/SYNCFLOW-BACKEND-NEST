@@ -3,19 +3,21 @@ import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Employer } from './entities/employer.entity';
+import { Recruiter } from './entities/employer.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CompanyService } from 'src/company/company.service';
 
 @Injectable()
 export class EmployerService {
   constructor(
-    @InjectRepository(Employer)
-    private readonly employerRepo: Repository<Employer>,
+    @InjectRepository(Recruiter)
+    private readonly employerRepo: Repository<Recruiter>,
+    private readonly companyService: CompanyService,
   ) {}
 
-  async create(createUserDto: CreateEmployerDto): Promise<Employer> {
+  async create(createUserDto: CreateEmployerDto): Promise<Recruiter> {
     const saltRounds = 10;
     const hash = bcrypt.hashSync(createUserDto.password, saltRounds);
     const newUser = await this.employerRepo.create({
@@ -42,17 +44,18 @@ export class EmployerService {
   }
 
   async findOneByCompanyName(companyName: string) {
-    const capitalizedCompanyName =
-      companyName.charAt(0).toUpperCase() + companyName.slice(1);
-    const user = await this.employerRepo.findOne({
-      where: { companyName: capitalizedCompanyName },
+    const company = await this.companyService.findOneByName(companyName);
+    if (!company) {
+      throw new Error('Company not found');
+    }
+    const employer = await this.employerRepo.findOne({
+      where: { companyId: company.id },
     });
 
-    if (!user) {
-      throw new Error('No user found by this company name');
+    if (!employer) {
+      throw new Error('Employer not found');
     }
-
-    return user;
+    return employer;
   }
 
   findOne(id: number) {

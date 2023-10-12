@@ -11,6 +11,7 @@ import { EmployerModule } from './employer/employer.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
 import type { RedisClientOptions } from 'redis';
+import { CompanyModule } from './company/company.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import type { RedisClientOptions } from 'redis';
     AuthModule,
     UserModule,
     EmployerModule,
+    CompanyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

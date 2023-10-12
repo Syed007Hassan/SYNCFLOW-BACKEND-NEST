@@ -10,7 +10,7 @@ import * as bcrypt from 'bcrypt';
 import { Role } from 'src/auth/model/role.enum';
 
 @Entity()
-export class User {
+export class Applicant {
   @PrimaryGeneratedColumn()
   id: number;
 

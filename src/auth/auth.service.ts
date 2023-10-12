@@ -40,11 +40,9 @@ export class AuthService {
     return {
       name: newUser.name,
       email: newUser.email,
-      companyName:
-        newUser.companyName.charAt(0).toUpperCase() +
-        newUser.companyName.slice(1),
       phone: newUser.phone,
       role: newUser.role,
+      companyId: newUser.companyId,
     };
   }
 
