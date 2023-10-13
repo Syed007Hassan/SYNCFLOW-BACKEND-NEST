@@ -18,7 +18,7 @@ export class CompanyService {
       where: { companyName: capitalizedCompanyName },
     });
     if (!company) {
-      throw new Error('Company not found');
+      return null;
     }
     return company;
   }
