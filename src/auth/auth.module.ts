@@ -8,12 +8,14 @@ import { JwtGuard } from './guards/jwt-auth.guard';
 import { EmployerModule } from 'src/employer/employer.module';
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { CompanyModule } from 'src/company/company.module';
 
 @Module({
   imports: [
     HttpModule,
     UserModule,
     EmployerModule,
+    CompanyModule,
     JwtModule.registerAsync({
       useFactory: () => ({
         secret: process.env.JWT_SECRET,

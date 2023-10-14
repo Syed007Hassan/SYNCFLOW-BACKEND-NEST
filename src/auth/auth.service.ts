@@ -11,6 +11,8 @@ import { LoginEmployerDto } from 'src/employer/dto/login-employer.dto';
 import { HttpService } from '@nestjs/axios';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { CompanyService } from 'src/company/company.service';
+import { CreateCompanyDto } from 'src/company/dto/create-company.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,33 +20,94 @@ export class AuthService {
     private userService: UserService,
     private employerService: EmployerService,
     private jwtService: JwtService,
+    private companyService: CompanyService,
     private readonly httpService: HttpService,
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
-  async registerUser(user: ExistingUserDto) {
-    const findUser = await this.userService.findOneByEmail(user.email);
-    if (findUser) {
-      throw new Error('User already exists');
-    }
-    const newUser = await this.userService.create(user);
-    return { name: newUser.name, email: newUser.email, role: newUser.role };
-  }
-
   async registerEmployer(user: ExistingEmployerDto) {
     const findUser = await this.employerService.findOneByEmail(user.email);
     if (findUser) {
-      throw new Error('User already exists');
+      throw new Error('Recruiter already exists with this email');
     }
-    const newUser = await this.employerService.create(user);
+
+    let company = await this.companyService.findOneByName(user.companyName);
+
+    if (company) {
+      throw new Error('Company already exists with this name');
+    }
+
+    if (!company) {
+      company = await this.companyService.create({
+        companyName: user.companyName,
+        companyEmail: '',
+        companyAddress: '',
+        companyPhone: 0,
+        companyWebsite: '',
+      });
+    }
+
+    const newUser = await this.employerService.create({
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      phone: user.phone,
+      designation: user.designation,
+      role: Role.Employer,
+      companyId: company.id,
+    });
+
     return {
       name: newUser.name,
       email: newUser.email,
-      companyName:
-        newUser.companyName.charAt(0).toUpperCase() +
-        newUser.companyName.slice(1),
       phone: newUser.phone,
       role: newUser.role,
+      designation: newUser.designation,
+      companyId: newUser.companyId,
+    };
+  }
+
+  async loginEmployer(loginUserDto: LoginEmployerDto) {
+    const user = await this.validateEmployer(
+      loginUserDto.email,
+      loginUserDto.password,
+      loginUserDto.role,
+    );
+
+    const payload = {
+      email: user.email,
+      name: user.name,
+      companyId: user.companyId,
+      role: user.role,
+    };
+    const jwt = await this.jwtService.signAsync(payload);
+    return { jwt };
+  }
+
+  async validateEmployer(email: string, password: string, role: string) {
+    const user = await this.employerService.findOneByEmail(email);
+    if (!user) {
+      throw new Error('User not found with this email');
+    }
+    const isPasswordMatching = await this.doesPasswordMatch(
+      password,
+      user.password,
+    );
+    if (!isPasswordMatching) {
+      throw new Error('Invalid credentials');
+    }
+
+    const company = await this.companyService.findOne(user.companyId);
+
+    if (!company) {
+      throw new Error('Company not found for this recruiter');
+    }
+
+    return {
+      name: user.name,
+      email: user.email,
+      companyId: user.companyId,
+      role: user.role,
     };
   }
 
@@ -60,22 +123,13 @@ export class AuthService {
     return { jwt };
   }
 
-  async loginEmployer(loginUserDto: LoginEmployerDto) {
-    const user = await this.validateEmployer(
-      loginUserDto.email,
-      loginUserDto.password,
-      loginUserDto.companyName,
-      loginUserDto.role,
-    );
-
-    const payload = {
-      email: user.email,
-      name: user.name,
-      role: user.role,
-      companyName: user.companyName,
-    };
-    const jwt = await this.jwtService.signAsync(payload);
-    return { jwt };
+  async registerUser(user: ExistingUserDto) {
+    const findUser = await this.userService.findOneByEmail(user.email);
+    if (findUser) {
+      throw new Error('User already exists');
+    }
+    const newUser = await this.userService.create(user);
+    return { name: newUser.name, email: newUser.email, role: newUser.role };
   }
 
   async doesPasswordMatch(password: string, hashedPassword: string) {
@@ -95,42 +149,6 @@ export class AuthService {
       throw new Error('Invalid credentials');
     }
     return { name: user.name, email: user.email, role: user.role };
-  }
-
-  async validateEmployer(
-    email: string,
-    password: string,
-    companyName: string,
-    role: string,
-  ) {
-    const user = await this.employerService.findOneByEmail(email);
-    if (!user) {
-      throw new Error('User not found');
-    }
-    const isPasswordMatching = await this.doesPasswordMatch(
-      password,
-      user.password,
-    );
-    if (!isPasswordMatching) {
-      throw new Error('Invalid credentials');
-    }
-
-    const company = await this.employerService.findOneByCompanyName(
-      companyName,
-    );
-    if (!company) {
-      throw new Error('Company not found');
-    }
-    if (company.email !== email) {
-      throw new Error('Email does not belong to the company');
-    }
-
-    return {
-      name: user.name,
-      email: user.email,
-      companyName: companyName,
-      role: user.role,
-    };
   }
 
   async verifyJwt(jwt: string) {

@@ -5,12 +5,15 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'src/auth/model/role.enum';
+import { Company } from 'src/company/entities/company.entity';
 
 @Entity()
-export class Employer {
+export class Recruiter {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -26,20 +29,16 @@ export class Employer {
   @Column({ nullable: false })
   phone: number;
 
-  @Column({ nullable: false })
-  companyName: string;
-
   @Column({ nullable: true, default: Role.Employer })
   role: string;
 
   @Column({ nullable: true })
   designation: string;
 
-  // @OneToMany((type) => Comment, (comment) => comment.user)
-  // comments: Comment[];
+  @ManyToOne((type) => Company, (company) => company.recruiters)
+  @JoinColumn({ name: 'companyId' })
+  company: Company;
 
-  // @BeforeInsert()
-  // async hashPasword() {
-  //   this.password = await bcrypt.hash(this.password, 10);
-  // }
+  @Column({ nullable: true })
+  companyId: number;
 }
