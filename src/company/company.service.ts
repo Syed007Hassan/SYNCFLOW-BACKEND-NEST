@@ -34,8 +34,13 @@ export class CompanyService {
     return this.companyRepo.save(newCompany);
   }
 
-  findAll() {
-    return `This action returns all company`;
+  async findAll() {
+    const companies = await this.companyRepo.find();
+    if (!companies) {
+      throw new Error('No companies found');
+    }
+
+    return companies;
   }
 
   async findOne(id: number) {
@@ -43,8 +48,21 @@ export class CompanyService {
     return company;
   }
 
-  update(id: number, updateCompanyDto: UpdateCompanyDto) {
-    return `This action updates a #${id} company`;
+  async update(id: number, updateCompanyDto: UpdateCompanyDto) {
+    const existingCompany = await this.companyRepo.findOneBy({
+      id,
+    });
+
+    if (!existingCompany) {
+      throw new Error('Company not found');
+    }
+
+    const updatedCompany = {
+      ...existingCompany,
+      ...updateCompanyDto,
+    };
+
+    return await this.companyRepo.save(updatedCompany);
   }
 
   remove(id: number) {
