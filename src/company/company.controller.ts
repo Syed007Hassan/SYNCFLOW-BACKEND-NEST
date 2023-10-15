@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
@@ -17,7 +19,8 @@ import { ApiTags } from '@nestjs/swagger';
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
-  @Post()
+  @Post('/create')
+  @HttpCode(HttpStatus.CREATED)
   async create(@Body() createCompanyDto: CreateCompanyDto) {
     try {
       const company = await this.companyService.create(createCompanyDto);
@@ -37,6 +40,16 @@ export class CompanyController {
     }
   }
 
+  @Get('findAll')
+  async findAll() {
+    try {
+      const companies = await this.companyService.findAll();
+      return { success: true, data: companies };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
   @Get('findOne/:id')
   async findOne(@Param('id') id: string) {
     try {
@@ -47,9 +60,20 @@ export class CompanyController {
     }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
-    return this.companyService.update(+id, updateCompanyDto);
+  @Patch('updateCompanyById/:id')
+  async update(
+    @Param('id') id: number,
+    @Body() updateCompanyDto: UpdateCompanyDto,
+  ) {
+    try {
+      const updatedCompany = await this.companyService.update(
+        id,
+        updateCompanyDto,
+      );
+      return { success: true, data: updatedCompany };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Delete(':id')

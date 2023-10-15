@@ -41,7 +41,7 @@ export class EmployerService {
   async findOneByEmail(email: string) {
     const user = await this.employerRepo.findOneBy({ email });
     if (!user) {
-      throw new Error('Recruiter not found by this email');
+      return null;
     }
     return user;
   }
@@ -63,6 +63,9 @@ export class EmployerService {
 
   findOne(id: number) {
     const user = this.employerRepo.findOneBy({ id });
+    if (!user) {
+      throw new Error('User not found');
+    }
     return user;
   }
 
