@@ -12,7 +12,9 @@ import { EmployerService } from './employer.service';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { CacheInterceptor } from '@nestjs/cache-manager';
+import { HttpService } from '@nestjs/axios';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @ApiTags('Employer')
 @Controller('employer')
@@ -29,7 +31,6 @@ export class EmployerController {
     }
   }
 
-  @UseInterceptors(CacheInterceptor)
   @Get('findAll')
   async findAll() {
     try {

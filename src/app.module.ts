@@ -24,6 +24,7 @@ import { CompanyModule } from './company/company.module';
       store: redisStore,
       host: 'redis',
       port: 6379,
+      ttl: 30,
     }),
     TypeOrmModule.forRoot(PostgreSqlDataSource),
     MongooseModule.forRoot(process.env.MONGODB_URI),

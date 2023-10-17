@@ -86,7 +86,7 @@ export class AuthController {
 
   //@HasRoles(Role.Employer) can be used if employer logged in generated its token
   @ApiBearerAuth()
-  @HasRoles(Role.Employee)
+  @HasRoles(Role.Employer)
   @UseGuards(JwtGuard, RoleGuard)
   @Get('validateToken')
   testRoute() {

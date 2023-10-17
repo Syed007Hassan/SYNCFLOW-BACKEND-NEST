@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -8,6 +8,9 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompanyService } from 'src/company/company.service';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { HttpService } from '@nestjs/axios';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class EmployerService {
@@ -15,6 +18,8 @@ export class EmployerService {
     @InjectRepository(Recruiter)
     private readonly employerRepo: Repository<Recruiter>,
     private readonly companyService: CompanyService,
+    private readonly httpService: HttpService,
+    @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
   async create(createUserDto: CreateEmployerDto): Promise<Recruiter> {
@@ -31,11 +36,22 @@ export class EmployerService {
   }
 
   async findAll() {
-    const users = await this.employerRepo.find();
-    if (!users) {
-      throw new Error('No users found');
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>('all_recruiters');
+    if (cachedData) {
+      console.log(`Getting data from cache!`);
+      return cachedData;
     }
-    return users;
+
+    // if not, fetch data from the database:
+    const employers = await this.employerRepo.find();
+    if (!employers) {
+      throw new Error('No recruiters found');
+    }
+
+    // set the cache:
+    await this.cacheService.set('all_recruiters', employers);
+    return employers;
   }
 
   async findOneByEmail(email: string) {
