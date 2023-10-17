@@ -16,7 +16,7 @@ import { HttpService } from '@nestjs/axios';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, CacheTTL } from '@nestjs/cache-manager';
 
-@ApiTags('Employer')
+@ApiTags('Employer/Recruiter')
 @Controller('employer')
 export class EmployerController {
   constructor(private readonly employerService: EmployerService) {}
