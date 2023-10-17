@@ -14,7 +14,7 @@ import { UpdateEmployerDto } from './dto/update-employer.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { HttpService } from '@nestjs/axios';
 import { Cache } from 'cache-manager';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { CACHE_MANAGER, CacheTTL } from '@nestjs/cache-manager';
 
 @ApiTags('Employer')
 @Controller('employer')
@@ -47,6 +47,7 @@ export class EmployerController {
   }
 
   @Get('findOneByCompanyName/:companyName')
+  @CacheTTL(30)
   async findOneByCompanyName(@Param('companyName') companyName: string) {
     try {
       const user = await this.employerService.findOneByCompanyName(companyName);

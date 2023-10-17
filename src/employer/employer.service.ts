@@ -55,14 +55,39 @@ export class EmployerService {
   }
 
   async findOneByEmail(email: string) {
+    // create a cache key based on the email:
+    const cacheKey = `recruiter_email_${email}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      console.log(`Getting data from cache!`);
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const user = await this.employerRepo.findOneBy({ email });
     if (!user) {
       return null;
     }
+
+    // set the cache:
+    await this.cacheService.set(cacheKey, user);
     return user;
   }
 
   async findOneByCompanyName(companyName: string) {
+    // create a cache key based on the company name:
+    const cacheKey = `recruiter_${companyName}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      console.log(`Getting data from cache!`);
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const company = await this.companyService.findOneByName(companyName);
     if (!company) {
       throw new Error('Company not found');
@@ -74,6 +99,9 @@ export class EmployerService {
     if (!employer) {
       throw new Error('Employer not found');
     }
+
+    // set the cache with the cache key:
+    await this.cacheService.set(cacheKey, employer);
     return employer;
   }
 
