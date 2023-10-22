@@ -4,15 +4,29 @@ import { UpdateCompanyDto } from './dto/update-company.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from './entities/company.entity';
 import { Repository } from 'typeorm';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { HttpService } from '@nestjs/axios';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class CompanyService {
   constructor(
     @InjectRepository(Company)
     public readonly companyRepo: Repository<Company>,
+    @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
   async findOneByName(name: string) {
+    // create a cache key based on the name:
+    const cacheKey = `company_name_${name}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const capitalizedCompanyName = name.charAt(0).toUpperCase() + name.slice(1);
     const company = await this.companyRepo.findOne({
       where: { companyName: capitalizedCompanyName },
@@ -20,6 +34,9 @@ export class CompanyService {
     if (!company) {
       return null;
     }
+
+    // set the cache:
+    await this.cacheService.set(cacheKey, company);
     return company;
   }
 
@@ -35,16 +52,46 @@ export class CompanyService {
   }
 
   async findAll() {
+    // create a cache key:
+    const cacheKey = `all_companies`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      console.log(`Getting data from cache!`);
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const companies = await this.companyRepo.find();
     if (!companies) {
       throw new Error('No companies found');
     }
 
+    // set the cache:
+    await this.cacheService.set(cacheKey, companies);
     return companies;
   }
 
   async findOne(id: number) {
+    // create a cache key based on the id:
+    const cacheKey = `company_id_${id}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      console.log(`Getting data from cache!`);
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const company = await this.companyRepo.findOneBy({ id });
+    if (!company) {
+      throw new Error('Company not found');
+    }
+
+    // set the cache:
+    await this.cacheService.set(cacheKey, company);
     return company;
   }
 
