@@ -8,10 +8,10 @@ const configService = new ConfigService();
 
 export default new DataSource({
   type: 'postgres',
-  host: 'localhost',
+  host: configService.get('PG_HOST'),
   port: parseInt(configService.get('PG_PORT')),
   username: configService.get('PG_USER'),
-  password: 'postgres',
+  password: configService.get('PG_PASSWORD'),
   database: configService.get('PG_DB'),
   schema: configService.get('DB_SCHEMA'),
   entities: [`${__dirname}/../src/**/*.entity{.ts,.js}`],
