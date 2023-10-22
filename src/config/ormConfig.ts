@@ -1,10 +1,3 @@
-import { configDotenv } from 'dotenv';
-import { ConfigService, registerAs } from '@nestjs/config';
-import { Applicant } from 'src/user/entities/user.entity';
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { Recruiter } from 'src/employer/entities/employer.entity';
-import { Company } from 'src/company/entities/company.entity';
-import { DataSource, DataSourceOptions } from 'typeorm';
 import { config as dotenvConfig } from 'dotenv';
 
 dotenvConfig({ path: '.env' });
@@ -17,7 +10,6 @@ dotenvConfig({ path: '.env' });
 //   password: process.env.DB_PASSWORD,
 //   database: process.env.DB_NAME,
 //   schema: process.env.DB_SCHEMA,
-//   entities: [User, Employer],
 //   synchronize: true,
 //   logging: true,
 // };
@@ -37,6 +29,3 @@ const config = {
   synchronize: true,
   logging: true,
 };
-
-export default registerAs('typeorm', () => config);
-export const connectionSource = new DataSource(config as DataSourceOptions);
