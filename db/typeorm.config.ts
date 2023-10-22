@@ -11,7 +11,7 @@ export default new DataSource({
   host: 'localhost',
   port: parseInt(configService.get('PG_PORT')),
   username: configService.get('PG_USER'),
-  password: 'fast',
+  password: 'postgres',
   database: configService.get('PG_DB'),
   schema: configService.get('DB_SCHEMA'),
   entities: [`${__dirname}/../src/**/*.entity{.ts,.js}`],
