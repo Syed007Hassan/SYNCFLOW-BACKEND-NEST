@@ -11,14 +11,15 @@ import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
 import type { RedisClientOptions } from 'redis';
 import { CompanyModule } from './company/company.module';
-import typeorm from './config/ormConfig';
+import { AppConfig, DatabaseConfig } from './config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.env`,
-      load: [typeorm],
+      load: [AppConfig, DatabaseConfig],
+      cache: true,
     }),
     CacheModule.register({
       isGlobal: true,
@@ -29,9 +30,11 @@ import typeorm from './config/ormConfig';
       max: 10,
     }),
     TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        ...configService.get('database'),
+      }),
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) =>
-        configService.get('typeorm'),
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     AuthModule,
