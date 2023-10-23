@@ -7,11 +7,13 @@ import {
   ManyToOne,
   JoinColumn,
   PrimaryGeneratedColumn,
+  Index,
 } from 'typeorm';
 import { Company } from 'src/company/entities/company.entity';
 import { Application } from 'src/application/entities/application.entity';
 @Entity('job')
 export class Job {
+  @Index()
   @PrimaryGeneratedColumn()
   jobId: number;
 
