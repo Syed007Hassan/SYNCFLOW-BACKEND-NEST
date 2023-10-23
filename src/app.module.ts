@@ -12,6 +12,7 @@ import * as redisStore from 'cache-manager-redis-store';
 import type { RedisClientOptions } from 'redis';
 import { CompanyModule } from './company/company.module';
 import { AppConfig, DatabaseConfig } from './config';
+import { JobModule } from './job/job.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { AppConfig, DatabaseConfig } from './config';
     UserModule,
     EmployerModule,
     CompanyModule,
+    JobModule,
   ],
   controllers: [AppController],
   providers: [AppService],
