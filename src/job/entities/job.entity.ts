@@ -4,9 +4,13 @@ import {
   Column,
   Entity,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-@Entity('company')
+import { Company } from 'src/company/entities/company.entity';
+import { Application } from 'src/application/entities/application.entity';
+@Entity('job')
 export class Job {
   @PrimaryGeneratedColumn()
   jobId: number;
@@ -25,4 +29,14 @@ export class Job {
 
   @Column({ nullable: true })
   jobCreatedAt: Date;
+
+  @ManyToOne((type) => Company, (company) => company.jobs)
+  @JoinColumn({ name: 'companyId' })
+  company: Company;
+
+  @Column({ nullable: true })
+  companyId: number;
+
+  @OneToMany(() => Application, (application) => application.job)
+  applications: Application[];
 }

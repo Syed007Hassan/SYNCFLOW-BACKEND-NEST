@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Recruiter } from 'src/employer/entities/employer.entity';
-
+import { Job } from 'src/job/entities/job.entity';
 @Entity('company')
 export class Company {
   @PrimaryGeneratedColumn()
@@ -30,4 +30,7 @@ export class Company {
 
   @OneToMany((type) => Recruiter, (recruiter) => recruiter.company)
   recruiters: Recruiter[];
+
+  @OneToMany((type) => Job, (job) => job.company)
+  jobs: Job[];
 }
