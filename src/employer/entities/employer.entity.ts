@@ -8,7 +8,6 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 import { Role } from 'src/auth/model/role.enum';
 import { Company } from 'src/company/entities/company.entity';
 

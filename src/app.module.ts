@@ -9,18 +9,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployerModule } from './employer/employer.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
-import type { RedisClientOptions } from 'redis';
 import { CompanyModule } from './company/company.module';
-import { AppConfig, DatabaseConfig } from './config';
 import { JobModule } from './job/job.module';
 import { ApplicationModule } from './application/application.module';
+import { PostgreSqlDataSource } from './config/OrmConfig';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: `.env`,
-      load: [AppConfig, DatabaseConfig],
       cache: true,
     }),
     CacheModule.register({
@@ -31,13 +29,7 @@ import { ApplicationModule } from './application/application.module';
       ttl: 15,
       max: 10,
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        ...configService.get('database'),
-      }),
-      inject: [ConfigService],
-    }),
+    TypeOrmModule.forRoot(PostgreSqlDataSource),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     AuthModule,
     UserModule,
