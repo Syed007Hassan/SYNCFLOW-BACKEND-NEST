@@ -39,4 +39,9 @@ export class Job {
 
   @OneToMany(() => Application, (application) => application.job)
   applications: Application[];
+
+  @BeforeInsert()
+  setJobCreatedAt() {
+    this.jobCreatedAt = new Date();
+  }
 }
