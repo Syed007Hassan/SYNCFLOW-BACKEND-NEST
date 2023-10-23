@@ -13,6 +13,7 @@ import type { RedisClientOptions } from 'redis';
 import { CompanyModule } from './company/company.module';
 import { AppConfig, DatabaseConfig } from './config';
 import { JobModule } from './job/job.module';
+import { ApplicationModule } from './application/application.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { JobModule } from './job/job.module';
     EmployerModule,
     CompanyModule,
     JobModule,
+    ApplicationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
