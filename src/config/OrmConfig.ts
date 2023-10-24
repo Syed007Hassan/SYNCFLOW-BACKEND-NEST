@@ -28,7 +28,7 @@ export const PostgreSqlDataSource: TypeOrmModuleOptions = {
   password: process.env.PG_PASSWORD,
   database: process.env.PG_DB,
   schema: process.env.DB_SCHEMA,
-  entities: [Applicant, Recruiter, Company],
+  // entities: [Applicant, Recruiter, Company],
   autoLoadEntities: true,
   synchronize: true,
   logging: true,

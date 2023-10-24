@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'src/auth/model/role.enum';
+import { Application } from 'src/application/entities/application.entity';
 
 @Entity()
 export class Applicant {
@@ -25,6 +26,9 @@ export class Applicant {
 
   @Column({ nullable: true, default: Role.Employee })
   role: string;
+
+  @OneToMany(() => Application, (application) => application.applicant)
+  applications: Application[];
 
   // @OneToMany((type) => Comment, (comment) => comment.user)
   // comments: Comment[];
