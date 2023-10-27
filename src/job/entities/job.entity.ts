@@ -9,8 +9,8 @@ import {
   PrimaryGeneratedColumn,
   Index,
 } from 'typeorm';
-import { Company } from 'src/company/entities/company.entity';
-import { Application } from 'src/application/entities/application.entity';
+import { Company } from '../../company/entities/company.entity';
+import { Application } from '../../application/entities/application.entity';
 @Entity('job')
 export class Job {
   @Index()

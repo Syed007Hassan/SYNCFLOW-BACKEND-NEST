@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Role } from 'src/auth/model/role.enum';
-import { Application } from 'src/application/entities/application.entity';
+import { Role } from '../../auth/model/role.enum';
+import { Application } from '../../application/entities/application.entity';
 
 @Entity()
 export class Applicant {
