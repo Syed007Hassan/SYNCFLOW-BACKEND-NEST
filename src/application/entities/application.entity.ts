@@ -7,8 +7,8 @@ import {
   JoinColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Job } from 'src/job/entities/job.entity';
-import { Applicant } from 'src/user/entities/user.entity';
+import { Job } from '../../job/entities/job.entity';
+import { Applicant } from '../../user/entities/user.entity';
 
 @Entity()
 export class Application {

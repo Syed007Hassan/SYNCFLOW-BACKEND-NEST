@@ -8,8 +8,8 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Role } from 'src/auth/model/role.enum';
-import { Company } from 'src/company/entities/company.entity';
+import { Role } from '../../auth/model/role.enum';
+import { Company } from '../../company/entities/company.entity';
 
 @Entity()
 export class Recruiter {
