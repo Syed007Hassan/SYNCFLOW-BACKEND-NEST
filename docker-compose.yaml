@@ -11,7 +11,7 @@ services:
       - 5000:5000
     environment:
       - DB_TYPE=postgres
-      - PG_HOST=db
+      - PG_HOST=postgres
       - PG_USER=postgres
       - PG_PASSWORD=postgres
       - PG_DB=postgres
@@ -24,7 +24,7 @@ services:
 
     restart: unless-stopped
     depends_on:
-      - db
+      - postgres
       - redis
 
   redis:
@@ -40,11 +40,11 @@ services:
     volumes:
       - redis:/data
 
-  db:
-    container_name: db
+  postgres:
+    container_name: postgres
     image: postgres:12
     ports:
-      - 5432:5432
+      - '5432:5432'
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -67,7 +67,7 @@ services:
     ports:
       - '5050:80'
     depends_on:
-      - db
+      - postgres
 
 networks:
   backend_bridge:

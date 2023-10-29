@@ -12,9 +12,11 @@ import { EmployerService } from './employer.service';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { CacheInterceptor } from '@nestjs/cache-manager';
+import { HttpService } from '@nestjs/axios';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER, CacheTTL } from '@nestjs/cache-manager';
 
-@ApiTags('Employer')
+@ApiTags('Employer/Recruiter')
 @Controller('employer')
 export class EmployerController {
   constructor(private readonly employerService: EmployerService) {}
@@ -29,7 +31,6 @@ export class EmployerController {
     }
   }
 
-  @UseInterceptors(CacheInterceptor)
   @Get('findAll')
   async findAll() {
     try {
@@ -46,6 +47,7 @@ export class EmployerController {
   }
 
   @Get('findOneByCompanyName/:companyName')
+  @CacheTTL(30)
   async findOneByCompanyName(@Param('companyName') companyName: string) {
     try {
       const user = await this.employerService.findOneByCompanyName(companyName);
