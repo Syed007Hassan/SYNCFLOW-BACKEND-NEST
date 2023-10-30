@@ -15,17 +15,6 @@ export class Application {
   @PrimaryGeneratedColumn()
   applicationId: number;
 
-  @ManyToOne(() => Job, (job) => job.applications)
-  @JoinColumn({ name: 'job_id' })
-  job: Job;
-
-  @ManyToOne(() => Applicant, (applicant) => applicant.applications)
-  @JoinColumn({ name: 'id' })
-  applicant: Applicant;
-
-  @Column({ nullable: true })
-  id: number;
-
   @Column({ nullable: false })
   status: string;
 
@@ -35,6 +24,20 @@ export class Application {
     default: () => 'CURRENT_TIMESTAMP',
   })
   applicationDate: Date;
+
+  @ManyToOne(() => Applicant, (applicant) => applicant.applications)
+  @JoinColumn({ name: 'id' })
+  applicant: Applicant;
+
+  @Column({ nullable: true })
+  id: number;
+
+  @ManyToOne(() => Job, (job) => job.applications)
+  @JoinColumn({ name: 'jobId' })
+  job: Job;
+
+  @Column({ nullable: true })
+  jobId: number;
 
   @BeforeInsert()
   setApplicationDate() {
