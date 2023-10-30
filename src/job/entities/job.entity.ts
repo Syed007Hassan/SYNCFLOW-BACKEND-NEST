@@ -32,6 +32,10 @@ export class Job {
   @Column({ nullable: true })
   jobCreatedAt: Date;
 
+  // TODO: ADD WORKFLOW TYPE
+  @Column({ nullable: true, type: 'jsonb' })
+  workFlow: string[];
+
   @ManyToOne((type) => Company, (company) => company.jobs)
   @JoinColumn({ name: 'companyId' })
   company: Company;
