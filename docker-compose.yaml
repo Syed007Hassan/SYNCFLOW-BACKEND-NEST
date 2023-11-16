@@ -9,19 +9,13 @@ services:
       context: .
     ports:
       - 5000:5000
-    environment:
-      - DB_TYPE=postgres
-      - PG_HOST=postgres
-      - PG_USER=postgres
-      - PG_PASSWORD=postgres
-      - PG_DB=postgres
-      - PG_PORT=5432
+    env_file:
+      - .env
     networks:
       - backend_bridge
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-
     restart: unless-stopped
     depends_on:
       - postgres
@@ -30,10 +24,10 @@ services:
   redis:
     container_name: redis
     image: redis
-    environment:
-      - RD_PORT=6379
     ports:
       - 6379:6379
+    env_file:
+      - .env
     networks:
       - backend_bridge
     restart: unless-stopped
@@ -45,10 +39,8 @@ services:
     image: postgres:12
     ports:
       - '5432:5432'
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+    env_file:
+      - .env
     networks:
       - backend_bridge
     restart: unless-stopped
@@ -59,9 +51,8 @@ services:
     image: dpage/pgadmin4
     restart: always
     container_name: nest-pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+    env_file:
+      - .env
     networks:
       - backend_bridge
     ports:
