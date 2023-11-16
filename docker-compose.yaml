@@ -16,7 +16,6 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    restart: unless-stopped
     depends_on:
       - postgres
       - redis
@@ -30,7 +29,6 @@ services:
       - .env
     networks:
       - backend_bridge
-    restart: unless-stopped
     volumes:
       - redis:/data
 
@@ -43,7 +41,6 @@ services:
       - .env
     networks:
       - backend_bridge
-    restart: unless-stopped
     volumes:
       - pgdata:/var/lib/postgresql/data
 
