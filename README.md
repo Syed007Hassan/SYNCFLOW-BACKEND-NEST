@@ -1,5 +1,8 @@
 ### To run the application
-1- Add .env
+
+- Create a **``` .env ```** file 
+
+```
 MONGODB_URI=
 JWT_SECRET=secret
 jwt_secret=secretjwt4565
@@ -18,8 +21,11 @@ POSTGRES_PASSWORD=postgres
 POSTGRES_DB=postgres
 PGADMIN_DEFAULT_EMAIL=admin@pgadmin.com
 PGADMIN_DEFAULT_PASSWORD=admin
+```
 
 2- `docker-compose build --no-cache`
+
 3- `docker-compose up`
+
 ### To run migrations (must checkout to branch-migrations)
-1- `docker-compose exec nestapp npm run migration:generate --name=Employee`
+- `docker-compose exec nestapp npm run migration:generate --name=Employee`
