@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { Company } from '../../company/entities/company.entity';
 import { Application } from '../../application/entities/application.entity';
+import { Workflow } from '../dto/workflow.interface';
 @Entity('job')
 export class Job {
   @Index()
@@ -31,6 +32,10 @@ export class Job {
 
   @Column({ nullable: true })
   jobCreatedAt: Date;
+
+  // TODO: ADD WORKFLOW TYPE
+  @Column({ nullable: true, type: 'jsonb' })
+  workFlow: Workflow;
 
   @ManyToOne((type) => Company, (company) => company.jobs)
   @JoinColumn({ name: 'companyId' })
