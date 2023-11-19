@@ -46,7 +46,6 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
-    restart: always
     container_name: nest-pgadmin4
     env_file:
       - .env
