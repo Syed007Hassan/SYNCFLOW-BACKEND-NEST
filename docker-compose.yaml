@@ -7,7 +7,6 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
-      target: development
     ports:
       - 5000:5000
     env_file:
