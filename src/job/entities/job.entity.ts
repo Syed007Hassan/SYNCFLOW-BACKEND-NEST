@@ -8,10 +8,12 @@ import {
   JoinColumn,
   PrimaryGeneratedColumn,
   Index,
+  OneToOne,
 } from 'typeorm';
 import { Company } from '../../company/entities/company.entity';
 import { Application } from '../../application/entities/application.entity';
-import { Workflow } from '../dto/workflow.interface';
+import { WorkFlow } from './workflow.entity';
+
 @Entity('job')
 export class Job {
   @Index()
@@ -31,11 +33,25 @@ export class Job {
   jobCategory: string;
 
   @Column({ nullable: true })
-  jobCreatedAt: Date;
+  jobLocation: string;
 
-  // TODO: ADD WORKFLOW TYPE
-  @Column({ nullable: true, type: 'jsonb' })
-  workFlow: Workflow;
+  @Column({ nullable: true })
+  jobSalary: string;
+
+  @Column({ nullable: true })
+  jobStatus: string;
+
+  @Column({ nullable: true })
+  jobQualification: string;
+
+  @Column({ nullable: true })
+  jobUrgency: string;
+
+  @Column({ nullable: true })
+  jobExperience: string;
+
+  @Column({ nullable: true })
+  jobCreatedAt: Date;
 
   @ManyToOne((type) => Company, (company) => company.jobs)
   @JoinColumn({ name: 'companyId' })
@@ -46,6 +62,13 @@ export class Job {
 
   @OneToMany(() => Application, (application) => application.job)
   applications: Application[];
+
+  @OneToOne(() => WorkFlow, (workflow) => workflow.job)
+  @JoinColumn({ name: 'workflowId' })
+  workflow: WorkFlow;
+
+  @Column({ nullable: true })
+  workflowId: number;
 
   @BeforeInsert()
   setJobCreatedAt() {
