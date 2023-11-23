@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Applicant } from './user.entity';
 
-@Entity()
+@Entity('applicantDetails')
 export class ApplicantDetails {
   @PrimaryGeneratedColumn()
   applicantDetailsId: number;
