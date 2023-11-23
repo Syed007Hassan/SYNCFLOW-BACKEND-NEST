@@ -13,6 +13,7 @@ import {
 import { Company } from '../../company/entities/company.entity';
 import { Application } from '../../application/entities/application.entity';
 import { WorkFlow } from './workflow.entity';
+import { AppliedJob } from './appliedJob.entity';
 
 @Entity('job')
 export class Job {
@@ -70,8 +71,11 @@ export class Job {
   @Column({ nullable: true })
   workflowId: number;
 
+  @OneToMany(() => AppliedJob, (appliedJob) => appliedJob.job)
+  appliedJobs: AppliedJob[];
+
   @BeforeInsert()
-  setJobCreatedAt() {
+  async setJobCreatedAt() {
     this.jobCreatedAt = new Date();
   }
 }

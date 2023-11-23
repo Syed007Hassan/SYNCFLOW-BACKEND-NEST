@@ -11,7 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { Role } from '../../auth/model/role.enum';
 import { Application } from '../../application/entities/application.entity';
 import { ApplicantDetails } from './applicant.details.entity';
-
+import { AppliedJob } from 'src/job/entities/appliedJob.entity';
 @Entity()
 export class Applicant {
   @PrimaryGeneratedColumn()
@@ -31,6 +31,9 @@ export class Applicant {
 
   @OneToMany(() => Application, (application) => application.applicant)
   applications: Application[];
+
+  @OneToMany(() => AppliedJob, (appliedJob) => appliedJob.applicant)
+  appliedJobs: AppliedJob[];
 
   @OneToOne(
     () => ApplicantDetails,
