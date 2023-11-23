@@ -6,8 +6,17 @@ import { Job } from './entities/job.entity';
 import { WorkFlow } from './entities/workflow.entity';
 import { AppliedJob } from './entities/appliedJob.entity';
 import { Assessment } from './entities/assessment.entity';
+import { HiredApplicant } from './entities/hiredApplicant.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([Job, WorkFlow, AppliedJob, Assessment])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Job,
+      WorkFlow,
+      AppliedJob,
+      Assessment,
+      HiredApplicant,
+    ]),
+  ],
   controllers: [JobController],
   providers: [JobService],
 })

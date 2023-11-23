@@ -15,6 +15,8 @@ import { Application } from '../../application/entities/application.entity';
 import { WorkFlow } from './workflow.entity';
 import { AppliedJob } from './appliedJob.entity';
 import { Assessment } from './assessment.entity';
+import { Recruiter } from '../../employer/entities/employer.entity';
+import { HiredApplicant } from './hiredApplicant.entity';
 
 @Entity('job')
 export class Job {
@@ -77,6 +79,16 @@ export class Job {
 
   @OneToMany(() => Assessment, (assessment) => assessment.job)
   assessments: Assessment[];
+
+  @OneToOne(() => Recruiter, (recruiter) => recruiter.job)
+  @JoinColumn({ name: 'id' })
+  recruiter: Recruiter;
+
+  @Column({ nullable: true })
+  id: number;
+
+  @OneToMany(() => HiredApplicant, (hiredApplicant) => hiredApplicant.job)
+  hiredApplicants: HiredApplicant[];
 
   @BeforeInsert()
   async setJobCreatedAt() {
