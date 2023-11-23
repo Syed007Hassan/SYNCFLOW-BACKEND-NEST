@@ -5,10 +5,12 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  OneToOne,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Role } from '../../auth/model/role.enum';
 import { Application } from '../../application/entities/application.entity';
+import { ApplicantDetails } from './applicant.details.entity';
 
 @Entity()
 export class Applicant {
@@ -30,11 +32,9 @@ export class Applicant {
   @OneToMany(() => Application, (application) => application.applicant)
   applications: Application[];
 
-  // @OneToMany((type) => Comment, (comment) => comment.user)
-  // comments: Comment[];
-
-  // @BeforeInsert()
-  // async hashPasword() {
-  //   this.password = await bcrypt.hash(this.password, 10);
-  // }
+  @OneToOne(
+    () => ApplicantDetails,
+    (applicantDetails) => applicantDetails.applicant,
+  )
+  applicantDetails: ApplicantDetails;
 }
