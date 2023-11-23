@@ -12,6 +12,8 @@ import { Role } from '../../auth/model/role.enum';
 import { Application } from '../../application/entities/application.entity';
 import { ApplicantDetails } from './applicant.details.entity';
 import { AppliedJob } from 'src/job/entities/appliedJob.entity';
+import { HiredApplicant } from 'src/job/entities/hiredApplicant.entity';
+
 @Entity()
 export class Applicant {
   @PrimaryGeneratedColumn()
@@ -40,4 +42,7 @@ export class Applicant {
     (applicantDetails) => applicantDetails.applicant,
   )
   applicantDetails: ApplicantDetails;
+
+  @OneToOne(() => HiredApplicant, (hiredApplicant) => hiredApplicant.applicant)
+  hiredApplicant: HiredApplicant;
 }
