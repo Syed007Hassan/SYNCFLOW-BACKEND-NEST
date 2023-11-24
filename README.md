@@ -29,3 +29,13 @@ PGADMIN_DEFAULT_PASSWORD=admin
 
 ### To run migrations (must checkout to branch-migrations)
 - `docker-compose exec nestapp npm run migration:generate --name=Employee`
+
+### Pushing Images to DockerHub
+#### Step 1: Tag the Docker image
+`docker tag nestjs syed007hassan/nestjs`
+
+#### Step 2: Log in to Docker Hub
+`docker login --username=syed007hassan`
+
+#### Step 3: Push the Docker image to Docker Hub
+`docker push syed007hassan/nestjs`
