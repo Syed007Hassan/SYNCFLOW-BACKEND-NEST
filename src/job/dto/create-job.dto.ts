@@ -50,10 +50,5 @@ export class CreateJobDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber()
-  workflowId: number | null;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsNumber()
   id: number | null;
 }
