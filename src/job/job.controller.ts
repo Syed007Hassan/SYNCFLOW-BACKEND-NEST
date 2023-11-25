@@ -20,8 +20,13 @@ export class JobController {
   constructor(private readonly jobService: JobService) {}
 
   @Post('/create')
-  create(@Body() createJobDto: CreateJobDto) {
-    return this.jobService.create(createJobDto);
+  async create(@Body() createJobDto: CreateJobDto) {
+    try {
+      const job = await this.jobService.create(createJobDto);
+      return { success: true, data: job };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Get('findAll')
