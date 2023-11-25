@@ -13,15 +13,30 @@ import { JobService } from './job.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { ApiTags } from '@nestjs/swagger';
-
+import { CreateWorkFlowDto } from './dto/create-workflow.dto';
 @ApiTags('Job')
 @Controller('job')
 export class JobController {
   constructor(private readonly jobService: JobService) {}
 
   @Post('/create')
-  create(@Body() createJobDto: CreateJobDto) {
-    return this.jobService.create(createJobDto);
+  async create(@Body() createJobDto: CreateJobDto) {
+    try {
+      const job = await this.jobService.create(createJobDto);
+      return { success: true, data: job };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Post('/createWorkFlow')
+  async createWorkFlow(@Body() createWorkFlowDto: CreateWorkFlowDto) {
+    try {
+      const workflow = await this.jobService.createWorkFlow(createWorkFlowDto);
+      return { success: true, data: workflow };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Get('findAll')

@@ -23,5 +23,9 @@ export class WorkFlow {
   stages: Stage[];
 
   @OneToOne((type) => Job, (job) => job.workflow)
+  @JoinColumn({ name: 'jobId' })
   job: Job;
+
+  @Column({ nullable: true })
+  jobId: number;
 }

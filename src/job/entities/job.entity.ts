@@ -68,11 +68,7 @@ export class Job {
   applications: Application[];
 
   @OneToOne(() => WorkFlow, (workflow) => workflow.job)
-  @JoinColumn({ name: 'workflowId' })
   workflow: WorkFlow;
-
-  @Column({ nullable: true })
-  workflowId: number;
 
   @OneToMany(() => AppliedJob, (appliedJob) => appliedJob.job)
   appliedJobs: AppliedJob[];
