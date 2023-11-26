@@ -30,7 +30,8 @@ export class ApplicantDetails {
   @Column({ nullable: false })
   languages: string;
 
+  //
   @OneToOne(() => Applicant, (applicant) => applicant.applicantDetails)
-  @JoinColumn({ name: 'id' })
+  @JoinColumn()
   applicant: Applicant;
 }
