@@ -27,7 +27,7 @@ export class Recruiter {
   password: string;
 
   @Column({ nullable: false })
-  phone: number;
+  phone: string;
 
   @Column({ nullable: true, default: Role.Employer })
   role: string;

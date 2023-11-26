@@ -5,7 +5,6 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { Job } from './entities/job.entity';
-import { WorkFlow } from './entities/workflow.entity';
 import { CreateJobDto } from './dto/create-job.dto';
 
 @Injectable()
@@ -13,8 +12,6 @@ export class JobService {
   constructor(
     @InjectRepository(Job)
     public readonly jobRepo: Repository<Job>,
-    @InjectRepository(WorkFlow)
-    public readonly workflowRepo: Repository<WorkFlow>,
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
@@ -23,13 +20,24 @@ export class JobService {
     return await this.jobRepo.save(newJob);
   }
 
-  async createWorkFlow(createWorkFlowDto) {
-    const newJob = await this.workflowRepo.create(createWorkFlowDto);
-    return await this.workflowRepo.save(newJob);
+  async findAll() {
+    const allJobs = await this.jobRepo.find();
+
+    if (allJobs.length === 0) {
+      throw new Error('No jobs found');
+    }
+    return allJobs;
   }
 
-  findAll() {
-    return `This action returns all job`;
+  async findOneByCompanyId(id: number) {
+    const allJobs = await this.jobRepo.find({
+      where: { companyId: id },
+    });
+
+    if (allJobs.length === 0) {
+      throw new Error('No jobs found');
+    }
+    return allJobs;
   }
 
   findOne(id: number) {

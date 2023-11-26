@@ -11,7 +11,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import { Stage } from '../dto/stage.interface';
-import { Job } from './job.entity';
+import { Job } from '../../job/entities/job.entity';
 
 @Entity('workflow')
 export class WorkFlow {
