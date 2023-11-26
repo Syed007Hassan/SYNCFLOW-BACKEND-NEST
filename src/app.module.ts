@@ -13,6 +13,7 @@ import { CompanyModule } from './company/company.module';
 import { JobModule } from './job/job.module';
 import { ApplicationModule } from './application/application.module';
 import { PostgreSqlDataSource } from './config/OrmConfig';
+import { WorkflowModule } from './workflow/workflow.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { PostgreSqlDataSource } from './config/OrmConfig';
     CompanyModule,
     JobModule,
     ApplicationModule,
+    WorkflowModule,
   ],
   controllers: [AppController],
   providers: [AppService],

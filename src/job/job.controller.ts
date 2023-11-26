@@ -13,7 +13,6 @@ import { JobService } from './job.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { CreateWorkFlowDto } from './dto/create-workflow.dto';
 @ApiTags('Job')
 @Controller('job')
 export class JobController {
@@ -29,20 +28,10 @@ export class JobController {
     }
   }
 
-  @Post('/createWorkFlow')
-  async createWorkFlow(@Body() createWorkFlowDto: CreateWorkFlowDto) {
-    try {
-      const workflow = await this.jobService.createWorkFlow(createWorkFlowDto);
-      return { success: true, data: workflow };
-    } catch (err) {
-      return { success: false, message: err.message };
-    }
-  }
-
-  @Get('findAll')
-  findAll() {
-    return this.jobService.findAll();
-  }
+  // @Get('findAll')
+  // findAll() {
+  //   return this.jobService.findAll();
+  // }
 
   @Get('findOne/:id')
   findOne(@Param('id') id: string) {

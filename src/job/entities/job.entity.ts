@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 import { Company } from '../../company/entities/company.entity';
 import { Application } from '../../application/entities/application.entity';
-import { WorkFlow } from './workflow.entity';
+import { WorkFlow } from '../../workflow/entities/workflow.entity';
 import { AppliedJob } from './appliedJob.entity';
 import { Assessment } from './assessment.entity';
 import { Recruiter } from '../../employer/entities/employer.entity';
