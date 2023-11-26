@@ -23,11 +23,21 @@ export class JobService {
   async findAll() {
     const allJobs = await this.jobRepo.find();
 
-    if (!allJobs) {
+    if (allJobs.length === 0) {
       throw new Error('No jobs found');
-    } else {
-      return allJobs;
     }
+    return allJobs;
+  }
+
+  async findOneByCompanyId(id: number) {
+    const allJobs = await this.jobRepo.find({
+      where: { companyId: id },
+    });
+
+    if (allJobs.length === 0) {
+      throw new Error('No jobs found');
+    }
+    return allJobs;
   }
 
   findOne(id: number) {

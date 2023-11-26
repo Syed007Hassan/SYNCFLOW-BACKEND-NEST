@@ -20,11 +20,21 @@ export class WorkflowService {
   async findAll() {
     const allWorkflows = await this.workflowRepo.find();
 
-    if (!allWorkflows) {
+    if (allWorkflows.length === 0) {
       throw new Error('No workflows found');
-    } else {
-      return allWorkflows;
     }
+    return allWorkflows;
+  }
+
+  async findOneByJobId(id: number) {
+    const allWorkflows = await this.workflowRepo.find({
+      where: { jobId: id },
+    });
+
+    if (allWorkflows.length === 0) {
+      throw new Error('No workflows found for this job');
+    }
+    return allWorkflows;
   }
 
   findOne(id: number) {

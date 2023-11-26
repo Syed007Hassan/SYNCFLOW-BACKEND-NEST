@@ -39,9 +39,14 @@ export class WorkflowController {
     }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.workflowService.findOne(+id);
+  @Get('findByJobId/:id')
+  async findOneByJobId(@Param('id') id: string) {
+    try {
+      const workflow = await this.workflowService.findOneByJobId(+id);
+      return { success: true, data: workflow };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Patch(':id')

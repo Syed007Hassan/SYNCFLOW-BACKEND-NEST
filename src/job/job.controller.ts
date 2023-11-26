@@ -38,9 +38,15 @@ export class JobController {
     }
   }
 
-  @Get('findOne/:id')
-  findOne(@Param('id') id: string) {
-    return this.jobService.findOne(+id);
+  @Get('findOneByCompanyId/:id')
+  async findOne(@Param('id') id: string) {
+    try {
+      const job = await this.jobService.findOneByCompanyId(+id);
+      console.log(job);
+      return { success: true, data: job };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Patch('updateJobById:id')

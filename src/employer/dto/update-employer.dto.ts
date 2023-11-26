@@ -18,7 +18,7 @@ export class UpdateEmployerDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  phone: number;
+  phone: string;
 
   @ApiProperty()
   @IsNotEmpty()
