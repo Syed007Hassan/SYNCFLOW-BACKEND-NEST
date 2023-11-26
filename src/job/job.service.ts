@@ -20,8 +20,14 @@ export class JobService {
     return await this.jobRepo.save(newJob);
   }
 
-  findAll() {
-    return `This action returns all job`;
+  async findAll() {
+    const allJobs = await this.jobRepo.find();
+
+    if (!allJobs) {
+      throw new Error('No jobs found');
+    } else {
+      return allJobs;
+    }
   }
 
   findOne(id: number) {

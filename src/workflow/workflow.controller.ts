@@ -29,9 +29,14 @@ export class WorkflowController {
     }
   }
 
-  @Get()
-  findAll() {
-    return this.workflowService.findAll();
+  @Get('findAll')
+  async findAll() {
+    try {
+      const workflows = await this.workflowService.findAll();
+      return { success: true, data: workflows };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Get(':id')

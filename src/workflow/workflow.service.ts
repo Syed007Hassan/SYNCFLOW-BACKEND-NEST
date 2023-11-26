@@ -17,8 +17,14 @@ export class WorkflowService {
     return await this.workflowRepo.save(newJob);
   }
 
-  findAll() {
-    return `This action returns all workflow`;
+  async findAll() {
+    const allWorkflows = await this.workflowRepo.find();
+
+    if (!allWorkflows) {
+      throw new Error('No workflows found');
+    } else {
+      return allWorkflows;
+    }
   }
 
   findOne(id: number) {

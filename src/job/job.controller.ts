@@ -28,10 +28,15 @@ export class JobController {
     }
   }
 
-  // @Get('findAll')
-  // findAll() {
-  //   return this.jobService.findAll();
-  // }
+  @Get('findAll')
+  async findAll() {
+    try {
+      const jobs = await this.jobService.findAll();
+      return { success: true, data: jobs };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
 
   @Get('findOne/:id')
   findOne(@Param('id') id: string) {
