@@ -4,6 +4,7 @@ import { UpdateWorkflowDto } from './dto/update-workflow.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WorkFlow } from './entities/workflow.entity';
 import { Repository } from 'typeorm';
+import { Job } from '../job/entities/job.entity';
 
 @Injectable()
 export class WorkflowService {
@@ -28,7 +29,7 @@ export class WorkflowService {
 
   async findOneByJobId(id: number) {
     const allWorkflows = await this.workflowRepo.find({
-      where: { jobId: id },
+      where: { job: { jobId: id } },
     });
 
     if (allWorkflows.length === 0) {

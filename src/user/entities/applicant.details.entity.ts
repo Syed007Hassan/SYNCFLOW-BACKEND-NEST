@@ -32,6 +32,6 @@ export class ApplicantDetails {
 
   //
   @OneToOne(() => Applicant, (applicant) => applicant.applicantDetails)
-  @JoinColumn()
+  @JoinColumn({ name: 'id' })
   applicant: Applicant;
 }
