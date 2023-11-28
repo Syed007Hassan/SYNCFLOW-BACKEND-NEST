@@ -13,7 +13,7 @@ export class WorkflowService {
     public readonly workflowRepo: Repository<WorkFlow>,
   ) {}
 
-  async createWorkFlow(createWorkFlowDto) {
+  async createWorkFlow(createWorkFlowDto: CreateWorkFlowDto) {
     const newJob = await this.workflowRepo.create(createWorkFlowDto);
     return await this.workflowRepo.save(newJob);
   }
@@ -29,6 +29,7 @@ export class WorkflowService {
 
   async findOneByJobId(id: number) {
     const allWorkflows = await this.workflowRepo.find({
+      relations: ['job'],
       where: { job: { jobId: id } },
     });
 

@@ -58,7 +58,7 @@ export class Job {
   jobCreatedAt: Date;
 
   @ManyToOne((type) => Company, (company) => company.jobs)
-  @JoinColumn({ name: 'id' })
+  @JoinColumn({ name: 'companyId' })
   company: Company;
 
   @OneToMany(() => Application, (application) => application.job)
@@ -74,7 +74,7 @@ export class Job {
   assessments: Assessment[];
 
   @ManyToOne(() => Recruiter, (recruiter) => recruiter.jobs)
-  @JoinColumn({ name: 'companyId' })
+  @JoinColumn({ name: 'id' })
   recruiter: Recruiter;
 
   @Column({ nullable: true })

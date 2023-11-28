@@ -15,8 +15,11 @@ export class JobService {
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
-  async create(createJobDto) {
+  async create(createJobDto: CreateJobDto) {
     const newJob = await this.jobRepo.create(createJobDto);
+
+    console.log('newJob', newJob);
+
     return await this.jobRepo.save(newJob);
   }
 
