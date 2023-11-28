@@ -31,7 +31,8 @@ export class JobService {
 
   async findOneByCompanyId(id: number) {
     const allJobs = await this.jobRepo.find({
-      where: { companyId: id },
+      relations: ['company'],
+      where: { company: { companyId: id } },
     });
 
     if (allJobs.length === 0) {

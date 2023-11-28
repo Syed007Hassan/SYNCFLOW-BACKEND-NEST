@@ -42,6 +42,6 @@ export class Recruiter {
   @Column({ nullable: true })
   companyId: number;
 
-  @OneToOne(() => Job, (job) => job.recruiter)
-  job: Job;
+  @OneToMany(() => Job, (job) => job.recruiter)
+  jobs: Job[];
 }
