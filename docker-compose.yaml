@@ -2,8 +2,8 @@ version: '3'
 
 services:
   nestapp:
-    container_name: nest-backend
-    image: nestjs
+    container_name: fyp-nest
+    image: fyp-nest
     build:
       dockerfile: Dockerfile
       context: .
@@ -21,7 +21,7 @@ services:
       - redis
 
   redis:
-    container_name: redis
+    container_name: fyp-redis
     image: redis
     ports:
       - 6379:6379
@@ -33,8 +33,8 @@ services:
       - redis:/data
 
   postgres:
-    container_name: postgres
-    image: postgres:12
+    container_name: fyp-postgres
+    image: postgres:14.5-alpine
     ports:
       - '5432:5432'
     env_file:
@@ -45,8 +45,8 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   pgadmin:
+    container_name: fyp-pgadmin
     image: dpage/pgadmin4
-    container_name: nest-pgadmin4
     env_file:
       - .env
     networks:

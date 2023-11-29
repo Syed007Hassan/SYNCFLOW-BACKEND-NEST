@@ -85,7 +85,7 @@ export class CompanyService {
     }
 
     // if not, fetch data from the database:
-    const company = await this.companyRepo.findOneBy({ id });
+    const company = await this.companyRepo.findOneBy({ companyId: id });
     if (!company) {
       throw new Error('Company not found');
     }
@@ -97,7 +97,7 @@ export class CompanyService {
 
   async update(id: number, updateCompanyDto: UpdateCompanyDto) {
     const existingCompany = await this.companyRepo.findOneBy({
-      id,
+      companyId: id,
     });
 
     if (!existingCompany) {
