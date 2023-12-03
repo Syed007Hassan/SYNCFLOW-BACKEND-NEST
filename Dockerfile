@@ -20,8 +20,8 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-# Build command
-RUN npm run build
+# # Build command
+# RUN npm run build
 
 # npm run migration:run:js
 # npm run tenant:migration:run:js
