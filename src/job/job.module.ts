@@ -6,9 +6,16 @@ import { Job } from './entities/job.entity';
 import { AppliedJob } from './entities/appliedJob.entity';
 import { Assessment } from './entities/assessment.entity';
 import { HiredApplicant } from './entities/hiredApplicant.entity';
+import { Interview } from './entities/interview.entity';
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Job, AppliedJob, Assessment, HiredApplicant]),
+    TypeOrmModule.forFeature([
+      Job,
+      AppliedJob,
+      Assessment,
+      HiredApplicant,
+      Interview,
+    ]),
   ],
   controllers: [JobController],
   providers: [JobService],

@@ -17,7 +17,7 @@ import { AppliedJob } from './appliedJob.entity';
 import { Assessment } from './assessment.entity';
 import { Recruiter } from '../../employer/entities/employer.entity';
 import { HiredApplicant } from './hiredApplicant.entity';
-
+import { Interview } from './interview.entity';
 @Entity('job')
 export class Job {
   @Index()
@@ -61,9 +61,6 @@ export class Job {
   @JoinColumn({ name: 'companyId' })
   company: Company;
 
-  @Column({ nullable: true })
-  companyId: number;
-
   @OneToMany(() => Application, (application) => application.job)
   applications: Application[];
 
@@ -76,7 +73,7 @@ export class Job {
   @OneToMany(() => Assessment, (assessment) => assessment.job)
   assessments: Assessment[];
 
-  @OneToOne(() => Recruiter, (recruiter) => recruiter.job)
+  @ManyToOne(() => Recruiter, (recruiter) => recruiter.jobs)
   @JoinColumn({ name: 'id' })
   recruiter: Recruiter;
 
@@ -85,6 +82,9 @@ export class Job {
 
   @OneToMany(() => HiredApplicant, (hiredApplicant) => hiredApplicant.job)
   hiredApplicants: HiredApplicant[];
+
+  @OneToMany(() => Interview, (interview) => interview.job)
+  interviews: Interview[];
 
   @BeforeInsert()
   async setJobCreatedAt() {

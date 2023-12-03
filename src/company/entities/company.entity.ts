@@ -12,7 +12,7 @@ import { HiredApplicant } from '../../job/entities/hiredApplicant.entity';
 @Entity('company')
 export class Company {
   @PrimaryGeneratedColumn()
-  id: number;
+  companyId: number;
 
   @Column({ nullable: true })
   companyName: string;

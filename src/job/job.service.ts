@@ -15,8 +15,11 @@ export class JobService {
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
-  async create(createJobDto) {
+  async create(createJobDto: CreateJobDto) {
     const newJob = await this.jobRepo.create(createJobDto);
+
+    console.log('newJob', newJob);
+
     return await this.jobRepo.save(newJob);
   }
 
@@ -31,7 +34,8 @@ export class JobService {
 
   async findOneByCompanyId(id: number) {
     const allJobs = await this.jobRepo.find({
-      where: { companyId: id },
+      relations: ['company'],
+      where: { company: { companyId: id } },
     });
 
     if (allJobs.length === 0) {
