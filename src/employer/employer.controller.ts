@@ -47,16 +47,16 @@ export class EmployerController {
     return this.employerService.findOne(+id);
   }
 
-  // @Get('findOneByCompanyName/:companyName')
-  // @CacheTTL(30)
-  // async findOneByCompanyName(@Param('companyName') companyName: string) {
-  //   try {
-  //     const user = await this.employerService.findOneByCompanyName(companyName);
-  //     return { success: true, data: user };
-  //   } catch (err) {
-  //     return { success: false, message: err.message };
-  //   }
-  // }
+  @Get('findOneByCompanyName/:companyName')
+  @CacheTTL(30)
+  async findOneByCompanyName(@Param('companyName') companyName: string) {
+    try {
+      const user = await this.employerService.findOneByCompanyName(companyName);
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
 
   @Get('findOneByEmail/:email')
   async findOneByEmail(@Param('email') email: string) {
