@@ -22,12 +22,16 @@ export class EmployerService {
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
-  async create(createUserDto: CreateEmployerDto): Promise<Recruiter> {
+  async create(
+    createUserDto: CreateEmployerDto,
+    company: any,
+  ): Promise<Recruiter> {
     const saltRounds = 10;
     const hash = bcrypt.hashSync(createUserDto.password, saltRounds);
     const newUser = await this.employerRepo.create({
       ...createUserDto,
       password: hash,
+      company: company,
     });
 
     await this.employerRepo.save(newUser);
@@ -76,34 +80,34 @@ export class EmployerService {
     return user;
   }
 
-  async findOneByCompanyName(companyName: string) {
-    // create a cache key based on the company name:
-    const cacheKey = `recruiter_${companyName}`;
+  // async findOneByCompanyName(companyName: string) {
+  //   // create a cache key based on the company name:
+  //   const cacheKey = `recruiter_${companyName}`;
 
-    // check if data is in cache:
-    const cachedData = await this.cacheService.get<any>(cacheKey);
-    if (cachedData) {
-      console.log(`Getting data from cache!`);
-      return cachedData;
-    }
+  //   // check if data is in cache:
+  //   const cachedData = await this.cacheService.get<any>(cacheKey);
+  //   if (cachedData) {
+  //     console.log(`Getting data from cache!`);
+  //     return cachedData;
+  //   }
 
-    // if not, fetch data from the database:
-    const company = await this.companyService.findOneByName(companyName);
-    if (!company) {
-      throw new Error('Company not found');
-    }
-    const employer = await this.employerRepo.findOne({
-      where: { companyId: company.id },
-    });
+  //   // if not, fetch data from the database:
+  //   const company = await this.companyService.findOneByName(companyName);
+  //   if (!company) {
+  //     throw new Error('Company not found');
+  //   }
+  //   const employer = await this.employerRepo.findOne({
+  //     where: { companyId: company.id },
+  //   });
 
-    if (!employer) {
-      throw new Error('Employer not found');
-    }
+  //   if (!employer) {
+  //     throw new Error('Employer not found');
+  //   }
 
-    // set the cache with the cache key:
-    await this.cacheService.set(cacheKey, employer);
-    return employer;
-  }
+  //   // set the cache with the cache key:
+  //   await this.cacheService.set(cacheKey, employer);
+  //   return employer;
+  // }
 
   async findOne(id: number) {
     // create a cache key based on the id:
