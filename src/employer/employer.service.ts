@@ -70,7 +70,10 @@ export class EmployerService {
     }
 
     // if not, fetch data from the database:
-    const user = await this.employerRepo.findOneBy({ email });
+    const user = await this.employerRepo.findOne({
+      where: { email },
+      relations: ['company'],
+    });
     if (!user) {
       return null;
     }

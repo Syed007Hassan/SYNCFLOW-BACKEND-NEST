@@ -107,7 +107,7 @@ export class AuthService {
     return {
       name: user.name,
       email: user.email,
-      companyId: user.companyId,
+      companyId: user.company.companyId,
       role: user.role,
     };
   }
