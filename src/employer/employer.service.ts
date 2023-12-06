@@ -22,12 +22,16 @@ export class EmployerService {
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
-  async create(createUserDto: CreateEmployerDto): Promise<Recruiter> {
+  async create(
+    createUserDto: CreateEmployerDto,
+    company: any,
+  ): Promise<Recruiter> {
     const saltRounds = 10;
     const hash = bcrypt.hashSync(createUserDto.password, saltRounds);
     const newUser = await this.employerRepo.create({
       ...createUserDto,
       password: hash,
+      company: company,
     });
 
     await this.employerRepo.save(newUser);
@@ -66,7 +70,10 @@ export class EmployerService {
     }
 
     // if not, fetch data from the database:
-    const user = await this.employerRepo.findOneBy({ email });
+    const user = await this.employerRepo.findOne({
+      where: { email },
+      relations: ['company'],
+    });
     if (!user) {
       return null;
     }
@@ -92,8 +99,9 @@ export class EmployerService {
     if (!company) {
       throw new Error('Company not found');
     }
-    const employer = await this.employerRepo.findOne({
-      where: { companyId: company.id },
+    const employer = await this.employerRepo.find({
+      relations: ['company'],
+      where: { company: { companyId: company.companyId } },
     });
 
     if (!employer) {

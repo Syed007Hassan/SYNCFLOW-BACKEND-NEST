@@ -39,9 +39,6 @@ export class Recruiter {
   @JoinColumn({ name: 'companyId' })
   company: Company;
 
-  @Column({ nullable: true })
-  companyId: number;
-
   @OneToMany(() => Job, (job) => job.recruiter)
   jobs: Job[];
 }

@@ -13,10 +13,15 @@ import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { CompanyService } from 'src/company/company.service';
 import { CreateCompanyDto } from 'src/company/dto/create-company.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Recruiter } from 'src/employer/entities/employer.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRepository(Recruiter)
+    private readonly employerRepo: Repository<Recruiter>,
     private userService: UserService,
     private employerService: EmployerService,
     private jwtService: JwtService,
@@ -47,24 +52,20 @@ export class AuthService {
       });
     }
 
-    const newUser = await this.employerService.create({
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      phone: user.phone,
-      designation: user.designation,
-      role: Role.Employer,
-      companyId: company.id,
-    });
+    const newUser = await this.employerService.create(
+      {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        phone: user.phone,
+        designation: user.designation,
+        role: Role.Employer,
+        companyId: company.id,
+      },
+      company,
+    );
 
-    return {
-      name: newUser.name,
-      email: newUser.email,
-      phone: newUser.phone,
-      role: newUser.role,
-      designation: newUser.designation,
-      companyId: newUser.companyId,
-    };
+    return newUser;
   }
 
   async loginEmployer(loginUserDto: LoginEmployerDto) {
@@ -106,7 +107,7 @@ export class AuthService {
     return {
       name: user.name,
       email: user.email,
-      companyId: user.companyId,
+      companyId: user.company.companyId,
       role: user.role,
     };
   }

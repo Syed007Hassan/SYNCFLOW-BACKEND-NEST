@@ -9,9 +9,12 @@ import { EmployerModule } from 'src/employer/employer.module';
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { CompanyModule } from 'src/company/company.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Recruiter } from 'src/employer/entities/employer.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Recruiter]),
     HttpModule,
     UserModule,
     EmployerModule,
