@@ -42,9 +42,9 @@ export class EmployerController {
     }
   }
 
-  @Get('findOne/:id')
-  findOne(@Param('id') id: string) {
-    return this.employerService.findOne(+id);
+  @Get('findOne/:recruiterId')
+  findOne(@Param('recruiterId') recruiterId: string) {
+    return this.employerService.findOne(+recruiterId);
   }
 
   @Get('findOneByCompanyName/:companyName')

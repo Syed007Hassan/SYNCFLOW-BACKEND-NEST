@@ -106,7 +106,7 @@ export class AuthService {
     }
 
     return {
-      recruiterId: user.id,
+      recruiterId: user.recruiterId,
       name: user.name,
       email: user.email,
       companyId: user.company.companyId,

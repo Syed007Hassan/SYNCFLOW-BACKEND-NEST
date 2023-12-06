@@ -15,7 +15,7 @@ import { Job } from 'src/job/entities/job.entity';
 @Entity()
 export class Recruiter {
   @PrimaryGeneratedColumn()
-  id: number;
+  recruiterId: number;
 
   @Column({ nullable: false })
   name: string;
