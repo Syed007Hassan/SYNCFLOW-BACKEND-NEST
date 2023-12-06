@@ -113,9 +113,9 @@ export class EmployerService {
     return employer;
   }
 
-  async findOne(id: number) {
+  async findOne(recruiterId: number) {
     // create a cache key based on the id:
-    const cacheKey = `recruiter_id_${id}`;
+    const cacheKey = `recruiter_id_${recruiterId}`;
 
     // check if data is in cache:
     const cachedData = await this.cacheService.get<any>(cacheKey);
@@ -125,7 +125,10 @@ export class EmployerService {
     }
 
     // if not, fetch data from the database:
-    const user = await this.employerRepo.findOneBy({ id });
+    const user = await this.employerRepo.findOne({
+      where: { recruiterId },
+      relations: ['company'],
+    });
     if (!user) {
       throw new Error('User not found');
     }
