@@ -76,6 +76,7 @@ export class AuthService {
     );
 
     const payload = {
+      recruiterId: user.recruiterId,
       email: user.email,
       name: user.name,
       companyId: user.companyId,
@@ -105,6 +106,7 @@ export class AuthService {
     }
 
     return {
+      recruiterId: user.id,
       name: user.name,
       email: user.email,
       companyId: user.company.companyId,
