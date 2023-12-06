@@ -125,7 +125,10 @@ export class EmployerService {
     }
 
     // if not, fetch data from the database:
-    const user = await this.employerRepo.findOneBy({ recruiterId });
+    const user = await this.employerRepo.findOne({
+      where: { recruiterId },
+      relations: ['company'],
+    });
     if (!user) {
       throw new Error('User not found');
     }

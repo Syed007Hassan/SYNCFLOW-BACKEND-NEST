@@ -74,11 +74,8 @@ export class Job {
   assessments: Assessment[];
 
   @ManyToOne(() => Recruiter, (recruiter) => recruiter.jobs)
-  @JoinColumn({ name: 'id' })
+  @JoinColumn({ name: 'recruiterId' })
   recruiter: Recruiter;
-
-  @Column({ nullable: true })
-  id: number;
 
   @OneToMany(() => HiredApplicant, (hiredApplicant) => hiredApplicant.job)
   hiredApplicants: HiredApplicant[];

@@ -43,8 +43,13 @@ export class EmployerController {
   }
 
   @Get('findOne/:recruiterId')
-  findOne(@Param('recruiterId') recruiterId: string) {
-    return this.employerService.findOne(+recruiterId);
+  async findOne(@Param('recruiterId') recruiterId: string) {
+    try {
+      const user = await this.employerService.findOne(+recruiterId);
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Get('findOneByCompanyName/:companyName')
