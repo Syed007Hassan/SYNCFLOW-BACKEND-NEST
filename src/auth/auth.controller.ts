@@ -52,6 +52,18 @@ export class AuthController {
     }
   }
 
+  // @Post('registerCompanyEmployee')
+  // async createCompanyEmployee(@Body() existingUserDto: ExistingUserDto) {
+  //   try {
+  //     const user = await this.authService.registerCompanyEmployee(
+  //       existingUserDto,
+  //     );
+  //     return { success: true, data: user };
+  //   } catch (err) {
+  //     return { success: false, message: err.message };
+  //   }
+  // }
+
   @Post('registerApplicant')
   async create(@Body() existingUserDto: ExistingUserDto) {
     try {
