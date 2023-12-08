@@ -16,6 +16,7 @@ import { CreateCompanyDto } from 'src/company/dto/create-company.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Recruiter } from 'src/employer/entities/employer.entity';
 import { Repository } from 'typeorm';
+import { AddCompanyEmployeeDto } from 'src/employer/dto/add-employee.company.dto';
 
 @Injectable()
 export class AuthService {
@@ -50,6 +51,37 @@ export class AuthService {
         companyPhone: 0,
         companyWebsite: '',
       });
+    }
+
+    const newUser = await this.employerService.create(
+      {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        phone: user.phone,
+        designation: user.designation,
+        role: Role.Employer,
+        companyId: company.id,
+      },
+      company,
+    );
+
+    return newUser;
+  }
+
+  async registerCompanyEmployee(
+    user: AddCompanyEmployeeDto,
+    companyId: number,
+  ) {
+    const findUser = await this.userService.findOneByEmail(user.email);
+    if (findUser) {
+      throw new Error('Company employee already exists with this email');
+    }
+
+    const company = await this.companyService.findOne(companyId);
+
+    if (!company) {
+      throw new Error('Company not found');
     }
 
     const newUser = await this.employerService.create(
