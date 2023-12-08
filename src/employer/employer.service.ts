@@ -48,7 +48,9 @@ export class EmployerService {
     }
 
     // if not, fetch data from the database:
-    const employers = await this.employerRepo.find();
+    const employers = await this.employerRepo.find({
+      relations: ['company'],
+    });
     if (!employers) {
       throw new Error('No recruiters found');
     }

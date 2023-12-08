@@ -25,6 +25,7 @@ import { JwtDto } from './dto/jwt.dto';
 import { ExistingEmployerDto } from 'src/employer/dto/existing-employer.dto';
 import { LoginEmployerDto } from 'src/employer/dto/login-employer.dto';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { AddCompanyEmployeeDto } from 'src/employer/dto/add-employee.company.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -52,17 +53,21 @@ export class AuthController {
     }
   }
 
-  // @Post('registerCompanyEmployee')
-  // async createCompanyEmployee(@Body() existingUserDto: ExistingUserDto) {
-  //   try {
-  //     const user = await this.authService.registerCompanyEmployee(
-  //       existingUserDto,
-  //     );
-  //     return { success: true, data: user };
-  //   } catch (err) {
-  //     return { success: false, message: err.message };
-  //   }
-  // }
+  @Post('registerCompanyEmployee')
+  async createCompanyEmployee(
+    @Body() existingUserDto: AddCompanyEmployeeDto,
+    @Param('companyId') companyId: number,
+  ) {
+    try {
+      const user = await this.authService.registerCompanyEmployee(
+        existingUserDto,
+        companyId,
+      );
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
 
   @Post('registerApplicant')
   async create(@Body() existingUserDto: ExistingUserDto) {
