@@ -3,10 +3,7 @@ version: '3'
 services:
   nestapp:
     container_name: fyp-nest
-    image: fyp-nest
-    build:
-      dockerfile: Dockerfile
-      context: .
+    image: syed007hassan/fyp-nest:latest
     ports:
       - 5000:5000
     env_file:
@@ -22,7 +19,7 @@ services:
 
   redis:
     container_name: fyp-redis
-    image: redis
+    image: syed007hassan/fyp-redis:latest
     ports:
       - 6379:6379
     env_file:
@@ -34,7 +31,7 @@ services:
 
   postgres:
     container_name: fyp-postgres
-    image: postgres:14.5-alpine
+    image: syed007hassan/fyp-postgres:latest
     ports:
       - '5432:5432'
     env_file:
@@ -46,7 +43,7 @@ services:
 
   pgadmin:
     container_name: fyp-pgadmin
-    image: dpage/pgadmin4
+    image: syed007hassan/fyp-pgadmin4:latest
     env_file:
       - .env
     networks:
