@@ -11,10 +11,23 @@ export class WorkflowService {
   constructor(
     @InjectRepository(WorkFlow)
     public readonly workflowRepo: Repository<WorkFlow>,
+    @InjectRepository(Job)
+    public readonly jobRepo: Repository<Job>,
   ) {}
 
-  async createWorkFlow(createWorkFlowDto: CreateWorkFlowDto) {
-    const newJob = await this.workflowRepo.create(createWorkFlowDto);
+  async createWorkFlow(jobId: number, createWorkFlowDto: CreateWorkFlowDto) {
+    const job = await this.jobRepo.findOne({
+      where: { jobId: jobId },
+    });
+
+    if (!job) {
+      throw new Error('Job not found');
+    }
+
+    const newJob = await this.workflowRepo.create({
+      ...createWorkFlowDto,
+      job: job,
+    });
     return await this.workflowRepo.save(newJob);
   }
 

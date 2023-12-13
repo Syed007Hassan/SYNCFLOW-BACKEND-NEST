@@ -32,9 +32,4 @@ export class CreateWorkFlowDto {
   @ValidateNested({ each: true })
   @Type(() => StageDto)
   stages: StageDto[];
-
-  @ApiProperty()
-  @IsOptional()
-  @IsNumber()
-  jobId?: number;
 }

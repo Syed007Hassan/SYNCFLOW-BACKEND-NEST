@@ -17,10 +17,14 @@ import { ApiTags } from '@nestjs/swagger';
 export class WorkflowController {
   constructor(private readonly workflowService: WorkflowService) {}
 
-  @Post('/createWorkFlow')
-  async createWorkFlow(@Body() createWorkFlowDto: CreateWorkFlowDto) {
+  @Post('/createWorkFlow/:jobId')
+  async createWorkFlow(
+    @Param('jobId') jobId: string,
+    @Body() createWorkFlowDto: CreateWorkFlowDto,
+  ) {
     try {
       const workflow = await this.workflowService.createWorkFlow(
+        +jobId,
         createWorkFlowDto,
       );
       return { success: true, data: workflow };
