@@ -17,7 +17,7 @@ import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, CacheTTL } from '@nestjs/cache-manager';
 
 @ApiTags('Employer/Recruiter')
-@Controller('employer')
+@Controller('recruiter')
 export class EmployerController {
   constructor(private readonly employerService: EmployerService) {}
 

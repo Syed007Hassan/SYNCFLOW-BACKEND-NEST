@@ -41,14 +41,4 @@ export class CreateJobDto {
   @ApiProperty()
   @IsString()
   jobExperience: string;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsNumber()
-  companyId: number | null;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsNumber()
-  id: number | null;
 }
