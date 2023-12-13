@@ -7,9 +7,13 @@ import { AppliedJob } from './entities/appliedJob.entity';
 import { Assessment } from './entities/assessment.entity';
 import { HiredApplicant } from './entities/hiredApplicant.entity';
 import { Interview } from './entities/interview.entity';
+import { Company } from 'src/company/entities/company.entity';
+import { Recruiter } from 'src/employer/entities/employer.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      Company,
+      Recruiter,
       Job,
       AppliedJob,
       Assessment,
