@@ -1,6 +1,5 @@
 export interface Stage {
-  id: number;
-  name: string;
+  stageId: number;
+  stageName: string;
   category: string;
-  assignedTo: string;
 }

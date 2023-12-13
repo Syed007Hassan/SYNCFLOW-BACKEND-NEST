@@ -18,10 +18,18 @@ import { ApiTags } from '@nestjs/swagger';
 export class JobController {
   constructor(private readonly jobService: JobService) {}
 
-  @Post('/create')
-  async create(@Body() createJobDto: CreateJobDto) {
+  @Post('/createJob/:recruiterId/:companyId')
+  async create(
+    @Param('recruiterId') recruiterId: string,
+    @Param('companyId') companyId: string,
+    @Body() createJobDto: CreateJobDto,
+  ) {
     try {
-      const job = await this.jobService.create(createJobDto);
+      const job = await this.jobService.create(
+        +recruiterId,
+        +companyId,
+        createJobDto,
+      );
       return { success: true, data: job };
     } catch (err) {
       return { success: false, message: err.message };
