@@ -10,12 +10,8 @@ import { Type } from 'class-transformer';
 
 class StageDto {
   @ApiProperty()
-  @IsNumber()
-  id: number;
-
-  @ApiProperty()
   @IsString()
-  name: string;
+  stageName: string;
 
   @ApiProperty()
   @IsString()

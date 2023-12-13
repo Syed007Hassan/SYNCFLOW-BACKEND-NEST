@@ -20,7 +20,7 @@ export class WorkFlow {
   @PrimaryGeneratedColumn()
   workflowId: number;
 
-  @OneToMany(() => Stage, (stage) => stage.workflow)
+  @OneToMany(() => Stage, (stage) => stage.workflow, { cascade: true })
   stages: Stage[];
 
   @OneToOne((type) => Job, (job) => job.workflow)

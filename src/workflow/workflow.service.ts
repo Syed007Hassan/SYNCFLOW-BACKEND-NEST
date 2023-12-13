@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WorkFlow } from './entities/workflow.entity';
 import { Repository } from 'typeorm';
 import { Job } from '../job/entities/job.entity';
+import { Stage } from './entities/stage.entity';
 
 @Injectable()
 export class WorkflowService {
@@ -13,6 +14,8 @@ export class WorkflowService {
     public readonly workflowRepo: Repository<WorkFlow>,
     @InjectRepository(Job)
     public readonly jobRepo: Repository<Job>,
+    @InjectRepository(Stage)
+    public readonly stageRepo: Repository<Stage>,
   ) {}
 
   async createWorkFlow(jobId: number, createWorkFlowDto: CreateWorkFlowDto) {
@@ -24,11 +27,20 @@ export class WorkflowService {
       throw new Error('Job not found');
     }
 
-    const newJob = await this.workflowRepo.create({
-      ...createWorkFlowDto,
+    // Map stages from DTO to Stage entities
+    const stages = createWorkFlowDto.stages.map((stageDto) => {
+      const stage = new Stage();
+      stage.stageName = stageDto.stageName;
+      stage.category = stageDto.category;
+      return stage;
+    });
+
+    const newWorkflow = this.workflowRepo.create({
+      stages: stages,
       job: job,
     });
-    return await this.workflowRepo.save(newJob);
+
+    return await this.workflowRepo.save(newWorkflow);
   }
 
   async findAll() {
