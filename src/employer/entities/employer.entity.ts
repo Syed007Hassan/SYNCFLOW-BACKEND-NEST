@@ -15,7 +15,7 @@ import { Job } from 'src/job/entities/job.entity';
 @Entity()
 export class Recruiter {
   @PrimaryGeneratedColumn()
-  id: number;
+  recruiterId: number;
 
   @Column({ nullable: false })
   name: string;
@@ -38,9 +38,6 @@ export class Recruiter {
   @ManyToOne((type) => Company, (company) => company.recruiters)
   @JoinColumn({ name: 'companyId' })
   company: Company;
-
-  @Column({ nullable: true })
-  companyId: number;
 
   @OneToMany(() => Job, (job) => job.recruiter)
   jobs: Job[];

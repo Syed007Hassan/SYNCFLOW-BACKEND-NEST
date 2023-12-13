@@ -24,7 +24,8 @@ export class EmployerController {
   @Post('create')
   async create(@Body() createUserDto: CreateEmployerDto) {
     try {
-      const user = await this.employerService.create(createUserDto);
+      let company = '';
+      const user = await this.employerService.create(createUserDto, company);
       return { success: true, data: user };
     } catch (err) {
       return { success: false, message: err.message };
@@ -41,9 +42,14 @@ export class EmployerController {
     }
   }
 
-  @Get('findOne/:id')
-  findOne(@Param('id') id: string) {
-    return this.employerService.findOne(+id);
+  @Get('findOne/:recruiterId')
+  async findOne(@Param('recruiterId') recruiterId: string) {
+    try {
+      const user = await this.employerService.findOne(+recruiterId);
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Get('findOneByCompanyName/:companyName')

@@ -22,12 +22,16 @@ export class EmployerService {
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
-  async create(createUserDto: CreateEmployerDto): Promise<Recruiter> {
+  async create(
+    createUserDto: CreateEmployerDto,
+    company: any,
+  ): Promise<Recruiter> {
     const saltRounds = 10;
     const hash = bcrypt.hashSync(createUserDto.password, saltRounds);
     const newUser = await this.employerRepo.create({
       ...createUserDto,
       password: hash,
+      company: company,
     });
 
     await this.employerRepo.save(newUser);
@@ -44,7 +48,9 @@ export class EmployerService {
     }
 
     // if not, fetch data from the database:
-    const employers = await this.employerRepo.find();
+    const employers = await this.employerRepo.find({
+      relations: ['company'],
+    });
     if (!employers) {
       throw new Error('No recruiters found');
     }
@@ -66,7 +72,10 @@ export class EmployerService {
     }
 
     // if not, fetch data from the database:
-    const user = await this.employerRepo.findOneBy({ email });
+    const user = await this.employerRepo.findOne({
+      where: { email },
+      relations: ['company'],
+    });
     if (!user) {
       return null;
     }
@@ -92,8 +101,9 @@ export class EmployerService {
     if (!company) {
       throw new Error('Company not found');
     }
-    const employer = await this.employerRepo.findOne({
-      where: { companyId: company.id },
+    const employer = await this.employerRepo.find({
+      relations: ['company'],
+      where: { company: { companyId: company.companyId } },
     });
 
     if (!employer) {
@@ -105,9 +115,9 @@ export class EmployerService {
     return employer;
   }
 
-  async findOne(id: number) {
+  async findOne(recruiterId: number) {
     // create a cache key based on the id:
-    const cacheKey = `recruiter_id_${id}`;
+    const cacheKey = `recruiter_id_${recruiterId}`;
 
     // check if data is in cache:
     const cachedData = await this.cacheService.get<any>(cacheKey);
@@ -117,7 +127,10 @@ export class EmployerService {
     }
 
     // if not, fetch data from the database:
-    const user = await this.employerRepo.findOneBy({ id });
+    const user = await this.employerRepo.findOne({
+      where: { recruiterId },
+      relations: ['company'],
+    });
     if (!user) {
       throw new Error('User not found');
     }
