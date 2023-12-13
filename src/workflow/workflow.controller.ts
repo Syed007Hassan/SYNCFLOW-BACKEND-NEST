@@ -11,6 +11,7 @@ import { WorkflowService } from './workflow.service';
 import { CreateWorkFlowDto } from './dto/create-workflow.dto';
 import { UpdateWorkflowDto } from './dto/update-workflow.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { AssignStageDto } from './dto/stage-assign.dto';
 
 @ApiTags('Workflow')
 @Controller('workflow')
@@ -28,6 +29,16 @@ export class WorkflowController {
         createWorkFlowDto,
       );
       return { success: true, data: workflow };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Post('/assignStage')
+  async assignStage(@Body() assignStagesDto: AssignStageDto) {
+    try {
+      const stages = await this.workflowService.assignStage(assignStagesDto);
+      return { success: true, data: stages };
     } catch (err) {
       return { success: false, message: err.message };
     }

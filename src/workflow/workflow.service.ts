@@ -3,10 +3,11 @@ import { CreateWorkFlowDto } from './dto/create-workflow.dto';
 import { UpdateWorkflowDto } from './dto/update-workflow.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WorkFlow } from './entities/workflow.entity';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Job } from '../job/entities/job.entity';
 import { Stage } from './entities/stage.entity';
-
+import { StageAssignee } from './entities/stageAssignee';
+import { AssignStageDto } from './dto/stage-assign.dto';
 @Injectable()
 export class WorkflowService {
   constructor(
@@ -16,6 +17,8 @@ export class WorkflowService {
     public readonly jobRepo: Repository<Job>,
     @InjectRepository(Stage)
     public readonly stageRepo: Repository<Stage>,
+    @InjectRepository(StageAssignee)
+    public readonly stageAssigneeRepo: Repository<StageAssignee>,
   ) {}
 
   async createWorkFlow(jobId: number, createWorkFlowDto: CreateWorkFlowDto) {
@@ -41,6 +44,25 @@ export class WorkflowService {
     });
 
     return await this.workflowRepo.save(newWorkflow);
+  }
+
+  async assignStage(assignStageDto: AssignStageDto) {
+    const stage = await this.stageRepo.findOne({
+      where: { stageId: assignStageDto.stageId },
+    });
+
+    if (!stage) {
+      throw new Error('Stage not found');
+    }
+
+    const assignees = assignStageDto.assigneeIds.map((assigneeId) => {
+      const assignee = new StageAssignee();
+      assignee.stageAssigneeId = assigneeId;
+      assignee.stage = stage;
+      return assignee;
+    });
+
+    return await this.stageAssigneeRepo.save(assignees);
   }
 
   async findAll() {

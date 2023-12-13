@@ -30,7 +30,6 @@ export class Stage {
   @JoinColumn({ name: 'workflowId' })
   workflow: WorkFlow;
 
-  @ManyToMany(() => StageAssignee, (stageAssignee) => stageAssignee.stages)
-  @JoinTable()
+  @OneToMany(() => StageAssignee, (stageAssignee) => stageAssignee.stage)
   assignees: StageAssignee[];
 }

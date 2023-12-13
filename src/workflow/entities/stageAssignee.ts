@@ -25,6 +25,7 @@ export class StageAssignee {
   @Column({ nullable: true })
   recruiterId: number;
 
-  @ManyToMany(() => Stage, (stage) => stage.assignees)
-  stages: Stage[];
+  @ManyToOne(() => Stage, (stage) => stage.assignees)
+  @JoinColumn({ name: 'stageId' })
+  stage: Stage;
 }
