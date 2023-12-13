@@ -10,8 +10,9 @@ import {
   Index,
   OneToOne,
 } from 'typeorm';
-import { Stage } from '../dto/stage.interface';
+// import { Stage } from '../dto/stage.interface';
 import { Job } from '../../job/entities/job.entity';
+import { Stage } from './stage.entity';
 
 @Entity('workflow')
 export class WorkFlow {
@@ -19,7 +20,7 @@ export class WorkFlow {
   @PrimaryGeneratedColumn()
   workflowId: number;
 
-  @Column({ nullable: true, type: 'jsonb' })
+  @OneToMany(() => Stage, (stage) => stage.workflow)
   stages: Stage[];
 
   @OneToOne((type) => Job, (job) => job.workflow)
