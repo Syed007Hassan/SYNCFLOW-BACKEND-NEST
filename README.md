@@ -31,6 +31,7 @@ PGADMIN_DEFAULT_PASSWORD=admin
 - `docker-compose exec nestapp npm run migration:generate --name=Employee`
 
 ### Pushing Images to DockerHub
+
 #### Step 1: Tag the Docker image
 `docker tag nestjs syed007hassan/nestjs`
 
