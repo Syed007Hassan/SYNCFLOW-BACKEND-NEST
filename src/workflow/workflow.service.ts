@@ -68,12 +68,23 @@ export class WorkflowService {
       throw new Error('Stage not found for this workflow');
     }
 
-    const newAssignedStage = await this.stageAssigneeRepo.create({
-      stage: stage,
-      assignees: assignStageDto.assignees,
+    let assignedStage = await this.stageAssigneeRepo.findOne({
+      where: { stage: { stageId: stageId } },
     });
 
-    return await this.stageAssigneeRepo.save(newAssignedStage);
+    if (assignedStage) {
+      // If assignedStage already exists, update it
+      console.log('assignedStage', assignedStage);
+      assignedStage.assignees = assignStageDto.assignees;
+    } else {
+      // If assignedStage does not exist, create a new one
+      assignedStage = this.stageAssigneeRepo.create({
+        stage: stage,
+        assignees: assignStageDto.assignees,
+      });
+    }
+
+    return await this.stageAssigneeRepo.save(assignedStage);
   }
 
   async findAll() {
