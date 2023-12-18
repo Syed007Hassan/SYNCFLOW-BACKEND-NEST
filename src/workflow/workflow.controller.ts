@@ -34,10 +34,16 @@ export class WorkflowController {
     }
   }
 
-  @Post('/assignStage')
-  async assignStage(@Body() assignStagesDto: AssignStageDto) {
+  @Post('/assignStage/:stageId')
+  async assignStage(
+    @Param('stageId') stageId: string,
+    @Body() assignStagesDto: AssignStageDto,
+  ) {
     try {
-      const stages = await this.workflowService.assignStage(assignStagesDto);
+      const stages = await this.workflowService.assignStage(
+        +stageId,
+        assignStagesDto,
+      );
       return { success: true, data: stages };
     } catch (err) {
       return { success: false, message: err.message };

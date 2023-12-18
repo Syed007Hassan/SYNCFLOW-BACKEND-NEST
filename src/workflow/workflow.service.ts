@@ -38,7 +38,7 @@ export class WorkflowService {
       return stage;
     });
 
-    const newWorkflow = this.workflowRepo.create({
+    const newWorkflow = await this.workflowRepo.create({
       stages: stages,
       job: job,
     });
@@ -46,23 +46,21 @@ export class WorkflowService {
     return await this.workflowRepo.save(newWorkflow);
   }
 
-  async assignStage(assignStageDto: AssignStageDto) {
+  async assignStage(stageId: number, assignStageDto: AssignStageDto) {
     const stage = await this.stageRepo.findOne({
-      where: { stageId: assignStageDto.stageId },
+      where: { stageId: stageId },
     });
 
     if (!stage) {
       throw new Error('Stage not found');
     }
 
-    const assignees = assignStageDto.assigneeIds.map((assigneeId) => {
-      const assignee = new StageAssignee();
-      assignee.stageAssigneeId = assigneeId;
-      assignee.stage = stage;
-      return assignee;
+    const newAssignedStage = await this.stageAssigneeRepo.create({
+      stage: stage,
+      assignees: assignStageDto.assignees,
     });
 
-    return await this.stageAssigneeRepo.save(assignees);
+    return await this.stageAssigneeRepo.save(newAssignedStage);
   }
 
   async findAll() {
