@@ -24,6 +24,6 @@ export class StageAssignee {
   @JoinColumn({ name: 'stageId' })
   stage: Stage;
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', nullable: true })
   assignees: Assignees[];
 }

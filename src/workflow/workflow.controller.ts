@@ -34,13 +34,15 @@ export class WorkflowController {
     }
   }
 
-  @Post('/assignStage/:stageId')
+  @Post('/assignStage/:workflowId/:stageId')
   async assignStage(
     @Param('stageId') stageId: string,
+    @Param('workflowId') workflowId: string,
     @Body() assignStagesDto: AssignStageDto,
   ) {
     try {
       const stages = await this.workflowService.assignStage(
+        +workflowId,
         +stageId,
         assignStagesDto,
       );

@@ -46,13 +46,26 @@ export class WorkflowService {
     return await this.workflowRepo.save(newWorkflow);
   }
 
-  async assignStage(stageId: number, assignStageDto: AssignStageDto) {
+  async assignStage(
+    workflowId: number,
+    stageId: number,
+    assignStageDto: AssignStageDto,
+  ) {
+    const existingWorkflow = await this.workflowRepo.findOne({
+      where: { workflowId: workflowId },
+    });
+
+    if (!existingWorkflow) {
+      throw new Error('Workflow not found');
+    }
+
     const stage = await this.stageRepo.findOne({
-      where: { stageId: stageId },
+      where: { stageId: stageId, workflow: { workflowId: workflowId } },
+      relations: ['workflow'],
     });
 
     if (!stage) {
-      throw new Error('Stage not found');
+      throw new Error('Stage not found for this workflow');
     }
 
     const newAssignedStage = await this.stageAssigneeRepo.create({
