@@ -98,6 +98,18 @@ export class WorkflowService {
     return allWorkflows;
   }
 
+  async findWorkFlowById(workflowId: number) {
+    const workflow = await this.workflowRepo.findOne({
+      relations: ['job', 'stages', 'stages.assignees'],
+      where: { workflowId: workflowId },
+    });
+
+    if (!workflow) {
+      throw new Error('Workflow not found');
+    }
+    return workflow;
+  }
+
   async findOneByJobId(id: number) {
     const allWorkflows = await this.workflowRepo.find({
       relations: ['job', 'stages'],
