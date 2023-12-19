@@ -12,6 +12,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import { Stage } from './stage.entity';
+import { Assignees } from '../dto/assignees.interface';
 
 @Entity('stageAssignee')
 export class StageAssignee {
@@ -19,13 +20,10 @@ export class StageAssignee {
   @PrimaryGeneratedColumn()
   stageAssigneeId: number;
 
-  @Column({ nullable: true })
-  assigneeName: string;
-
-  @Column({ nullable: true })
-  recruiterId: number;
-
   @ManyToOne(() => Stage, (stage) => stage.assignees)
   @JoinColumn({ name: 'stageId' })
   stage: Stage;
+
+  @Column({ type: 'jsonb', nullable: true })
+  assignees: Assignees[];
 }
