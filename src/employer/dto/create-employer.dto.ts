@@ -37,8 +37,4 @@ export class CreateEmployerDto {
   @ApiProperty({ default: Role.Employer })
   @IsString()
   role: string;
-
-  @ApiProperty()
-  @IsNumber()
-  companyId: number;
 }

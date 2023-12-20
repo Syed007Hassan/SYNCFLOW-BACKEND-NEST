@@ -11,10 +11,11 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { CompanyModule } from 'src/company/company.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Recruiter } from 'src/employer/entities/employer.entity';
+import { Company } from 'src/company/entities/company.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Recruiter]),
+    TypeOrmModule.forFeature([Recruiter, Company]),
     HttpModule,
     UserModule,
     EmployerModule,
