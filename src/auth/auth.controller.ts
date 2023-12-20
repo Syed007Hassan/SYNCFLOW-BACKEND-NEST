@@ -53,15 +53,15 @@ export class AuthController {
     }
   }
 
-  @Post('registerCompanyEmployee')
+  @Post('registerCompanyEmployee/:companyId')
   async createCompanyEmployee(
     @Body() existingUserDto: AddCompanyEmployeeDto,
-    @Param('companyId') companyId: number,
+    @Param('companyId') companyId: string,
   ) {
     try {
       const user = await this.authService.registerCompanyEmployee(
         existingUserDto,
-        companyId,
+        +companyId,
       );
       return { success: true, data: user };
     } catch (err) {
