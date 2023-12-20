@@ -52,6 +52,22 @@ export class WorkflowController {
     }
   }
 
+  @Get('/findAssignedStage/:workflowId/:stageId')
+  async getAssignedStage(
+    @Param('stageId') stageId: string,
+    @Param('workflowId') workflowId: string,
+  ) {
+    try {
+      const stages = await this.workflowService.getAssignedStage(
+        +workflowId,
+        +stageId,
+      );
+      return { success: true, data: stages };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
   @Get('findAllWorkflows')
   async findAll() {
     try {
