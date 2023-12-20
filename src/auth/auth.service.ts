@@ -17,12 +17,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Recruiter } from 'src/employer/entities/employer.entity';
 import { Repository } from 'typeorm';
 import { AddCompanyEmployeeDto } from 'src/employer/dto/add-employee.company.dto';
+import { Company } from 'src/company/entities/company.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(Recruiter)
     private readonly employerRepo: Repository<Recruiter>,
+    @InjectRepository(Company)
+    private readonly companyRepo: Repository<Company>,
     private userService: UserService,
     private employerService: EmployerService,
     private jwtService: JwtService,
@@ -61,7 +64,6 @@ export class AuthService {
         phone: user.phone,
         designation: user.designation,
         role: Role.Employer,
-        companyId: company.id,
       },
       company,
     );
@@ -73,12 +75,14 @@ export class AuthService {
     user: AddCompanyEmployeeDto,
     companyId: number,
   ) {
-    const findUser = await this.userService.findOneByEmail(user.email);
+    const findUser = await this.employerService.findOneByEmail(user.email);
     if (findUser) {
       throw new Error('Company employee already exists with this email');
     }
 
-    const company = await this.companyService.findOne(companyId);
+    const company = await this.companyRepo.findOne({
+      where: { companyId },
+    });
 
     if (!company) {
       throw new Error('Company not found');
@@ -92,7 +96,6 @@ export class AuthService {
         phone: user.phone,
         designation: user.designation,
         role: Role.Employer,
-        companyId: company.id,
       },
       company,
     );
