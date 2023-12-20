@@ -34,6 +34,28 @@ export class AuthService {
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
+  async oAuthLogin(user) {
+    if (!user) {
+      throw new Error('User not found!!!');
+    }
+
+    const userExist = await this.employerService.findOneByEmail(user.email);
+
+    if (!userExist) {
+      return this.registerEmployer(user);
+    }
+
+    const payload = {
+      recruiterId: user.recruiterId,
+      email: user.email,
+      name: user.name,
+      companyId: user.companyId,
+      role: user.role,
+    };
+    const jwt = await this.jwtService.signAsync(payload);
+    return { jwt };
+  }
+
   async registerEmployer(user: ExistingEmployerDto) {
     const findUser = await this.employerService.findOneByEmail(user.email);
     if (findUser) {
