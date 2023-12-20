@@ -17,16 +17,16 @@ export class Recruiter {
   @PrimaryGeneratedColumn()
   recruiterId: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   name: string;
 
   @Column({ nullable: false, unique: true })
   email: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   password: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   phone: string;
 
   @Column({ nullable: true, default: Role.Employer })

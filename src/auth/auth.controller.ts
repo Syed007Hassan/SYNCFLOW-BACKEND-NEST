@@ -43,8 +43,11 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(GoogleOauthGuard)
   async googleAuthCallback(@Req() req, @Res() res: Response) {
+    console.log(JSON.stringify(req.user) + 'req.user');
+    //{"provider":"google","providerId":"108883059921859475304","email":"smhsyed61smh@gmail.com","name":"Syed Hassan","picture":"https://lh3.googleusercontent.com/a/ACg8ocL_5WDMrVHky4yKciuoOBUAOmVd34s1G_Z2Ckkm_hG9=s96-c"}
     const token = await this.authService.oAuthLogin(req.user);
 
+    // return await req.user;
     return token;
   }
 

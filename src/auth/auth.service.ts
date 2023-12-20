@@ -39,21 +39,50 @@ export class AuthService {
       throw new Error('User not found!!!');
     }
 
-    const userExist = await this.employerService.findOneByEmail(user.email);
+    let userExist = await this.employerRepo.findOne({
+      where: { email: user.email },
+    });
 
     if (!userExist) {
-      return this.registerEmployer(user);
+      userExist = await this.registerEmployerOauth(user);
     }
 
     const payload = {
-      recruiterId: user.recruiterId,
-      email: user.email,
-      name: user.name,
-      companyId: user.companyId,
-      role: user.role,
+      recruiterId: userExist.recruiterId,
+      email: userExist.email,
+      name: userExist.name,
+      companyId: userExist.company.companyId,
+      role: userExist.role,
     };
     const jwt = await this.jwtService.signAsync(payload);
     return { jwt };
+  }
+
+  async registerEmployerOauth(user) {
+    const findUser = await this.employerService.findOneByEmail(user.email);
+    if (findUser) {
+      throw new Error('Recruiter already exists with this email');
+    }
+
+    const company = await this.companyService.create({
+      companyName: ' ',
+      companyEmail: ' ',
+      companyAddress: ' ',
+      companyPhone: 0,
+      companyWebsite: ' ',
+    });
+
+    const newUser = await this.employerRepo.create({
+      name: user.name,
+      email: user.email,
+      password: '',
+      phone: '',
+      designation: '',
+      role: Role.Employer,
+      company,
+    });
+
+    return await this.employerRepo.save(newUser);
   }
 
   async registerEmployer(user: ExistingEmployerDto) {
