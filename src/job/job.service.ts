@@ -70,6 +70,18 @@ export class JobService {
     return allJobs;
   }
 
+  async findOneByJobId(id: number) {
+    const job = await this.jobRepo.findOne({
+      relations: ['company', 'recruiter'],
+      where: { jobId: id },
+    });
+
+    if (!job) {
+      throw new Error('No job found');
+    }
+    return job;
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} job`;
   }

@@ -7,13 +7,18 @@ import {
   IsInt,
 } from 'class-validator';
 
-export class AssignStageDto {
-  @ApiProperty({ example: 1 })
+export class Assignee {
+  @ApiProperty()
   @IsInt()
-  stageId: number;
+  recruiterId: number;
 
-  @ApiProperty({ example: [3, 4] })
+  @ApiProperty()
+  @IsString()
+  name: string;
+}
+export class AssignStageDto {
+  @ApiProperty({ type: [Assignee] })
   @IsArray()
-  @IsInt({ each: true })
-  assigneeIds: number[];
+  @IsOptional()
+  assignees: Assignee[];
 }

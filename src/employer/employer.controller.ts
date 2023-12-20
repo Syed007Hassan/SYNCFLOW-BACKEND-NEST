@@ -52,11 +52,26 @@ export class EmployerController {
     }
   }
 
-  @Get('findOneByCompanyName/:companyName')
+  @Get('findByCompanyName/:companyName')
   @CacheTTL(30)
   async findOneByCompanyName(@Param('companyName') companyName: string) {
     try {
-      const user = await this.employerService.findOneByCompanyName(companyName);
+      const user = await this.employerService.findEmployeeByCompanyName(
+        companyName,
+      );
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Get('findByCompanyId/:companyId')
+  @CacheTTL(30)
+  async findByCompanyId(@Param('companyId') companyId: string) {
+    try {
+      const user = await this.employerService.findEmployeeByCompanyId(
+        +companyId,
+      );
       return { success: true, data: user };
     } catch (err) {
       return { success: false, message: err.message };

@@ -11,12 +11,15 @@ import { CompanyService } from 'src/company/company.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { HttpService } from '@nestjs/axios';
 import { Cache } from 'cache-manager';
+import { Company } from 'src/company/entities/company.entity';
 
 @Injectable()
 export class EmployerService {
   constructor(
     @InjectRepository(Recruiter)
     private readonly employerRepo: Repository<Recruiter>,
+    @InjectRepository(Company)
+    private readonly companyRepo: Repository<Company>,
     private readonly companyService: CompanyService,
     private readonly httpService: HttpService,
     @Inject(CACHE_MANAGER) private cacheService: Cache,
@@ -85,7 +88,7 @@ export class EmployerService {
     return user;
   }
 
-  async findOneByCompanyName(companyName: string) {
+  async findEmployeeByCompanyName(companyName: string) {
     // create a cache key based on the company name:
     const cacheKey = `recruiter_${companyName}`;
 
@@ -98,6 +101,38 @@ export class EmployerService {
 
     // if not, fetch data from the database:
     const company = await this.companyService.findOneByName(companyName);
+    if (!company) {
+      throw new Error('Company not found');
+    }
+    const employer = await this.employerRepo.find({
+      relations: ['company'],
+      where: { company: { companyId: company.companyId } },
+    });
+
+    if (!employer) {
+      throw new Error('Employer not found');
+    }
+
+    // set the cache with the cache key:
+    await this.cacheService.set(cacheKey, employer);
+    return employer;
+  }
+
+  async findEmployeeByCompanyId(companyId: number) {
+    // create a cache key based on the company id:
+    const cacheKey = `recruiter_${companyId}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      console.log(`Getting data from cache!`);
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
+    const company = await this.companyRepo.findOne({
+      where: { companyId },
+    });
     if (!company) {
       throw new Error('Company not found');
     }
