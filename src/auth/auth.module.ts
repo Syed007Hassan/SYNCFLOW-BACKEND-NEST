@@ -12,7 +12,8 @@ import { CompanyModule } from 'src/company/company.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Recruiter } from 'src/employer/entities/employer.entity';
 import { Company } from 'src/company/entities/company.entity';
-
+import { GoogleOauthGuard } from './guards/google-oauth.guard';
+import { GoogleStrategy } from './guards/google-oauth.strategy';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Recruiter, Company]),
@@ -31,6 +32,6 @@ import { Company } from 'src/company/entities/company.entity';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtGuardStrategy, JwtGuard],
+  providers: [AuthService, JwtGuardStrategy, JwtGuard, GoogleStrategy],
 })
 export class AuthModule {}

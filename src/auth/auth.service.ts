@@ -34,6 +34,57 @@ export class AuthService {
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
+  async oAuthLogin(user) {
+    if (!user) {
+      throw new Error('User not found!!!');
+    }
+
+    let userExist = await this.employerRepo.findOne({
+      where: { email: user.email },
+    });
+
+    if (!userExist) {
+      userExist = await this.registerEmployerOauth(user);
+    }
+
+    const payload = {
+      recruiterId: userExist.recruiterId,
+      email: userExist.email,
+      name: userExist.name,
+      companyId: userExist.company.companyId,
+      role: userExist.role,
+    };
+    const jwt = await this.jwtService.signAsync(payload);
+    return { jwt };
+  }
+
+  async registerEmployerOauth(user) {
+    const findUser = await this.employerService.findOneByEmail(user.email);
+    if (findUser) {
+      throw new Error('Recruiter already exists with this email');
+    }
+
+    const company = await this.companyService.create({
+      companyName: ' ',
+      companyEmail: ' ',
+      companyAddress: ' ',
+      companyPhone: 0,
+      companyWebsite: ' ',
+    });
+
+    const newUser = await this.employerRepo.create({
+      name: user.name,
+      email: user.email,
+      password: '',
+      phone: '',
+      designation: '',
+      role: Role.Employer,
+      company,
+    });
+
+    return await this.employerRepo.save(newUser);
+  }
+
   async registerEmployer(user: ExistingEmployerDto) {
     const findUser = await this.employerService.findOneByEmail(user.email);
     if (findUser) {
