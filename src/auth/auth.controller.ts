@@ -37,7 +37,6 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(GoogleOauthGuard)
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async auth() {}
 
   @Get('google/callback')
@@ -46,7 +45,7 @@ export class AuthController {
     try {
       const token = await this.authService.oAuthLogin(req.user);
       console.log(JSON.stringify(req.user) + 'req.user');
-      return { success: true, data: token };
+      res.redirect(`localhost:3000/oauth?token=${token}`);
     } catch (err) {
       return { success: false, message: err.message };
     }
