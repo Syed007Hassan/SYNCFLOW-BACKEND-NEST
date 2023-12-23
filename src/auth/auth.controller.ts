@@ -45,11 +45,10 @@ export class AuthController {
     try {
       const token = await this.authService.oAuthLogin(req.user);
       console.log(JSON.stringify(req.user) + 'req.user');
-      res.redirect(`localhost:3000/oauth?token=${token}`);
+      res.redirect(`http://localhost:3000/oauth?token=${token}`);
     } catch (err) {
       return { success: false, message: err.message };
     }
-    // return await req.user;
   }
 
   @Post('registerRecruiter')

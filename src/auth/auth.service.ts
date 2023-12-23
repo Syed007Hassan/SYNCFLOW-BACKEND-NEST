@@ -35,29 +35,27 @@ export class AuthService {
   ) {}
 
   async oAuthLogin(user) {
-    // if (!user) {
-    //   throw new Error('User not found!!!');
-    // }
+    if (!user) {
+      throw new Error('User not found!!!');
+    }
 
-    // let userExist = await this.employerRepo.findOne({
-    //   where: { email: user.email },
-    // });
+    let userExist = await this.employerRepo.findOne({
+      where: { email: user.email },
+    });
 
-    // if (!userExist) {
-    //   userExist = await this.registerEmployerOauth(user);
-    // }
+    if (!userExist) {
+      userExist = await this.registerEmployerOauth(user);
+    }
 
-    // const payload = {
-    //   recruiterId: userExist.recruiterId,
-    //   email: userExist.email,
-    //   name: userExist.name,
-    //   companyId: userExist.company.companyId,
-    //   role: userExist.role,
-    // };
-    // const jwt = await this.jwtService.signAsync(payload);
-    // return { jwt };
-    const jwt = '34554534534534345345';
-    return jwt;
+    const payload = {
+      recruiterId: userExist.recruiterId,
+      email: userExist.email,
+      name: userExist.name,
+      companyId: userExist.company.companyId,
+      role: userExist.role,
+    };
+    const jwt = await this.jwtService.signAsync(payload);
+    return { jwt };
   }
 
   async registerEmployerOauth(user) {
