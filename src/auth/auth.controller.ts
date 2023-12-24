@@ -37,18 +37,19 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(GoogleOauthGuard)
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async auth() {}
 
   @Get('google/callback')
   @UseGuards(GoogleOauthGuard)
   async googleAuthCallback(@Req() req, @Res() res: Response) {
-    console.log(JSON.stringify(req.user) + 'req.user');
-    //{"provider":"google","providerId":"108883059921859475304","email":"smhsyed61smh@gmail.com","name":"Syed Hassan","picture":"https://lh3.googleusercontent.com/a/ACg8ocL_5WDMrVHky4yKciuoOBUAOmVd34s1G_Z2Ckkm_hG9=s96-c"}
-    const token = await this.authService.oAuthLogin(req.user);
-
-    // return await req.user;
-    return token;
+    try {
+      const token = await this.authService.oAuthLogin(req.user);
+      console.log(JSON.stringify(req.user) + 'req.user');
+      console.log(JSON.stringify(token) + 'token');
+      res.redirect(`http://localhost:3000/oauth?token=${token}`);
+    } catch (err) {
+      res.status(500).send({ success: false, message: err.message });
+    }
   }
 
   @Post('registerRecruiter')
