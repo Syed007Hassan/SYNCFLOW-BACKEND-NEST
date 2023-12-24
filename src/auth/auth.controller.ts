@@ -45,9 +45,10 @@ export class AuthController {
     try {
       const token = await this.authService.oAuthLogin(req.user);
       console.log(JSON.stringify(req.user) + 'req.user');
+      console.log(JSON.stringify(token) + 'token');
       res.redirect(`http://localhost:3000/oauth?token=${token}`);
     } catch (err) {
-      return { success: false, message: err.message };
+      res.status(500).send({ success: false, message: err.message });
     }
   }
 
