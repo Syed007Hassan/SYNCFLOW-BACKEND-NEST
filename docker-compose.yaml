@@ -2,66 +2,53 @@ version: '3'
 
 services:
   nestapp:
-    container_name: nest-backend
-    image: nestjs
+    container_name: fyp-nest
+    image: fyp-nest
     build:
       dockerfile: Dockerfile
       context: .
     ports:
       - 5000:5000
-    environment:
-      - DB_TYPE=postgres
-      - PG_HOST=postgres
-      - PG_USER=postgres
-      - PG_PASSWORD=postgres
-      - PG_DB=postgres
-      - PG_PORT=5432
+    env_file:
+      - .env
     networks:
       - backend_bridge
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-
-    restart: unless-stopped
     depends_on:
       - postgres
       - redis
 
   redis:
-    container_name: redis
+    container_name: fyp-redis
     image: redis
-    environment:
-      - RD_PORT=6379
     ports:
       - 6379:6379
+    env_file:
+      - .env
     networks:
       - backend_bridge
-    restart: unless-stopped
     volumes:
       - redis:/data
 
   postgres:
-    container_name: postgres
-    image: postgres:12
+    container_name: fyp-postgres
+    image: postgres:14.5-alpine
     ports:
       - '5432:5432'
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+    env_file:
+      - .env
     networks:
       - backend_bridge
-    restart: unless-stopped
     volumes:
       - pgdata:/var/lib/postgresql/data
 
   pgadmin:
+    container_name: fyp-pgadmin
     image: dpage/pgadmin4
-    restart: always
-    container_name: nest-pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+    env_file:
+      - .env
     networks:
       - backend_bridge
     ports:

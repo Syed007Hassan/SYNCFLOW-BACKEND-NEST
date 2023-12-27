@@ -1,7 +1,7 @@
 # BUILD FOR LOCAL DEVELOPMENT
 ###################
 
-FROM node:18-alpine
+FROM node:20-alpine
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -20,8 +20,8 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-# Build command
-RUN npm run build
+# # Build command
+# RUN npm run build
 
 # npm run migration:run:js
 # npm run tenant:migration:run:js

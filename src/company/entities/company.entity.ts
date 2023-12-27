@@ -8,10 +8,11 @@ import {
 } from 'typeorm';
 import { Recruiter } from '../../employer/entities/employer.entity';
 import { Job } from '../../job/entities/job.entity';
+import { HiredApplicant } from '../../job/entities/hiredApplicant.entity';
 @Entity('company')
 export class Company {
   @PrimaryGeneratedColumn()
-  id: number;
+  companyId: number;
 
   @Column({ nullable: true })
   companyName: string;
@@ -33,4 +34,10 @@ export class Company {
 
   @OneToMany((type) => Job, (job) => job.company)
   jobs: Job[];
+
+  @OneToMany(
+    (type) => HiredApplicant,
+    (hiredApplicant) => hiredApplicant.company,
+  )
+  hiredApplicants: HiredApplicant[];
 }

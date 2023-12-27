@@ -9,9 +9,14 @@ import { EmployerModule } from 'src/employer/employer.module';
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { CompanyModule } from 'src/company/company.module';
-
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Recruiter } from 'src/employer/entities/employer.entity';
+import { Company } from 'src/company/entities/company.entity';
+import { GoogleOauthGuard } from './guards/google-oauth.guard';
+import { GoogleStrategy } from './guards/google-oauth.strategy';
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Recruiter, Company]),
     HttpModule,
     UserModule,
     EmployerModule,
@@ -27,6 +32,6 @@ import { CompanyModule } from 'src/company/company.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtGuardStrategy, JwtGuard],
+  providers: [AuthService, JwtGuardStrategy, JwtGuard, GoogleStrategy],
 })
 export class AuthModule {}

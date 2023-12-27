@@ -13,10 +13,19 @@ import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { CompanyService } from 'src/company/company.service';
 import { CreateCompanyDto } from 'src/company/dto/create-company.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Recruiter } from 'src/employer/entities/employer.entity';
+import { Repository } from 'typeorm';
+import { AddCompanyEmployeeDto } from 'src/employer/dto/add-employee.company.dto';
+import { Company } from 'src/company/entities/company.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRepository(Recruiter)
+    private readonly employerRepo: Repository<Recruiter>,
+    @InjectRepository(Company)
+    private readonly companyRepo: Repository<Company>,
     private userService: UserService,
     private employerService: EmployerService,
     private jwtService: JwtService,
@@ -24,6 +33,58 @@ export class AuthService {
     private readonly httpService: HttpService,
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
+
+  async oAuthLogin(user) {
+    if (!user) {
+      throw new Error('User not found!!!');
+    }
+
+    // let userExist = await this.employerRepo.findOne({
+    //   where: { email: user.email },
+    // });
+
+    // if (!userExist) {
+    //   userExist = await this.registerEmployerOauth(user);
+    // }
+
+    // const payload = {
+    //   recruiterId: userExist.recruiterId,
+    //   email: userExist.email,
+    //   name: userExist.name,
+    //   companyId: userExist.company.companyId,
+    //   role: userExist.role,
+    // };
+    // const jwt = await this.jwtService.sign(payload);
+    // return { jwt };
+    return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWNydWl0ZXJJZCI6MSwiZW1haWwiOiJoYXNzYW5AZ21haWwuY29tIiwibmFtZSI6Imhhc3NhbiIsImNvbXBhbnlJZCI6MSwicm9sZSI6ImVtcGxveWVyIiwiaWF0IjoxNzAzMzYzOTI1LCJleHAiOjE3MDM2MjMxMjV9.yjTR-1a3U-PWAqxO6rDFNHZ1zbk7il2QTwu1QHrkORM';
+  }
+
+  async registerEmployerOauth(user) {
+    const findUser = await this.employerService.findOneByEmail(user.email);
+    if (findUser) {
+      throw new Error('Recruiter already exists with this email');
+    }
+
+    const company = await this.companyService.create({
+      companyName: ' ',
+      companyEmail: ' ',
+      companyAddress: ' ',
+      companyPhone: 0,
+      companyWebsite: ' ',
+    });
+
+    const newUser = await this.employerRepo.create({
+      name: user.name,
+      email: user.email,
+      password: '',
+      phone: '',
+      designation: '',
+      role: Role.Employer,
+      company,
+    });
+
+    return await this.employerRepo.save(newUser);
+  }
 
   async registerEmployer(user: ExistingEmployerDto) {
     const findUser = await this.employerService.findOneByEmail(user.email);
@@ -47,24 +108,51 @@ export class AuthService {
       });
     }
 
-    const newUser = await this.employerService.create({
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      phone: user.phone,
-      designation: user.designation,
-      role: Role.Employer,
-      companyId: company.id,
+    const newUser = await this.employerService.create(
+      {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        phone: user.phone,
+        designation: user.designation,
+        role: Role.Employer,
+      },
+      company,
+    );
+
+    return newUser;
+  }
+
+  async registerCompanyEmployee(
+    user: AddCompanyEmployeeDto,
+    companyId: number,
+  ) {
+    const findUser = await this.employerService.findOneByEmail(user.email);
+    if (findUser) {
+      throw new Error('Company employee already exists with this email');
+    }
+
+    const company = await this.companyRepo.findOne({
+      where: { companyId },
     });
 
-    return {
-      name: newUser.name,
-      email: newUser.email,
-      phone: newUser.phone,
-      role: newUser.role,
-      designation: newUser.designation,
-      companyId: newUser.companyId,
-    };
+    if (!company) {
+      throw new Error('Company not found');
+    }
+
+    const newUser = await this.employerService.create(
+      {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        phone: user.phone,
+        designation: user.designation,
+        role: Role.Employer,
+      },
+      company,
+    );
+
+    return newUser;
   }
 
   async loginEmployer(loginUserDto: LoginEmployerDto) {
@@ -75,6 +163,7 @@ export class AuthService {
     );
 
     const payload = {
+      recruiterId: user.recruiterId,
       email: user.email,
       name: user.name,
       companyId: user.companyId,
@@ -104,9 +193,10 @@ export class AuthService {
     }
 
     return {
+      recruiterId: user.recruiterId,
       name: user.name,
       email: user.email,
-      companyId: user.companyId,
+      companyId: user.company.companyId,
       role: user.role,
     };
   }

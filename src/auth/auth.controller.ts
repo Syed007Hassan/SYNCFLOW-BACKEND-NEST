@@ -9,7 +9,8 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
-  Request,
+  Req,
+  Res,
   Inject,
   UseInterceptors,
 } from '@nestjs/common';
@@ -25,23 +26,33 @@ import { JwtDto } from './dto/jwt.dto';
 import { ExistingEmployerDto } from 'src/employer/dto/existing-employer.dto';
 import { LoginEmployerDto } from 'src/employer/dto/login-employer.dto';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { AddCompanyEmployeeDto } from 'src/employer/dto/add-employee.company.dto';
+import { GoogleOauthGuard } from './guards/google-oauth.guard';
+import { Response } from 'express';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('register')
-  async create(@Body() existingUserDto: ExistingUserDto) {
+  @Get('google')
+  @UseGuards(GoogleOauthGuard)
+  async auth() {}
+
+  @Get('google/callback')
+  @UseGuards(GoogleOauthGuard)
+  async googleAuthCallback(@Req() req, @Res() res: Response) {
     try {
-      const user = await this.authService.registerUser(existingUserDto);
-      return { success: true, data: user };
+      const token = await this.authService.oAuthLogin(req.user);
+      console.log(JSON.stringify(req.user) + 'req.user');
+      console.log(JSON.stringify(token) + 'token');
+      res.redirect(`http://localhost:3000/oauth?token=${token}`);
     } catch (err) {
-      return { success: false, message: err.message };
+      res.status(500).send({ success: false, message: err.message });
     }
   }
 
-  @Post('registerEmployer')
+  @Post('registerRecruiter')
   async createEmployer(@Body() existingUserDto: ExistingEmployerDto) {
     try {
       const user = await this.authService.registerEmployer(existingUserDto);
@@ -51,22 +62,48 @@ export class AuthController {
     }
   }
 
-  @Post('login')
+  @Post('loginRecruiter')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() loginUserDto: LoginUserDto) {
+  async loginEmployer(@Body() loginUserDto: LoginEmployerDto) {
     try {
-      const user = await this.authService.login(loginUserDto);
+      const user = await this.authService.loginEmployer(loginUserDto);
       return { success: true, data: user };
     } catch (err) {
       return { success: false, message: err.message };
     }
   }
 
-  @Post('loginEmployer')
-  @HttpCode(HttpStatus.OK)
-  async loginEmployer(@Body() loginUserDto: LoginEmployerDto) {
+  @Post('registerCompanyEmployee/:companyId')
+  async createCompanyEmployee(
+    @Body() existingUserDto: AddCompanyEmployeeDto,
+    @Param('companyId') companyId: string,
+  ) {
     try {
-      const user = await this.authService.loginEmployer(loginUserDto);
+      const user = await this.authService.registerCompanyEmployee(
+        existingUserDto,
+        +companyId,
+      );
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Post('registerApplicant')
+  async create(@Body() existingUserDto: ExistingUserDto) {
+    try {
+      const user = await this.authService.registerUser(existingUserDto);
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Post('loginApplicant')
+  @HttpCode(HttpStatus.OK)
+  async login(@Body() loginUserDto: LoginUserDto) {
+    try {
+      const user = await this.authService.login(loginUserDto);
       return { success: true, data: user };
     } catch (err) {
       return { success: false, message: err.message };

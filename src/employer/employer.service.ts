@@ -11,23 +11,30 @@ import { CompanyService } from 'src/company/company.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { HttpService } from '@nestjs/axios';
 import { Cache } from 'cache-manager';
+import { Company } from 'src/company/entities/company.entity';
 
 @Injectable()
 export class EmployerService {
   constructor(
     @InjectRepository(Recruiter)
     private readonly employerRepo: Repository<Recruiter>,
+    @InjectRepository(Company)
+    private readonly companyRepo: Repository<Company>,
     private readonly companyService: CompanyService,
     private readonly httpService: HttpService,
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
-  async create(createUserDto: CreateEmployerDto): Promise<Recruiter> {
+  async create(
+    createUserDto: CreateEmployerDto,
+    company: any,
+  ): Promise<Recruiter> {
     const saltRounds = 10;
     const hash = bcrypt.hashSync(createUserDto.password, saltRounds);
     const newUser = await this.employerRepo.create({
       ...createUserDto,
       password: hash,
+      company: company,
     });
 
     await this.employerRepo.save(newUser);
@@ -44,7 +51,9 @@ export class EmployerService {
     }
 
     // if not, fetch data from the database:
-    const employers = await this.employerRepo.find();
+    const employers = await this.employerRepo.find({
+      relations: ['company'],
+    });
     if (!employers) {
       throw new Error('No recruiters found');
     }
@@ -66,7 +75,10 @@ export class EmployerService {
     }
 
     // if not, fetch data from the database:
-    const user = await this.employerRepo.findOneBy({ email });
+    const user = await this.employerRepo.findOne({
+      where: { email },
+      relations: ['company'],
+    });
     if (!user) {
       return null;
     }
@@ -76,7 +88,7 @@ export class EmployerService {
     return user;
   }
 
-  async findOneByCompanyName(companyName: string) {
+  async findEmployeeByCompanyName(companyName: string) {
     // create a cache key based on the company name:
     const cacheKey = `recruiter_${companyName}`;
 
@@ -92,8 +104,9 @@ export class EmployerService {
     if (!company) {
       throw new Error('Company not found');
     }
-    const employer = await this.employerRepo.findOne({
-      where: { companyId: company.id },
+    const employer = await this.employerRepo.find({
+      relations: ['company'],
+      where: { company: { companyId: company.companyId } },
     });
 
     if (!employer) {
@@ -105,9 +118,9 @@ export class EmployerService {
     return employer;
   }
 
-  async findOne(id: number) {
-    // create a cache key based on the id:
-    const cacheKey = `recruiter_id_${id}`;
+  async findEmployeeByCompanyId(companyId: number) {
+    // create a cache key based on the company id:
+    const cacheKey = `recruiter_${companyId}`;
 
     // check if data is in cache:
     const cachedData = await this.cacheService.get<any>(cacheKey);
@@ -117,7 +130,42 @@ export class EmployerService {
     }
 
     // if not, fetch data from the database:
-    const user = await this.employerRepo.findOneBy({ id });
+    const company = await this.companyRepo.findOne({
+      where: { companyId },
+    });
+    if (!company) {
+      throw new Error('Company not found');
+    }
+    const employer = await this.employerRepo.find({
+      relations: ['company'],
+      where: { company: { companyId: company.companyId } },
+    });
+
+    if (!employer) {
+      throw new Error('Employer not found');
+    }
+
+    // set the cache with the cache key:
+    await this.cacheService.set(cacheKey, employer);
+    return employer;
+  }
+
+  async findOne(recruiterId: number) {
+    // create a cache key based on the id:
+    const cacheKey = `recruiter_id_${recruiterId}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      console.log(`Getting data from cache!`);
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
+    const user = await this.employerRepo.findOne({
+      where: { recruiterId },
+      relations: ['company'],
+    });
     if (!user) {
       throw new Error('User not found');
     }

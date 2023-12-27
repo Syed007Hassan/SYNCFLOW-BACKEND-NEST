@@ -7,26 +7,27 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { Role } from '../../auth/model/role.enum';
 import { Company } from '../../company/entities/company.entity';
-
+import { Job } from 'src/job/entities/job.entity';
 @Entity()
 export class Recruiter {
   @PrimaryGeneratedColumn()
-  id: number;
+  recruiterId: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   name: string;
 
   @Column({ nullable: false, unique: true })
   email: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   password: string;
 
-  @Column({ nullable: false })
-  phone: number;
+  @Column({ nullable: true })
+  phone: string;
 
   @Column({ nullable: true, default: Role.Employer })
   role: string;
@@ -38,6 +39,6 @@ export class Recruiter {
   @JoinColumn({ name: 'companyId' })
   company: Company;
 
-  @Column({ nullable: true })
-  companyId: number;
+  @OneToMany(() => Job, (job) => job.recruiter)
+  jobs: Job[];
 }

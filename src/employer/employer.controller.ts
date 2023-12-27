@@ -17,14 +17,15 @@ import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, CacheTTL } from '@nestjs/cache-manager';
 
 @ApiTags('Employer/Recruiter')
-@Controller('employer')
+@Controller('recruiter')
 export class EmployerController {
   constructor(private readonly employerService: EmployerService) {}
 
   @Post('create')
   async create(@Body() createUserDto: CreateEmployerDto) {
     try {
-      const user = await this.employerService.create(createUserDto);
+      let company = '';
+      const user = await this.employerService.create(createUserDto, company);
       return { success: true, data: user };
     } catch (err) {
       return { success: false, message: err.message };
@@ -41,16 +42,36 @@ export class EmployerController {
     }
   }
 
-  @Get('findOne/:id')
-  findOne(@Param('id') id: string) {
-    return this.employerService.findOne(+id);
+  @Get('findOne/:recruiterId')
+  async findOne(@Param('recruiterId') recruiterId: string) {
+    try {
+      const user = await this.employerService.findOne(+recruiterId);
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
-  @Get('findOneByCompanyName/:companyName')
+  @Get('findByCompanyName/:companyName')
   @CacheTTL(30)
   async findOneByCompanyName(@Param('companyName') companyName: string) {
     try {
-      const user = await this.employerService.findOneByCompanyName(companyName);
+      const user = await this.employerService.findEmployeeByCompanyName(
+        companyName,
+      );
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Get('findByCompanyId/:companyId')
+  @CacheTTL(30)
+  async findByCompanyId(@Param('companyId') companyId: string) {
+    try {
+      const user = await this.employerService.findEmployeeByCompanyId(
+        +companyId,
+      );
       return { success: true, data: user };
     } catch (err) {
       return { success: false, message: err.message };
