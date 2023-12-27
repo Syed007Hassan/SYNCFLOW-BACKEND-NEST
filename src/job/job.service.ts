@@ -47,7 +47,7 @@ export class JobService {
     return await this.jobRepo.save(newJob);
   }
 
-  async findAll() {
+  async findAllJobs() {
     // create a cache key:
     const cacheKey = `all_jobs`;
 
