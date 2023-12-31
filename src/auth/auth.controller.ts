@@ -29,6 +29,7 @@ import { CacheInterceptor } from '@nestjs/cache-manager';
 import { AddCompanyEmployeeDto } from 'src/employer/dto/add-employee.company.dto';
 import { GoogleOauthGuard } from './guards/google-oauth.guard';
 import { Response } from 'express';
+import { FRONTEND_URL } from './dto/constants';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -44,9 +45,7 @@ export class AuthController {
   async googleAuthCallback(@Req() req, @Res() res: Response) {
     try {
       const token = await this.authService.oAuthLogin(req.user);
-      console.log(JSON.stringify(req.user) + 'req.user');
-      console.log(JSON.stringify(token) + 'token');
-      res.redirect(`http://localhost:3000/oauth?token=${token}`);
+      res.redirect(`${FRONTEND_URL}/oauth?token=${token.jwt}`);
     } catch (err) {
       res.status(500).send({ success: false, message: err.message });
     }
