@@ -57,8 +57,6 @@ export class AuthService {
     };
     const jwt = await this.jwtService.sign(payload);
 
-    console.log(JSON.stringify(jwt) + 'jwt');
-
     return { jwt };
   }
 
