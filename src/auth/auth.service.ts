@@ -39,24 +39,25 @@ export class AuthService {
       throw new Error('User not found!!!');
     }
 
-    // let userExist = await this.employerRepo.findOne({
-    //   where: { email: user.email },
-    // });
+    let userExist = await this.employerRepo.findOne({
+      where: { email: user.email },
+      relations: ['company'],
+    });
 
-    // if (!userExist) {
-    //   userExist = await this.registerEmployerOauth(user);
-    // }
+    if (!userExist) {
+      userExist = await this.registerEmployerOauth(user);
+    }
 
-    // const payload = {
-    //   recruiterId: userExist.recruiterId,
-    //   email: userExist.email,
-    //   name: userExist.name,
-    //   companyId: userExist.company.companyId,
-    //   role: userExist.role,
-    // };
-    // const jwt = await this.jwtService.sign(payload);
-    // return { jwt };
-    return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWNydWl0ZXJJZCI6MSwiZW1haWwiOiJoYXNzYW5AZ21haWwuY29tIiwibmFtZSI6Imhhc3NhbiIsImNvbXBhbnlJZCI6MSwicm9sZSI6ImVtcGxveWVyIiwiaWF0IjoxNzAzMzYzOTI1LCJleHAiOjE3MDM2MjMxMjV9.yjTR-1a3U-PWAqxO6rDFNHZ1zbk7il2QTwu1QHrkORM';
+    const payload = {
+      recruiterId: userExist.recruiterId,
+      email: userExist.email,
+      name: userExist.name,
+      companyId: userExist.company.companyId,
+      role: userExist.role,
+    };
+    const jwt = await this.jwtService.sign(payload);
+
+    return { jwt };
   }
 
   async registerEmployerOauth(user) {
