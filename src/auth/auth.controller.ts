@@ -129,13 +129,13 @@ export class AuthController {
     return { success: true };
   }
 
-  @Get('/:id')
-  async getPokemon(@Param('id') id: number) {
-    try {
-      const data = await this.authService.getPokemon(id);
-      return { success: true, data: data };
-    } catch (err) {
-      return { success: false, message: err.message };
-    }
-  }
+  // @Get('/:id')
+  // async getPokemon(@Param('id') id: number) {
+  //   try {
+  //     const data = await this.authService.getPokemon(id);
+  //     return { success: true, data: data };
+  //   } catch (err) {
+  //     return { success: false, message: err.message };
+  //   }
+  // }
 }
