@@ -34,6 +34,59 @@ export class AuthService {
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
+  async oAuthLogin(user) {
+    if (!user) {
+      throw new Error('User not found!!!');
+    }
+
+    let userExist = await this.employerRepo.findOne({
+      where: { email: user.email },
+      relations: ['company'],
+    });
+
+    if (!userExist) {
+      userExist = await this.registerEmployerOauth(user);
+    }
+
+    const payload = {
+      recruiterId: userExist.recruiterId,
+      email: userExist.email,
+      name: userExist.name,
+      companyId: userExist.company.companyId,
+      role: userExist.role,
+    };
+    const jwt = await this.jwtService.sign(payload);
+
+    return { jwt };
+  }
+
+  async registerEmployerOauth(user) {
+    const findUser = await this.employerService.findOneByEmail(user.email);
+    if (findUser) {
+      throw new Error('Recruiter already exists with this email');
+    }
+
+    const company = await this.companyService.create({
+      companyName: ' ',
+      companyEmail: ' ',
+      companyAddress: ' ',
+      companyPhone: 0,
+      companyWebsite: ' ',
+    });
+
+    const newUser = await this.employerRepo.create({
+      name: user.name,
+      email: user.email,
+      password: '',
+      phone: '',
+      designation: '',
+      role: Role.Employer,
+      company,
+    });
+
+    return await this.employerRepo.save(newUser);
+  }
+
   async registerEmployer(user: ExistingEmployerDto) {
     const findUser = await this.employerService.findOneByEmail(user.email);
     if (findUser) {
@@ -200,21 +253,21 @@ export class AuthService {
     return payloadReturn;
   }
 
-  async getPokemon(id: number): Promise<string> {
-    // check if data is in cache:
-    const cachedData = await this.cacheService.get<{ name: string }>(
-      id.toString(),
-    );
-    if (cachedData) {
-      console.log(`Getting data from cache!`);
-      return `${cachedData.name}`;
-    }
+  // async getPokemon(id: number): Promise<string> {
+  //   // check if data is in cache:
+  //   const cachedData = await this.cacheService.get<{ name: string }>(
+  //     id.toString(),
+  //   );
+  //   if (cachedData) {
+  //     console.log(`Getting data from cache!`);
+  //     return `${cachedData.name}`;
+  //   }
 
-    // if not, call API and set the cache:
-    const { data } = await this.httpService.axiosRef.get(
-      `https://pokeapi.co/api/v2/pokemon/${id}`,
-    );
-    await this.cacheService.set(id.toString(), data);
-    return await `${data.name}`;
-  }
+  //   // if not, call API and set the cache:
+  //   const { data } = await this.httpService.axiosRef.get(
+  //     `https://pokeapi.co/api/v2/pokemon/${id}`,
+  //   );
+  //   await this.cacheService.set(id.toString(), data);
+  //   return await `${data.name}`;
+  // }
 }

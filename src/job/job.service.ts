@@ -47,7 +47,18 @@ export class JobService {
     return await this.jobRepo.save(newJob);
   }
 
-  async findAll() {
+  async findAllJobs() {
+    // create a cache key:
+    const cacheKey = `all_jobs`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      console.log(`Getting data from cache!`);
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const allJobs = await this.jobRepo.find({
       relations: ['company', 'recruiter'],
     });
@@ -55,6 +66,9 @@ export class JobService {
     if (allJobs.length === 0) {
       throw new Error('No jobs found');
     }
+
+    // set the cache:
+    await this.cacheService.set(cacheKey, allJobs);
     return allJobs;
   }
 

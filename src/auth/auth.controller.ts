@@ -9,7 +9,8 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
-  Request,
+  Req,
+  Res,
   Inject,
   UseInterceptors,
 } from '@nestjs/common';
@@ -26,11 +27,29 @@ import { ExistingEmployerDto } from 'src/employer/dto/existing-employer.dto';
 import { LoginEmployerDto } from 'src/employer/dto/login-employer.dto';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { AddCompanyEmployeeDto } from 'src/employer/dto/add-employee.company.dto';
+import { GoogleOauthGuard } from './guards/google-oauth.guard';
+import { Response } from 'express';
+import { FRONTEND_URL } from './dto/constants';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Get('google')
+  @UseGuards(GoogleOauthGuard)
+  async auth() {}
+
+  @Get('google/callback')
+  @UseGuards(GoogleOauthGuard)
+  async googleAuthCallback(@Req() req, @Res() res: Response) {
+    try {
+      const token = await this.authService.oAuthLogin(req.user);
+      res.redirect(`${FRONTEND_URL}/oauth?token=${token.jwt}`);
+    } catch (err) {
+      res.status(500).send({ success: false, message: err.message });
+    }
+  }
 
   @Post('registerRecruiter')
   async createEmployer(@Body() existingUserDto: ExistingEmployerDto) {
@@ -110,13 +129,13 @@ export class AuthController {
     return { success: true };
   }
 
-  @Get('/:id')
-  async getPokemon(@Param('id') id: number) {
-    try {
-      const data = await this.authService.getPokemon(id);
-      return { success: true, data: data };
-    } catch (err) {
-      return { success: false, message: err.message };
-    }
-  }
+  // @Get('/:id')
+  // async getPokemon(@Param('id') id: number) {
+  //   try {
+  //     const data = await this.authService.getPokemon(id);
+  //     return { success: true, data: data };
+  //   } catch (err) {
+  //     return { success: false, message: err.message };
+  //   }
+  // }
 }

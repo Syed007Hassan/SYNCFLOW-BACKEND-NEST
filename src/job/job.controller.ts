@@ -39,7 +39,7 @@ export class JobController {
   @Get('findAll')
   async findAll() {
     try {
-      const jobs = await this.jobService.findAll();
+      const jobs = await this.jobService.findAllJobs();
       return { success: true, data: jobs };
     } catch (err) {
       return { success: false, message: err.message };
