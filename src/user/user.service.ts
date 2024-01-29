@@ -4,16 +4,20 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Applicant } from './entities/user.entity';
+import { ApplicantDetails } from './entities/applicant.details.entity';
 import { Repository } from 'typeorm';
 import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
+import { ApplicantDetailsDto } from './dto/applicantDetails.dto';
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(Applicant)
     private readonly userRepo: Repository<Applicant>,
+    @InjectRepository(ApplicantDetails)
+    private readonly applicantDetailsRepo: Repository<ApplicantDetails>,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<Applicant> {
@@ -45,6 +49,24 @@ export class UserService {
   findOne(id: number) {
     const user = this.userRepo.findOneBy({ id });
     return user;
+  }
+
+  async createApplicantDetails(
+    id: number,
+    applicantDetailsDto: ApplicantDetailsDto,
+  ) {
+    const user = await this.userRepo.findOneBy({ id });
+
+    if (!user) {
+      throw new Error('Applicant not found');
+    }
+
+    const newUserApplicantDetails = await this.applicantDetailsRepo.create({
+      ...applicantDetailsDto,
+      applicant: user,
+    });
+
+    return newUserApplicantDetails;
   }
 
   //
