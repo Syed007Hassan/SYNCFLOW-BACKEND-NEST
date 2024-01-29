@@ -69,6 +69,16 @@ export class UserController {
     }
   }
 
+  @Get('findApplicantDetails/:id')
+  async findApplicantDetails(@Param('id') id: string) {
+    try {
+      const user = await this.userService.findApplicantDetails(+id);
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
   @Patch('update/:id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(+id, updateUserDto);

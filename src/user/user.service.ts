@@ -66,7 +66,26 @@ export class UserService {
       applicant: user,
     });
 
-    return newUserApplicantDetails;
+    return await this.applicantDetailsRepo.save(newUserApplicantDetails);
+  }
+
+  async findApplicantDetails(id: number) {
+    const user = await this.userRepo.findOneBy({ id });
+
+    if (!user) {
+      throw new Error('Applicant not found');
+    }
+
+    const applicantDetails = await this.applicantDetailsRepo.findOne({
+      where: { applicant: { id: id } },
+      relations: ['applicant'],
+    });
+
+    if (!applicantDetails) {
+      throw new Error('Applicant details not found');
+    }
+
+    return applicantDetails;
   }
 
   //
