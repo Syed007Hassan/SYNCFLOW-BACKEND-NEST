@@ -61,12 +61,30 @@ export class UserService {
       throw new Error('Applicant not found');
     }
 
-    const newUserApplicantDetails = await this.applicantDetailsRepo.create({
-      ...applicantDetailsDto,
-      applicant: user,
+    const existingApplicantDetails = await this.applicantDetailsRepo.findOne({
+      where: { applicant: { id: id } },
+      relations: ['applicant'],
     });
 
-    return await this.applicantDetailsRepo.save(newUserApplicantDetails);
+    console.log(
+      JSON.stringify(existingApplicantDetails) + 'existingApplicantDetails',
+    );
+
+    if (existingApplicantDetails) {
+      const updatedApplicantDetails = await this.applicantDetailsRepo.merge(
+        existingApplicantDetails,
+        applicantDetailsDto,
+      );
+
+      return await this.applicantDetailsRepo.save(updatedApplicantDetails);
+    }
+
+    // const newUserApplicantDetails = await this.applicantDetailsRepo.create({
+    //   ...applicantDetailsDto,
+    //   applicant: user,
+    // });
+
+    // return await this.applicantDetailsRepo.save(newUserApplicantDetails);
   }
 
   async findApplicantDetails(id: number) {
