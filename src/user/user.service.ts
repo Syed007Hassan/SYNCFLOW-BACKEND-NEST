@@ -66,21 +66,20 @@ export class UserService {
       relations: ['applicant'],
     });
 
-    // if (existingApplicantDetails) {
-    //   const updatedApplicantDetails = await this.applicantDetailsRepo.merge(
-    //     existingApplicantDetails,
-    //     applicantDetailsDto,
-    //   );
+    if (existingApplicantDetails) {
+      const updatedApplicantDetails = await this.applicantDetailsRepo.merge(
+        existingApplicantDetails,
+        applicantDetailsDto,
+      );
 
-    //   return await this.applicantDetailsRepo.save(updatedApplicantDetails);
-    // }
-
-    // const newUserApplicantDetails = await this.applicantDetailsRepo.create({
-    //   ...applicantDetailsDto,
-    //   applicant: user,
-    // });
-
-    // return await this.applicantDetailsRepo.save(newUserApplicantDetails);
+      return await this.applicantDetailsRepo.save(updatedApplicantDetails);
+    } else {
+      const newUserApplicantDetails = await this.applicantDetailsRepo.create({
+        ...applicantDetailsDto,
+        applicant: user,
+      });
+      return await this.applicantDetailsRepo.save(newUserApplicantDetails);
+    }
   }
 
   async findApplicantDetails(id: number) {
