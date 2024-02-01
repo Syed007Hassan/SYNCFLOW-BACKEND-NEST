@@ -66,18 +66,14 @@ export class UserService {
       relations: ['applicant'],
     });
 
-    console.log(
-      JSON.stringify(existingApplicantDetails) + 'existingApplicantDetails',
-    );
+    // if (existingApplicantDetails) {
+    //   const updatedApplicantDetails = await this.applicantDetailsRepo.merge(
+    //     existingApplicantDetails,
+    //     applicantDetailsDto,
+    //   );
 
-    if (existingApplicantDetails) {
-      const updatedApplicantDetails = await this.applicantDetailsRepo.merge(
-        existingApplicantDetails,
-        applicantDetailsDto,
-      );
-
-      return await this.applicantDetailsRepo.save(updatedApplicantDetails);
-    }
+    //   return await this.applicantDetailsRepo.save(updatedApplicantDetails);
+    // }
 
     // const newUserApplicantDetails = await this.applicantDetailsRepo.create({
     //   ...applicantDetailsDto,
