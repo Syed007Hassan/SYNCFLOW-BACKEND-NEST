@@ -15,7 +15,7 @@ export class Application {
   @PrimaryGeneratedColumn()
   applicationId: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, default: 'pending' })
   status: string;
 
   @Column({

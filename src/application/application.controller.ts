@@ -17,9 +17,22 @@ import { ApiTags } from '@nestjs/swagger';
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
-  @Post('/create')
-  create(@Body() createApplicationDto: CreateApplicationDto) {
-    return this.applicationService.create(createApplicationDto);
+  @Post('/createApplication/:jobId/:applicantId')
+  async create(
+    @Param('jobId') jobId: string,
+    @Param('applicantId') applicantId: string,
+    @Body() createApplicationDto: CreateApplicationDto,
+  ) {
+    try {
+      const application = await this.applicationService.create(
+        +jobId,
+        +applicantId,
+        createApplicationDto,
+      );
+      return { success: true, data: application };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Get('findAll')
