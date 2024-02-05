@@ -53,6 +53,21 @@ export class ApplicationController {
     }
   }
 
+  @Get('findByApplicantId/:applicantId')
+  @ApiOperation({
+    summary: 'Find application by applicant ID, for applicant use only',
+  })
+  async findByApplicantId(@Param('applicantId') applicantId: string) {
+    try {
+      const application = await this.applicationService.findByApplicantId(
+        +applicantId,
+      );
+      return { success: true, data: application };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
   @Patch('updateApplicationById:id')
   update(
     @Param('id') id: string,
