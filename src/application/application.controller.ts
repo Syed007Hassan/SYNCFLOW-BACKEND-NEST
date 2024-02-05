@@ -10,7 +10,7 @@ import {
 import { ApplicationService } from './application.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Application')
 @Controller('application')
@@ -40,9 +40,17 @@ export class ApplicationController {
     return this.applicationService.findAll();
   }
 
-  @Get('findOne:id')
-  findOne(@Param('id') id: string) {
-    return this.applicationService.findOne(+id);
+  @Get('findByJobId/:jobId')
+  @ApiOperation({
+    summary: 'Find application by job ID, for recruiter use only',
+  })
+  async findByJobid(@Param('jobId') jobId: string) {
+    try {
+      const application = await this.applicationService.findByJobId(+jobId);
+      return { success: true, data: application };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Patch('updateApplicationById:id')

@@ -59,8 +59,22 @@ export class ApplicationService {
     return `This action returns all application`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} application`;
+  async findByJobId(jobId: number) {
+    const applications = await this.applicationRepo.find({
+      where: { job: { jobId: jobId } },
+      relations: ['applicant', 'job', 'applicant.applicantDetails'],
+    });
+
+    //delete the password from the response
+    applications.forEach((application) => {
+      delete application.applicant.password;
+    });
+
+    if (!applications) {
+      throw new Error('No applications found');
+    }
+
+    return applications;
   }
 
   update(id: number, updateApplicationDto: UpdateApplicationDto) {
