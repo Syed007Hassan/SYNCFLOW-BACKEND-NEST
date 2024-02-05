@@ -29,15 +29,9 @@ export class Application {
   @JoinColumn({ name: 'id' })
   applicant: Applicant;
 
-  @Column({ nullable: true })
-  id: number;
-
   @ManyToOne(() => Job, (job) => job.applications)
   @JoinColumn({ name: 'jobId' })
   job: Job;
-
-  @Column({ nullable: true })
-  jobId: number;
 
   @BeforeInsert()
   setApplicationDate() {
