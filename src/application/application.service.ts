@@ -26,7 +26,33 @@ export class ApplicationService {
     applicantId: number,
     createApplicationDto: CreateApplicationDto,
   ) {
-    return 'This action adds a new application';
+    const job = await this.jobRepo.findOne({
+      where: { jobId: jobId },
+    });
+
+    const applicant = await this.applicantRepo.findOne({
+      where: { id: applicantId },
+    });
+
+    const existingApplication = await this.applicationRepo.findOne({
+      where: { job: { jobId: jobId }, applicant: { id: applicantId } },
+    });
+
+    if (existingApplication) {
+      throw new Error('Application already exists');
+    }
+
+    if (!job || !applicant) {
+      throw new Error('Job or Applicant not found');
+    }
+
+    const newApplication = await this.applicationRepo.create({
+      ...createApplicationDto,
+      job: job,
+      applicant: applicant,
+    });
+
+    return await this.applicationRepo.save(newApplication);
   }
 
   findAll() {
