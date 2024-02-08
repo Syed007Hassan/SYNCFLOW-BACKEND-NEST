@@ -11,6 +11,7 @@ import {
 import { Applicant } from './user.entity';
 import { Education } from '../dto/education.interface';
 import { ApplicantLocation } from '../dto/applicantLocation.interface';
+import { Experience } from '../dto/experience.interface';
 @Entity('applicantDetails')
 export class ApplicantDetails {
   @PrimaryGeneratedColumn()
@@ -34,11 +35,14 @@ export class ApplicantDetails {
   @Column({ nullable: false, type: 'jsonb' })
   location: ApplicantLocation;
 
-  @Column({ nullable: false })
-  expertise: string;
-
   @Column({ nullable: false, type: 'jsonb' })
-  experience: string;
+  experience: Experience[];
+
+  @Column({ nullable: false })
+  relocation: boolean;
+
+  @Column({ nullable: true })
+  resume: string;
 
   @Column({ nullable: false })
   languages: string;
