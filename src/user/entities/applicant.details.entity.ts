@@ -18,7 +18,7 @@ export class ApplicantDetails {
   applicantDetailsId: number;
 
   @Column({ nullable: false })
-  dob: Date;
+  dob: string;
 
   @Column({ nullable: false })
   gender: string;
