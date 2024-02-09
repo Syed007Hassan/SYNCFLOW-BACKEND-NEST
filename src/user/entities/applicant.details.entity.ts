@@ -17,34 +17,34 @@ export class ApplicantDetails {
   @PrimaryGeneratedColumn()
   applicantDetailsId: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   dob: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   gender: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   aboutMe: string;
 
-  @Column({ nullable: false, type: 'jsonb' })
+  @Column({ nullable: true, type: 'jsonb' })
   education: Education[];
 
-  @Column({ nullable: false, type: 'jsonb' })
+  @Column({ nullable: true, type: 'jsonb' })
   skills: string[];
 
-  @Column({ nullable: false, type: 'jsonb' })
+  @Column({ nullable: true, type: 'jsonb' })
   location: ApplicantLocation;
 
-  @Column({ nullable: false, type: 'jsonb' })
+  @Column({ nullable: true, type: 'jsonb' })
   experience: Experience[];
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   relocation: boolean;
 
   @Column({ nullable: true })
   resume: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   languages: string;
 
   //
