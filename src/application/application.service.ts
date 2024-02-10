@@ -109,7 +109,7 @@ export class ApplicationService {
   async findByApplicantId(applicantId: number) {
     const applications = await this.applicationRepo.find({
       where: { applicant: { id: applicantId } },
-      relations: ['applicant', 'job'],
+      relations: ['applicant', 'job', 'stage'],
     });
 
     //delete the password from the response
