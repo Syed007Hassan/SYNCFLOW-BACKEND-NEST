@@ -8,6 +8,8 @@ import { Application } from './entities/application.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Job } from 'src/job/entities/job.entity';
 import { Applicant } from 'src/user/entities/user.entity';
+import { WorkFlow } from 'src/workflow/entities/workflow.entity';
+import { Stage } from 'src/workflow/entities/stage.entity';
 
 @Injectable()
 export class ApplicationService {
@@ -18,6 +20,10 @@ export class ApplicationService {
     public readonly jobRepo: Repository<Job>,
     @InjectRepository(Applicant)
     public readonly applicantRepo: Repository<Applicant>,
+    @InjectRepository(WorkFlow)
+    public readonly workflowRepo: Repository<WorkFlow>,
+    @InjectRepository(Stage)
+    public readonly stageRepo: Repository<Stage>,
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
@@ -46,10 +52,33 @@ export class ApplicationService {
       throw new Error('Job or Applicant not found');
     }
 
+    const existingJobWorkflow = await this.workflowRepo.findOne({
+      where: { job: { jobId: jobId } },
+    });
+
+    if (!existingJobWorkflow) {
+      throw new Error('Workflow not found');
+    }
+
+    const existingFirstStageInWorkflow = await this.stageRepo.findOne({
+      where: { workflow: { workflowId: existingJobWorkflow.workflowId } },
+      order: { stageId: 'ASC' },
+    });
+
+    console.log(
+      JSON.stringify(existingFirstStageInWorkflow) +
+        'existingFirstStageInWorkflow',
+    );
+
+    if (!existingFirstStageInWorkflow) {
+      throw new Error('First stage not found');
+    }
+
     const newApplication = await this.applicationRepo.create({
       ...createApplicationDto,
       job: job,
       applicant: applicant,
+      stage: existingFirstStageInWorkflow,
     });
 
     return await this.applicationRepo.save(newApplication);
