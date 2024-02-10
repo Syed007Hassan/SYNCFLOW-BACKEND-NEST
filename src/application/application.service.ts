@@ -124,6 +124,22 @@ export class ApplicationService {
     return applications;
   }
 
+  async findByJobIdAndApplicantId(jobId: number, applicantId: number) {
+    const application = await this.applicationRepo.findOne({
+      where: { job: { jobId: jobId }, applicant: { id: applicantId } },
+      relations: ['applicant', 'job', 'stage'],
+    });
+
+    //delete the password from the response
+    delete application.applicant.password;
+
+    if (!application) {
+      throw new Error('No application found');
+    }
+
+    return application;
+  }
+
   update(id: number, updateApplicationDto: UpdateApplicationDto) {
     return `This action updates a #${id} application`;
   }
