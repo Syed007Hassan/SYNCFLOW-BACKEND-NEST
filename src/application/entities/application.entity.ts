@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Job } from '../../job/entities/job.entity';
 import { Applicant } from '../../user/entities/user.entity';
+import { Stage } from '../../workflow/entities/stage.entity';
 
 @Entity()
 export class Application {
@@ -32,6 +33,10 @@ export class Application {
   @ManyToOne(() => Job, (job) => job.applications)
   @JoinColumn({ name: 'jobId' })
   job: Job;
+
+  @ManyToOne(() => Stage, (stage) => stage.applications)
+  @JoinColumn({ name: 'stageId' })
+  stage: Stage;
 
   @BeforeInsert()
   setApplicationDate() {

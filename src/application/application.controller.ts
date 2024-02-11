@@ -55,13 +55,34 @@ export class ApplicationController {
 
   @Get('findByApplicantId/:applicantId')
   @ApiOperation({
-    summary: 'Find application by applicant ID, for applicant use only',
+    summary: 'Find all applications by applicant ID, for applicant use only',
   })
   async findByApplicantId(@Param('applicantId') applicantId: string) {
     try {
       const application = await this.applicationService.findByApplicantId(
         +applicantId,
       );
+      return { success: true, data: application };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Get('findByJobIdAndApplicantId/:jobId/:applicantId')
+  @ApiOperation({
+    summary:
+      'Find application by job ID and applicant ID, for applicant use only',
+  })
+  async findByJobIdAndApplicantId(
+    @Param('jobId') jobId: string,
+    @Param('applicantId') applicantId: string,
+  ) {
+    try {
+      const application =
+        await this.applicationService.findByJobIdAndApplicantId(
+          +jobId,
+          +applicantId,
+        );
       return { success: true, data: application };
     } catch (err) {
       return { success: false, message: err.message };
