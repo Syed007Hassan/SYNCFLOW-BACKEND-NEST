@@ -14,6 +14,7 @@ import { JobModule } from './job/job.module';
 import { ApplicationModule } from './application/application.module';
 import { PostgreSqlDataSource } from './config/OrmConfig';
 import { WorkflowModule } from './workflow/workflow.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { WorkflowModule } from './workflow/workflow.module';
     JobModule,
     ApplicationModule,
     WorkflowModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
