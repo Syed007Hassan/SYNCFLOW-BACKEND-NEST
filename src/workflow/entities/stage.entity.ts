@@ -14,6 +14,7 @@ import {
 } from 'typeorm';
 import { StageAssignee } from './stageAssignee';
 import { WorkFlow } from './workflow.entity';
+import { Application } from 'src/application/entities/application.entity';
 
 @Entity('stage')
 export class Stage {
@@ -32,4 +33,7 @@ export class Stage {
 
   @OneToMany(() => StageAssignee, (stageAssignee) => stageAssignee.stage)
   assignees: StageAssignee[];
+
+  @OneToMany(() => Application, (application) => application.stage)
+  applications: Application[];
 }

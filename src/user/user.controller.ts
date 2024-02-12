@@ -11,6 +11,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { ApplicantDetailsDto } from './dto/applicantDetails.dto';
 
 @ApiTags('User/Candidate')
 @Controller('user')
@@ -46,6 +47,32 @@ export class UserController {
   async findOneByEmail(@Param('email') email: string) {
     try {
       const user = await this.userService.findOneByEmail(email);
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Post('createApplicantDetails/:id')
+  async createApplicantDetails(
+    @Param('id') id: string,
+    @Body() applicantDetailsDto: ApplicantDetailsDto,
+  ) {
+    try {
+      const user = await this.userService.createApplicantDetails(
+        +id,
+        applicantDetailsDto,
+      );
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Get('findApplicantDetails/:id')
+  async findApplicantDetails(@Param('id') id: string) {
+    try {
+      const user = await this.userService.findApplicantDetails(+id);
       return { success: true, data: user };
     } catch (err) {
       return { success: false, message: err.message };

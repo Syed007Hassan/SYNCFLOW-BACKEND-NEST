@@ -10,16 +10,29 @@ import {
 import { ApplicationService } from './application.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Application')
 @Controller('application')
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
-  @Post('/create')
-  create(@Body() createApplicationDto: CreateApplicationDto) {
-    return this.applicationService.create(createApplicationDto);
+  @Post('/createApplication/:jobId/:applicantId')
+  async create(
+    @Param('jobId') jobId: string,
+    @Param('applicantId') applicantId: string,
+    @Body() createApplicationDto: CreateApplicationDto,
+  ) {
+    try {
+      const application = await this.applicationService.create(
+        +jobId,
+        +applicantId,
+        createApplicationDto,
+      );
+      return { success: true, data: application };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Get('findAll')
@@ -27,9 +40,53 @@ export class ApplicationController {
     return this.applicationService.findAll();
   }
 
-  @Get('findOne:id')
-  findOne(@Param('id') id: string) {
-    return this.applicationService.findOne(+id);
+  @Get('findByJobId/:jobId')
+  @ApiOperation({
+    summary: 'Find application by job ID, for recruiter use only',
+  })
+  async findByJobid(@Param('jobId') jobId: string) {
+    try {
+      const application = await this.applicationService.findByJobId(+jobId);
+      return { success: true, data: application };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Get('findByApplicantId/:applicantId')
+  @ApiOperation({
+    summary: 'Find all applications by applicant ID, for applicant use only',
+  })
+  async findByApplicantId(@Param('applicantId') applicantId: string) {
+    try {
+      const application = await this.applicationService.findByApplicantId(
+        +applicantId,
+      );
+      return { success: true, data: application };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Get('findByJobIdAndApplicantId/:jobId/:applicantId')
+  @ApiOperation({
+    summary:
+      'Find application by job ID and applicant ID, for applicant use only',
+  })
+  async findByJobIdAndApplicantId(
+    @Param('jobId') jobId: string,
+    @Param('applicantId') applicantId: string,
+  ) {
+    try {
+      const application =
+        await this.applicationService.findByJobIdAndApplicantId(
+          +jobId,
+          +applicantId,
+        );
+      return { success: true, data: application };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Patch('updateApplicationById:id')
