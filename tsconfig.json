@@ -17,7 +17,7 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "types": ["node", "Multer"] // <-- Add "Multer" here
+    "types": ["node", "@types/multer"] // <-- Add "Multer" here
   },
   "watchOptions": {
     // Use native file system events for files and directories
