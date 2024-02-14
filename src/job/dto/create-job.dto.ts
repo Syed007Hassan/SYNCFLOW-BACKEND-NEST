@@ -1,5 +1,38 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString, IsOptional, IsDate } from 'class-validator';
+import {
+  IsNumber,
+  IsString,
+  IsOptional,
+  IsDate,
+  IsNotEmpty,
+} from 'class-validator';
+
+class LocationDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  area: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  city: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  country: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  latitude: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  longitude: string;
+}
 
 export class CreateJobDto {
   @ApiProperty()
@@ -19,8 +52,8 @@ export class CreateJobDto {
   jobCategory: string;
 
   @ApiProperty()
-  @IsString()
-  jobLocation: string;
+  @IsNotEmpty()
+  jobLocation: LocationDto;
 
   @ApiProperty()
   @IsString()
