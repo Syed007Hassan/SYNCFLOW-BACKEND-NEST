@@ -18,6 +18,7 @@ import { Assessment } from './assessment.entity';
 import { Recruiter } from '../../employer/entities/employer.entity';
 import { HiredApplicant } from './hiredApplicant.entity';
 import { Interview } from './interview.entity';
+import { JobLocation } from '../dto/jobLocation.interface';
 @Entity('job')
 export class Job {
   @Index()
@@ -36,8 +37,8 @@ export class Job {
   @Column({ nullable: true })
   jobCategory: string;
 
-  @Column({ nullable: true })
-  jobLocation: string;
+  @Column({ nullable: true, type: 'jsonb' })
+  jobLocation: JobLocation;
 
   @Column({ nullable: true })
   jobSalary: string;

@@ -9,13 +9,14 @@ import {
 } from 'typeorm';
 import { Job } from '../../job/entities/job.entity';
 import { Applicant } from '../../user/entities/user.entity';
+import { Stage } from '../../workflow/entities/stage.entity';
 
 @Entity()
 export class Application {
   @PrimaryGeneratedColumn()
   applicationId: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, default: 'pending' })
   status: string;
 
   @Column({
@@ -29,15 +30,13 @@ export class Application {
   @JoinColumn({ name: 'id' })
   applicant: Applicant;
 
-  @Column({ nullable: true })
-  id: number;
-
   @ManyToOne(() => Job, (job) => job.applications)
   @JoinColumn({ name: 'jobId' })
   job: Job;
 
-  @Column({ nullable: true })
-  jobId: number;
+  @ManyToOne(() => Stage, (stage) => stage.applications)
+  @JoinColumn({ name: 'stageId' })
+  stage: Stage;
 
   @BeforeInsert()
   setApplicationDate() {

@@ -9,25 +9,42 @@ import {
   OneToOne,
 } from 'typeorm';
 import { Applicant } from './user.entity';
-
+import { Education } from '../dto/education.interface';
+import { ApplicantLocation } from '../dto/applicantLocation.interface';
+import { Experience } from '../dto/experience.interface';
 @Entity('applicantDetails')
 export class ApplicantDetails {
   @PrimaryGeneratedColumn()
   applicantDetailsId: number;
 
-  @Column({ nullable: false })
-  expertise: string;
+  @Column({ nullable: true })
+  dob: string;
 
-  @Column({ nullable: false })
-  experience: string;
+  @Column({ nullable: true })
+  gender: string;
 
-  @Column({ nullable: false })
-  education: string;
+  @Column({ nullable: true })
+  aboutMe: string;
 
-  @Column({ nullable: false })
-  skills: string;
+  @Column({ nullable: true, type: 'jsonb' })
+  education: Education[];
 
-  @Column({ nullable: false })
+  @Column({ nullable: true, type: 'jsonb' })
+  skills: string[];
+
+  @Column({ nullable: true, type: 'jsonb' })
+  location: ApplicantLocation;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  experience: Experience[];
+
+  @Column({ nullable: true })
+  relocation: boolean;
+
+  @Column({ nullable: true })
+  resume: string;
+
+  @Column({ nullable: true })
   languages: string;
 
   //
