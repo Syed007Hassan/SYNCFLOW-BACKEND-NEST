@@ -40,3 +40,7 @@ PGADMIN_DEFAULT_PASSWORD=admin
 
 #### Step 3: Push the Docker image to Docker Hub
 `docker push syed007hassan/nestjs`
+
+### To access the remote azure vm 
+
+ssh -i "C:/Users/Syed Hassan/Downloads/fyp_nest_key_pair.pem" smhsyed61smh@40.76.250.183
