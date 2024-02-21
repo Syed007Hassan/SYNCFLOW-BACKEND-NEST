@@ -166,7 +166,6 @@ export class ApplicationService {
     const stage = await this.stageRepo.findOne({
       where: {
         stageId: stageId,
-        workflow: { workflowId: application.job.workflow.workflowId },
       },
       relations: ['workflow'],
     });
