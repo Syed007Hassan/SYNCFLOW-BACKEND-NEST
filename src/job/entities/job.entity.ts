@@ -55,6 +55,9 @@ export class Job {
   @Column({ nullable: true })
   jobExperience: string;
 
+  @Column({ nullable: true, type: 'jsonb' })
+  jobSkills: string[];
+
   @Column({ nullable: true })
   jobCreatedAt: Date;
 
