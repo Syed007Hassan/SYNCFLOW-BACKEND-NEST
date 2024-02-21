@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsDate,
   IsNotEmpty,
+  IsArray,
 } from 'class-validator';
 
 class LocationDto {
@@ -66,6 +67,11 @@ export class CreateJobDto {
   @ApiProperty()
   @IsString()
   jobQualification: string;
+
+  @ApiProperty({ type: [String] })
+  @IsNotEmpty()
+  @IsArray()
+  jobSkills: string[];
 
   @ApiProperty()
   @IsString()
