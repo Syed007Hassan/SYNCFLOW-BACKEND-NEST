@@ -29,6 +29,9 @@ export class ApplicantDetails {
   @Column({ nullable: true })
   aboutMe: string;
 
+  @Column({ nullable: true })
+  phoneNo: string;
+
   @Column({ nullable: true, type: 'jsonb' })
   education: Education[];
 

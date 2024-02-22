@@ -118,6 +118,11 @@ export class ApplicantDetailsDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsString()
+  phoneNo: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
   location: LocationDto;
 
   @ApiProperty({ type: [ExperienceDto] })

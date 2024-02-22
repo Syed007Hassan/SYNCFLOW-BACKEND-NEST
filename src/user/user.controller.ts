@@ -10,7 +10,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { ApplicantDetailsDto } from './dto/applicantDetails.dto';
 
 @ApiTags('User/Candidate')
@@ -79,9 +79,32 @@ export class UserController {
     }
   }
 
-  @Patch('update/:id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @Patch('updateContactDetails/:id')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        phoneNo: { type: 'string' },
+        location: {
+          type: 'object',
+          properties: {
+            area: { type: 'string' },
+            city: { type: 'string' },
+            country: { type: 'string' },
+            latitude: { type: 'string' },
+            longitude: { type: 'string' },
+          },
+        },
+      },
+    },
+  })
+  update(@Param('id') id: string, @Body() updateUserDto) {
+    try {
+      const user = this.userService.updateContact(+id, updateUserDto);
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Delete('delete/:id')
