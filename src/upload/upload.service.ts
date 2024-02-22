@@ -54,6 +54,54 @@ export class UploadService {
     return uploadedData;
   }
 
+  async uploadProfilePicture(id: number, file) {
+    const existingUserProfile = await this.applicantDetailsRepo.findOne({
+      where: { applicant: { id: id } },
+    });
+
+    if (!existingUserProfile) {
+      throw new Error('User does not exist');
+    }
+
+    const { originalname } = file;
+
+    const uploadedData = await this.s3_upload(
+      file.buffer,
+      this.AWS_S3_BUCKET_NAME,
+      'applicantProfile/' + originalname,
+      file.mimetype,
+    );
+
+    existingUserProfile.profilePicture = uploadedData.Location;
+    await this.applicantDetailsRepo.save(existingUserProfile);
+
+    return uploadedData;
+  }
+
+  async uploadCompanyProfilePicture(companyId: number, file) {
+    const existingCompany = await this.companyRepo.findOne({
+      where: { companyId: companyId },
+    });
+
+    if (!existingCompany) {
+      throw new Error('Company does not exist');
+    }
+
+    const { originalname } = file;
+
+    const uploadedData = await this.s3_upload(
+      file.buffer,
+      this.AWS_S3_BUCKET_NAME,
+      'companyProfile/' + originalname,
+      file.mimetype,
+    );
+
+    existingCompany.companyProfile = uploadedData.Location;
+    await this.companyRepo.save(existingCompany);
+
+    return uploadedData;
+  }
+
   async uploadFile(file) {
     const { originalname } = file;
     console.log(this.AWS_S3_BUCKET_NAME);
