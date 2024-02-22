@@ -21,6 +21,9 @@ export class ApplicantDetails {
   dob: string;
 
   @Column({ nullable: true })
+  profilePicture: string;
+
+  @Column({ nullable: true })
   gender: string;
 
   @Column({ nullable: true })
