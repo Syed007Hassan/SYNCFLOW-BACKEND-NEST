@@ -120,6 +120,60 @@ export class UserService {
     return await this.applicantDetailsRepo.save(updatedUser);
   }
 
+  async updateEducationDetails(id: number, updateUserDto) {
+    const user = await this.applicantDetailsRepo.findOne({
+      where: { applicant: { id: id } },
+      relations: ['applicant'],
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const updatedUser = await this.applicantDetailsRepo.merge(
+      user,
+      updateUserDto,
+    );
+
+    return await this.applicantDetailsRepo.save(updatedUser);
+  }
+
+  async updateExperienceDetails(id: number, updateUserDto) {
+    const user = await this.applicantDetailsRepo.findOne({
+      where: { applicant: { id: id } },
+      relations: ['applicant'],
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const updatedUser = await this.applicantDetailsRepo.merge(
+      user,
+      updateUserDto,
+    );
+
+    return await this.applicantDetailsRepo.save(updatedUser);
+  }
+
+  async updateSkills(id: number, updateUserDto) {
+    const user = await this.applicantDetailsRepo.findOne({
+      where: { applicant: { id: id } },
+      relations: ['applicant'],
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const updatedUser = await this.applicantDetailsRepo.merge(
+      user,
+      updateUserDto,
+    );
+
+    return await this.applicantDetailsRepo.save(updatedUser);
+  }
+
   remove(id: number) {
     return `#${id} user deleted`;
   }

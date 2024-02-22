@@ -107,6 +107,96 @@ export class UserController {
     }
   }
 
+  @Patch('updateEducationDetails/:id')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        education: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              degree: { type: 'string' },
+              institution: { type: 'string' },
+              startDate: { type: 'string' },
+              endDate: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+  })
+  async updateEducationDetails(@Param('id') id: string, @Body() updateUserDto) {
+    try {
+      const user = await this.userService.updateEducationDetails(
+        +id,
+        updateUserDto,
+      );
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Patch('updateExperienceDetails/:id')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        experience: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              company: { type: 'string' },
+              title: { type: 'string' },
+              startDate: { type: 'string' },
+              endDate: { type: 'string' },
+              description: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+  })
+  async updateExperienceDetails(
+    @Param('id') id: string,
+    @Body() updateUserDto,
+  ) {
+    try {
+      const user = await this.userService.updateExperienceDetails(
+        +id,
+        updateUserDto,
+      );
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Patch('updateSkills/:id')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        aboutMe: { type: 'string' },
+        skills: {
+          type: 'array',
+          items: { type: 'string' },
+        },
+      },
+    },
+  })
+  async updateSkills(@Param('id') id: string, @Body() updateUserDto) {
+    try {
+      const user = await this.userService.updateSkills(+id, updateUserDto);
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
   @Delete('delete/:id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
