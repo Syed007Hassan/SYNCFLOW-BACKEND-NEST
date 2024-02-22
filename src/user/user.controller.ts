@@ -10,7 +10,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { ApplicantDetailsDto } from './dto/applicantDetails.dto';
 
 @ApiTags('User/Candidate')
@@ -79,9 +79,122 @@ export class UserController {
     }
   }
 
-  @Patch('update/:id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @Patch('updateContactDetails/:id')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        phoneNo: { type: 'string' },
+        location: {
+          type: 'object',
+          properties: {
+            area: { type: 'string' },
+            city: { type: 'string' },
+            country: { type: 'string' },
+            latitude: { type: 'string' },
+            longitude: { type: 'string' },
+          },
+        },
+      },
+    },
+  })
+  async update(@Param('id') id: string, @Body() updateUserDto) {
+    try {
+      const user = await this.userService.updateContact(+id, updateUserDto);
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Patch('updateEducationDetails/:id')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        education: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              degree: { type: 'string' },
+              institution: { type: 'string' },
+              startDate: { type: 'string' },
+              endDate: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+  })
+  async updateEducationDetails(@Param('id') id: string, @Body() updateUserDto) {
+    try {
+      const user = await this.userService.updateEducationDetails(
+        +id,
+        updateUserDto,
+      );
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Patch('updateExperienceDetails/:id')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        experience: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              company: { type: 'string' },
+              title: { type: 'string' },
+              startDate: { type: 'string' },
+              endDate: { type: 'string' },
+              description: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+  })
+  async updateExperienceDetails(
+    @Param('id') id: string,
+    @Body() updateUserDto,
+  ) {
+    try {
+      const user = await this.userService.updateExperienceDetails(
+        +id,
+        updateUserDto,
+      );
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Patch('updateSkillDetails/:id')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        aboutMe: { type: 'string' },
+        skills: {
+          type: 'array',
+          items: { type: 'string' },
+        },
+      },
+    },
+  })
+  async updateSkills(@Param('id') id: string, @Body() updateUserDto) {
+    try {
+      const user = await this.userService.updateSkills(+id, updateUserDto);
+      return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Delete('delete/:id')
