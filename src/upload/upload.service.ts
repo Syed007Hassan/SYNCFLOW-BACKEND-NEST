@@ -30,6 +30,30 @@ export class UploadService {
     });
   }
 
+  async uploadResume(id: number, file) {
+    const existingUserProfile = await this.applicantDetailsRepo.findOne({
+      where: { applicant: { id: id } },
+    });
+
+    if (!existingUserProfile) {
+      throw new Error('User does not exist');
+    }
+
+    const { originalname } = file;
+
+    const uploadedData = await this.s3_upload(
+      file.buffer,
+      this.AWS_S3_BUCKET_NAME,
+      'resume/' + originalname,
+      file.mimetype,
+    );
+
+    existingUserProfile.resume = uploadedData.Location;
+    await this.applicantDetailsRepo.save(existingUserProfile);
+
+    return uploadedData;
+  }
+
   async uploadFile(file) {
     const { originalname } = file;
     console.log(this.AWS_S3_BUCKET_NAME);
@@ -38,18 +62,6 @@ export class UploadService {
       file.buffer,
       this.AWS_S3_BUCKET_NAME,
       originalname,
-      file.mimetype,
-    );
-  }
-
-  async uploadResume(id: number, file) {
-    const { originalname } = file;
-    console.log(this.AWS_S3_BUCKET_NAME);
-
-    return await this.s3_upload(
-      file.buffer,
-      this.AWS_S3_BUCKET_NAME,
-      'resume/' + originalname,
       file.mimetype,
     );
   }
