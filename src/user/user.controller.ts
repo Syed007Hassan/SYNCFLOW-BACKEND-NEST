@@ -98,9 +98,9 @@ export class UserController {
       },
     },
   })
-  update(@Param('id') id: string, @Body() updateUserDto) {
+  async update(@Param('id') id: string, @Body() updateUserDto) {
     try {
-      const user = this.userService.updateContact(+id, updateUserDto);
+      const user = await this.userService.updateContact(+id, updateUserDto);
       return { success: true, data: user };
     } catch (err) {
       return { success: false, message: err.message };

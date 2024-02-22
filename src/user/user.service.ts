@@ -102,8 +102,22 @@ export class UserService {
   }
 
   //
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async updateContact(id: number, updateUserDto) {
+    const user = await this.applicantDetailsRepo.findOne({
+      where: { applicant: { id: id } },
+      relations: ['applicant'],
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const updatedUser = await this.applicantDetailsRepo.merge(
+      user,
+      updateUserDto,
+    );
+
+    return await this.applicantDetailsRepo.save(updatedUser);
   }
 
   remove(id: number) {
