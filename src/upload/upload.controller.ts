@@ -44,9 +44,10 @@ export class UploadController {
     }
   }
 
-  @Post('resume')
+  @Post(':id/resume')
   @UseInterceptors(FileInterceptor('file'))
   async resume(
+    @Param('id') id: string,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -58,7 +59,7 @@ export class UploadController {
     file: Express.Multer.File,
   ) {
     try {
-      const response = await this.uploadService.uploadFile(file);
+      const response = await this.uploadService.uploadResume(+id, file);
       return { success: true, data: response };
     } catch (e) {
       return { success: false, message: e.message };
