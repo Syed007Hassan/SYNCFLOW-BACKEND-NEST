@@ -175,7 +175,7 @@ export class UserController {
     }
   }
 
-  @Patch('updateSkills/:id')
+  @Patch('updateSkillDetails/:id')
   @ApiBody({
     schema: {
       type: 'object',
