@@ -36,8 +36,13 @@ export class ApplicationController {
   }
 
   @Get('findAll')
-  findAll() {
-    return this.applicationService.findAll();
+  async findAll() {
+    try {
+      const applications = await this.applicationService.findAll();
+      return { success: true, data: applications };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Get('findByJobId/:jobId')
@@ -89,12 +94,22 @@ export class ApplicationController {
     }
   }
 
-  @Patch('updateApplicationById:id')
-  update(
-    @Param('id') id: string,
-    @Body() updateApplicationDto: UpdateApplicationDto,
+  @Patch('updateApplicationStage/:jobId/:applicantId/:stageId')
+  async updateApplicationStage(
+    @Param('jobId') jobId: string,
+    @Param('applicantId') applicantId: string,
+    @Param('stageId') stageId: string,
   ) {
-    return this.applicationService.update(+id, updateApplicationDto);
+    try {
+      const application = await this.applicationService.updateApplication(
+        +jobId,
+        +applicantId,
+        +stageId,
+      );
+      return { success: true, data: application };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
   @Delete('deleteOneById:id')

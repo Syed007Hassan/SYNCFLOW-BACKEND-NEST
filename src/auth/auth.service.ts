@@ -70,6 +70,7 @@ export class AuthService {
       companyName: ' ',
       companyEmail: ' ',
       companyAddress: ' ',
+      companyProfile: ' ',
       companyPhone: 0,
       companyWebsite: ' ',
     });
@@ -103,6 +104,7 @@ export class AuthService {
       company = await this.companyService.create({
         companyName: user.companyName,
         companyEmail: '',
+        companyProfile: '',
         companyAddress: '',
         companyPhone: 0,
         companyWebsite: '',
@@ -209,7 +211,12 @@ export class AuthService {
       loginUserDto.role,
     );
 
-    const payload = { email: user.email, name: user.name, role: user.role };
+    const payload = {
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      id: user.id,
+    };
     const jwt = await this.jwtService.signAsync(payload);
     return { jwt };
   }
@@ -239,7 +246,7 @@ export class AuthService {
     if (!isPasswordMatching) {
       throw new Error('Invalid credentials');
     }
-    return { name: user.name, email: user.email, role: user.role };
+    return { name: user.name, email: user.email, role: user.role, id: user.id };
   }
 
   async verifyJwt(jwt: string) {

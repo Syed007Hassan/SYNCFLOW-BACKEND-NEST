@@ -101,6 +101,11 @@ export class ApplicantDetailsDto {
   @IsString()
   aboutMe: string;
 
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  profilePicture: string;
+
   @ApiProperty({ type: [EducationDto] })
   @IsNotEmpty()
   @IsArray()
@@ -110,6 +115,11 @@ export class ApplicantDetailsDto {
   @IsNotEmpty()
   @IsArray()
   skills: string[];
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  phoneNo: string;
 
   @ApiProperty()
   @IsNotEmpty()

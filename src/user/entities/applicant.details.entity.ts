@@ -21,10 +21,16 @@ export class ApplicantDetails {
   dob: string;
 
   @Column({ nullable: true })
+  profilePicture: string;
+
+  @Column({ nullable: true })
   gender: string;
 
   @Column({ nullable: true })
   aboutMe: string;
+
+  @Column({ nullable: true })
+  phoneNo: string;
 
   @Column({ nullable: true, type: 'jsonb' })
   education: Education[];

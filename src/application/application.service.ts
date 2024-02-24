@@ -84,8 +84,21 @@ export class ApplicationService {
     return await this.applicationRepo.save(newApplication);
   }
 
-  findAll() {
-    return `This action returns all application`;
+  async findAll() {
+    const applications = await this.applicationRepo.find({
+      relations: ['applicant', 'job', 'stage'],
+    });
+
+    //delete the password from the response
+    applications.forEach((application) => {
+      delete application.applicant.password;
+    });
+
+    if (!applications) {
+      throw new Error('No applications found');
+    }
+
+    return applications;
   }
 
   async findByJobId(jobId: number) {
@@ -140,8 +153,30 @@ export class ApplicationService {
     return application;
   }
 
-  update(id: number, updateApplicationDto: UpdateApplicationDto) {
-    return `This action updates a #${id} application`;
+  async updateApplication(jobId: number, applicantId: number, stageId: number) {
+    const application = await this.applicationRepo.findOne({
+      where: { job: { jobId: jobId }, applicant: { id: applicantId } },
+      relations: ['applicant', 'job', 'stage'],
+    });
+
+    if (!application) {
+      throw new Error('No application found');
+    }
+
+    const stage = await this.stageRepo.findOne({
+      where: {
+        stageId: stageId,
+      },
+      relations: ['workflow'],
+    });
+
+    if (!stage) {
+      throw new Error('Stage not found for this workflow');
+    }
+
+    application.stage = stage;
+
+    return await this.applicationRepo.save(application);
   }
 
   remove(id: number) {
