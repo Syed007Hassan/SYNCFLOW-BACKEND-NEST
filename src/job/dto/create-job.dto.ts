@@ -80,4 +80,8 @@ export class CreateJobDto {
   @ApiProperty()
   @IsString()
   jobExperience: string;
+
+  @ApiProperty()
+  @IsString()
+  restrictedLocationRange: string;
 }
