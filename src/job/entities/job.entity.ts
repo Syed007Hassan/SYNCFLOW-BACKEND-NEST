@@ -59,6 +59,9 @@ export class Job {
   jobSkills: string[];
 
   @Column({ nullable: true })
+  restrictedLocationRange: string;
+
+  @Column({ nullable: true })
   jobCreatedAt: Date;
 
   @ManyToOne((type) => Company, (company) => company.jobs)
