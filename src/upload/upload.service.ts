@@ -41,17 +41,22 @@ export class UploadService {
 
     const { originalname } = file;
 
-    const uploadedData = await this.s3_upload(
-      file.buffer,
-      this.AWS_S3_BUCKET_NAME,
-      'resume/' + originalname,
-      file.mimetype,
-    );
+    try {
+      const uploadedData = await this.s3_upload(
+        file.buffer,
+        this.AWS_S3_BUCKET_NAME,
+        'resume/' + originalname,
+        file.mimetype,
+      );
 
-    existingUserProfile.resume = uploadedData.Location;
-    await this.applicantDetailsRepo.save(existingUserProfile);
-
-    return uploadedData;
+      if (uploadedData) {
+        existingUserProfile.resume = uploadedData.Location;
+        await this.applicantDetailsRepo.save(existingUserProfile);
+        return uploadedData;
+      }
+    } catch (err) {
+      return err.message;
+    }
   }
 
   async uploadProfilePicture(id: number, file) {
@@ -65,17 +70,22 @@ export class UploadService {
 
     const { originalname } = file;
 
-    const uploadedData = await this.s3_upload(
-      file.buffer,
-      this.AWS_S3_BUCKET_NAME,
-      'applicantProfile/' + originalname,
-      file.mimetype,
-    );
+    try {
+      const uploadedData = await this.s3_upload(
+        file.buffer,
+        this.AWS_S3_BUCKET_NAME,
+        'applicantProfile/' + originalname,
+        file.mimetype,
+      );
 
-    existingUserProfile.profilePicture = uploadedData.Location;
-    await this.applicantDetailsRepo.save(existingUserProfile);
-
-    return uploadedData;
+      if (uploadedData) {
+        existingUserProfile.profilePicture = uploadedData.Location;
+        await this.applicantDetailsRepo.save(existingUserProfile);
+        return uploadedData;
+      }
+    } catch (err) {
+      return err.message;
+    }
   }
 
   async uploadCompanyProfilePicture(companyId: number, file) {
@@ -89,17 +99,22 @@ export class UploadService {
 
     const { originalname } = file;
 
-    const uploadedData = await this.s3_upload(
-      file.buffer,
-      this.AWS_S3_BUCKET_NAME,
-      'companyProfile/' + originalname,
-      file.mimetype,
-    );
+    try {
+      const uploadedData = await this.s3_upload(
+        file.buffer,
+        this.AWS_S3_BUCKET_NAME,
+        'companyProfile/' + originalname,
+        file.mimetype,
+      );
 
-    existingCompany.companyProfile = uploadedData.Location;
-    await this.companyRepo.save(existingCompany);
-
-    return uploadedData;
+      if (uploadedData) {
+        existingCompany.companyProfile = uploadedData.Location;
+        await this.companyRepo.save(existingCompany);
+        return uploadedData;
+      }
+    } catch (err) {
+      return err.message;
+    }
   }
 
   async uploadFile(file) {
