@@ -179,6 +179,25 @@ export class ApplicationService {
     return await this.applicationRepo.save(application);
   }
 
+  async updateApplicationStatus(
+    jobId: number,
+    applicantId: number,
+    status: string,
+  ) {
+    const application = await this.applicationRepo.findOne({
+      where: { job: { jobId: jobId }, applicant: { id: applicantId } },
+      relations: ['applicant', 'job', 'stage'],
+    });
+
+    if (!application) {
+      throw new Error('No application found');
+    }
+
+    application.status = status;
+
+    return await this.applicationRepo.save(application);
+  }
+
   remove(id: number) {
     return `This action removes a #${id} application`;
   }
