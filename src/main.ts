@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Logger } from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
 import * as dotenv from 'dotenv';
 import helmet from 'helmet';
 
@@ -16,7 +17,7 @@ async function bootstrap() {
     allowedHeaders: '*',
   });
 
-  app.use((req, res, next) => {
+  app.use((req: Request, res: Response, next: NextFunction) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header(
       'Access-Control-Allow-Methods',

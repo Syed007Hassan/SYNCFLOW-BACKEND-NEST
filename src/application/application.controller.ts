@@ -10,7 +10,7 @@ import {
 import { ApplicationService } from './application.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Application')
 @Controller('application')
@@ -64,9 +64,8 @@ export class ApplicationController {
   })
   async findByApplicantId(@Param('applicantId') applicantId: string) {
     try {
-      const application = await this.applicationService.findByApplicantId(
-        +applicantId,
-      );
+      const application =
+        await this.applicationService.findByApplicantId(+applicantId);
       return { success: true, data: application };
     } catch (err) {
       return { success: false, message: err.message };
@@ -105,6 +104,36 @@ export class ApplicationController {
         +jobId,
         +applicantId,
         +stageId,
+      );
+      return { success: true, data: application };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  // a patch request to update the application status, status will be send in the body
+  @Patch('updateApplicationStatus/:jobId/:applicantId')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        status: {
+          type: 'string',
+          description: 'The new status of the application',
+        },
+      },
+    },
+  })
+  async updateApplicationStatus(
+    @Param('jobId') jobId: string,
+    @Param('applicantId') applicantId: string,
+    @Body('status') status: string,
+  ) {
+    try {
+      const application = await this.applicationService.updateApplicationStatus(
+        +jobId,
+        +applicantId,
+        status,
       );
       return { success: true, data: application };
     } catch (err) {
