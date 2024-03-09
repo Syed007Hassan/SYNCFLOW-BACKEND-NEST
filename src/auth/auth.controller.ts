@@ -27,7 +27,7 @@ import { ExistingEmployerDto } from 'src/employer/dto/existing-employer.dto';
 import { LoginEmployerDto } from 'src/employer/dto/login-employer.dto';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { AddCompanyEmployeeDto } from 'src/employer/dto/add-employee.company.dto';
-import { GoogleOauthGuard } from './guards/google-oauth.guard';
+import { GoogleOauthGuard } from './guards/google-recruiter.oauth.guard';
 import { Response } from 'express';
 import { FRONTEND_URL } from './dto/constants';
 
@@ -40,11 +40,12 @@ export class AuthController {
   @UseGuards(GoogleOauthGuard)
   async auth() {}
 
-  @Get('google/callback')
+  @Get('google/callback/recruiter')
   @UseGuards(GoogleOauthGuard)
   async googleAuthCallback(@Req() req, @Res() res: Response) {
     try {
       const token = await this.authService.oAuthLogin(req.user);
+      console.log(JSON.stringify(token) + 'token');
       res.redirect(`${FRONTEND_URL}/oauth?token=${token.jwt}`);
     } catch (err) {
       res.status(500).send({ success: false, message: err.message });

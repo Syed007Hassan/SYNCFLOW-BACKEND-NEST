@@ -11,13 +11,16 @@ import { Strategy, VerifyCallback } from 'passport-google-oauth2';
 configDotenv();
 
 @Injectable()
-export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
+export class GoogleStrategyRecruiter extends PassportStrategy(
+  Strategy,
+  'google',
+) {
   constructor() {
     // @InjectRepository(User) private userRepository: Repository<User>,
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.CALLBACK_URL,
+      callbackURL: process.env.CALLBACK_URL_RECRUITER,
       scope: ['profile', 'email'],
     });
   }

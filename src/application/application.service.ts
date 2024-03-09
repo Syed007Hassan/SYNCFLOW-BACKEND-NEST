@@ -104,17 +104,19 @@ export class ApplicationService {
   async findByJobId(jobId: number) {
     const applications = await this.applicationRepo.find({
       where: { job: { jobId: jobId } },
-      relations: ['applicant', 'job', 'applicant.applicantDetails'],
+      relations: ['applicant', 'job', 'applicant.applicantDetails', 'stage'],
     });
+
+    console.log(JSON.stringify(applications) + 'applications');
+
+    if (applications.length === 0) {
+      throw new Error('No applications found');
+    }
 
     //delete the password from the response
     applications.forEach((application) => {
       delete application.applicant.password;
     });
-
-    if (!applications) {
-      throw new Error('No applications found');
-    }
 
     return applications;
   }
@@ -175,6 +177,25 @@ export class ApplicationService {
     }
 
     application.stage = stage;
+
+    return await this.applicationRepo.save(application);
+  }
+
+  async updateApplicationStatus(
+    jobId: number,
+    applicantId: number,
+    status: string,
+  ) {
+    const application = await this.applicationRepo.findOne({
+      where: { job: { jobId: jobId }, applicant: { id: applicantId } },
+      relations: ['applicant', 'job', 'stage'],
+    });
+
+    if (!application) {
+      throw new Error('No application found');
+    }
+
+    application.status = status;
 
     return await this.applicationRepo.save(application);
   }
