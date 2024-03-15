@@ -8,6 +8,7 @@ import { Job } from './entities/job.entity';
 import { CreateJobDto } from './dto/create-job.dto';
 import { Company } from 'src/company/entities/company.entity';
 import { Recruiter } from 'src/employer/entities/employer.entity';
+import { getMonth, getYear, getDate } from 'date-fns';
 
 @Injectable()
 export class JobService {
@@ -107,6 +108,41 @@ export class JobService {
     return totalJobs;
   }
 
+  async findActiveJobsByCompanyId(id: number) {
+    const activeJobs = await this.jobRepo.count({
+      where: { company: { companyId: id }, jobStatus: 'active' },
+    });
+
+    if (activeJobs === 0) {
+      throw new Error('No active jobs found');
+    }
+    return activeJobs;
+  }
+
+  async findJobsCountInAllMonthsByCompanyId(id: number) {
+    // Assuming jobs is the array of job objects
+    const jobs = await this.jobRepo.find({
+      where: { company: { companyId: id } },
+    });
+    const jobCountsByMonth = jobs.reduce((acc, job) => {
+      const date = new Date(job.jobCreatedAt);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1; // getMonth() returns month index starting from 0
+
+      const key = `${year}-${month < 10 ? '0' + month : month}`; // key format: YYYY-MM
+
+      if (!acc[key]) {
+        acc[key] = 0;
+      }
+
+      acc[key]++;
+
+      return acc;
+    }, {});
+
+    return jobCountsByMonth;
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} job`;
   }
@@ -115,7 +151,15 @@ export class JobService {
     return `This action updates a #${id} job`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} job`;
+  async remove(id: number) {
+    const job = await this.jobRepo.findOne({
+      where: { jobId: id },
+    });
+
+    if (!job) {
+      throw new Error('Job not found');
+    }
+
+    return await this.jobRepo.remove(job);
   }
 }

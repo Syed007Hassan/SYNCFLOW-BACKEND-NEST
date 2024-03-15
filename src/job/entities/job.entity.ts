@@ -71,7 +71,7 @@ export class Job {
   @OneToMany(() => Application, (application) => application.job)
   applications: Application[];
 
-  @OneToOne(() => WorkFlow, (workflow) => workflow.job)
+  @OneToOne(() => WorkFlow, (workflow) => workflow.job, { cascade: true })
   workflow: WorkFlow;
 
   @OneToMany(() => AppliedJob, (appliedJob) => appliedJob.job)

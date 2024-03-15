@@ -72,7 +72,27 @@ export class JobController {
   async findTotalJobsByCompanyId(@Param('id') id: string) {
     try {
       const job = await this.jobService.findTotalJobsByCompanyId(+id);
-      console.log(job);
+      return { success: true, data: job };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Get('findActiveJobsByCompanyId/:id')
+  async findActiveJobsByCompanyId(@Param('id') id: string) {
+    try {
+      const job = await this.jobService.findActiveJobsByCompanyId(+id);
+      return { success: true, data: job };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Get('findJobsInAMonthByCompanyId/:id')
+  async findJobsInAMonthByCompanyId(@Param('id') id: string) {
+    try {
+      const job =
+        await this.jobService.findJobsCountInAllMonthsByCompanyId(+id);
       return { success: true, data: job };
     } catch (err) {
       return { success: false, message: err.message };
@@ -85,7 +105,12 @@ export class JobController {
   }
 
   @Delete('deleteJobById:id')
-  remove(@Param('id') id: string) {
-    return this.jobService.remove(+id);
+  async remove(@Param('id') id: string) {
+    try {
+      const job = await this.jobService.remove(+id);
+      return { success: true, data: job };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 }
