@@ -68,6 +68,17 @@ export class JobController {
     }
   }
 
+  @Get('findTotalJobsByCompanyId/:id')
+  async findTotalJobsByCompanyId(@Param('id') id: string) {
+    try {
+      const job = await this.jobService.findTotalJobsByCompanyId(+id);
+      console.log(job);
+      return { success: true, data: job };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
   @Patch('updateJobById:id')
   update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
     return this.jobService.update(+id, updateJobDto);

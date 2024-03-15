@@ -96,6 +96,17 @@ export class JobService {
     return job;
   }
 
+  async findTotalJobsByCompanyId(id: number) {
+    const totalJobs = await this.jobRepo.count({
+      where: { company: { companyId: id } },
+    });
+
+    if (totalJobs === 0) {
+      throw new Error('No jobs found');
+    }
+    return totalJobs;
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} job`;
   }
