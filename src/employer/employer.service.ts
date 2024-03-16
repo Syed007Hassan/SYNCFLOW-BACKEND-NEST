@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -12,6 +12,10 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { HttpService } from '@nestjs/axios';
 import { Cache } from 'cache-manager';
 import { Company } from 'src/company/entities/company.entity';
+import { Job } from 'src/job/entities/job.entity';
+import { WorkFlow } from 'src/workflow/entities/workflow.entity';
+import { Stage } from 'src/workflow/entities/stage.entity';
+import { StageAssignee } from 'src/workflow/entities/stageAssignee';
 
 @Injectable()
 export class EmployerService {
@@ -21,6 +25,14 @@ export class EmployerService {
     @InjectRepository(Company)
     private readonly companyRepo: Repository<Company>,
     private readonly companyService: CompanyService,
+    @InjectRepository(Job)
+    private readonly jobRepo: Repository<Job>,
+    @InjectRepository(WorkFlow)
+    private readonly workFlowRepo: Repository<WorkFlow>,
+    @InjectRepository(Stage)
+    private readonly stageRepo: Repository<Stage>,
+    @InjectRepository(StageAssignee)
+    private readonly stageAssigneeRepo: Repository<StageAssignee>,
     private readonly httpService: HttpService,
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
@@ -196,6 +208,90 @@ export class EmployerService {
     };
 
     return await this.employerRepo.save(updatedRecruiter);
+  }
+
+  async findAllTheStagesAssignedToRecruiter(recruiterId: number) {
+    // Find the recruiter
+    const recruiter = await this.employerRepo.findOne({
+      where: { recruiterId },
+      relations: ['company'],
+    });
+
+    console.log(recruiter + 'hhhhh');
+    if (!recruiter) {
+      throw new NotFoundException(`Recruiter with ID ${recruiterId} not found`);
+    }
+
+    // Get the company ID
+    const companyId = recruiter.company.companyId;
+
+    // Find all jobs for the company
+    const jobs = await this.jobRepo.find({
+      where: { company: { companyId } },
+      relations: ['workflow', 'workflow.stages', 'workflow.stages.assignees'],
+    });
+
+    if (!jobs) {
+      throw new NotFoundException(`No jobs found for company ID ${companyId}`);
+    }
+
+    // Filter jobs where the recruiter is assigned
+    const filteredJobs = jobs.filter((job) => {
+      return (
+        job.workflow &&
+        job.workflow.stages &&
+        job.workflow.stages.some((stage) => {
+          return (
+            stage.assignees &&
+            stage.assignees.some((assignee) => {
+              return (
+                assignee.assignees &&
+                assignee.assignees.some((a) => a.recruiterId === recruiterId)
+              );
+            })
+          );
+        })
+      );
+    });
+
+    if (filteredJobs.length === 0) {
+      throw new NotFoundException(
+        `No jobs found for recruiter ID ${recruiterId}`,
+      );
+    }
+
+    const result = filteredJobs.map((job) => {
+      return {
+        jobId: job.jobId,
+        jobTitle: job.jobTitle,
+        stages: job.workflow.stages
+          .filter((stage) => {
+            return (
+              stage.assignees &&
+              stage.assignees.some((assignee) => {
+                return (
+                  assignee.assignees &&
+                  assignee.assignees.some((a) => a.recruiterId === recruiterId)
+                );
+              })
+            );
+          })
+          .map((stage) => {
+            return {
+              stageId: stage.stageId,
+              stageName: stage.stageName,
+            };
+          }),
+      };
+    });
+
+    if (result.length === 0) {
+      throw new NotFoundException(
+        `No stages found for recruiter ID ${recruiterId}`,
+      );
+    }
+
+    return result;
   }
 
   remove(id: number) {

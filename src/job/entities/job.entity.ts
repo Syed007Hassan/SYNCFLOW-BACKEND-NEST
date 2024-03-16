@@ -95,6 +95,7 @@ export class Job {
 
   @OneToMany(() => Interview, (interview) => interview.job)
   interviews: Interview[];
+  id: any;
 
   @BeforeInsert()
   async setJobCreatedAt() {
