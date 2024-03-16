@@ -217,7 +217,6 @@ export class EmployerService {
       relations: ['company'],
     });
 
-    console.log(recruiter + 'hhhhh');
     if (!recruiter) {
       throw new NotFoundException(`Recruiter with ID ${recruiterId} not found`);
     }
