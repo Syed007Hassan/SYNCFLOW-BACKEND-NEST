@@ -120,6 +120,36 @@ export class JobController {
     }
   }
 
+  @Get('findApplicationsCountInAllMonthsByCompanyId/:companyId')
+  async findApplicationsCountInAllMonthsByCompanyId(
+    @Param('companyId') companyId: string,
+  ) {
+    try {
+      const job =
+        await this.jobService.findApplicationsCountInAllMonthsByCompanyId(
+          +companyId,
+        );
+      return { success: true, data: job };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Get('findApplicationsInLastFiveJobsByCompanyId/:companyId')
+  async findApplicationsInLastFiveJobsByCompanyId(
+    @Param('companyId') companyId: string,
+  ) {
+    try {
+      const job =
+        await this.jobService.findApplicationsInLastFiveJobsByCompanyId(
+          +companyId,
+        );
+      return { success: true, data: job };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
   @Patch('updateJobById:id')
   update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
     return this.jobService.update(+id, updateJobDto);

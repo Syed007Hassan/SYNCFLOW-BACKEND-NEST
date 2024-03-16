@@ -8,6 +8,7 @@ import { Job } from './entities/job.entity';
 import { CreateJobDto } from './dto/create-job.dto';
 import { Company } from 'src/company/entities/company.entity';
 import { Recruiter } from 'src/employer/entities/employer.entity';
+import { Application } from 'src/application/entities/application.entity';
 import { getMonth, getYear, getDate } from 'date-fns';
 
 @Injectable()
@@ -19,6 +20,8 @@ export class JobService {
     public readonly companyRepo: Repository<Company>,
     @InjectRepository(Recruiter)
     public readonly recruiterRepo: Repository<Recruiter>,
+    @InjectRepository(Application)
+    public readonly applicationRepo: Repository<Application>,
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
@@ -155,6 +158,32 @@ export class JobService {
 
     return jobCountsByMonth;
   }
+
+  async findApplicationsCountInAllMonthsByCompanyId(companyId: number) {
+    const applications = await this.applicationRepo.find({
+      where: { job: { company: { companyId: companyId } } },
+    });
+
+    const applicationCountsByMonth = applications.reduce((acc, application) => {
+      const date = new Date(application.applicationDate);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1; // getMonth() returns month index starting from 0
+
+      const key = `${year}-${month < 10 ? '0' + month : month}`; // key format: YYYY-MM
+
+      if (!acc[key]) {
+        acc[key] = 0;
+      }
+
+      acc[key]++;
+
+      return acc;
+    }, {});
+
+    return applicationCountsByMonth;
+  }
+
+  async findApplicationsInLastFiveJobsByCompanyId(companyId: number) {}
 
   findOne(id: number) {
     return `This action returns a #${id} job`;
