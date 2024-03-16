@@ -56,6 +56,7 @@ export class ApplicantDetails {
   //
   @OneToOne(() => Applicant, (applicant) => applicant.applicantDetails, {
     cascade: true,
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'id' })
   applicant: Applicant;

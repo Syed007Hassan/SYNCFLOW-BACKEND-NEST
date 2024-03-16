@@ -64,7 +64,10 @@ export class Job {
   @Column({ nullable: true })
   jobCreatedAt: Date;
 
-  @ManyToOne((type) => Company, (company) => company.jobs, { cascade: true })
+  @ManyToOne((type) => Company, (company) => company.jobs, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'companyId' })
   company: Company;
 
@@ -80,7 +83,10 @@ export class Job {
   @OneToMany(() => Assessment, (assessment) => assessment.job)
   assessments: Assessment[];
 
-  @ManyToOne(() => Recruiter, (recruiter) => recruiter.jobs, { cascade: true })
+  @ManyToOne(() => Recruiter, (recruiter) => recruiter.jobs, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'recruiterId' })
   recruiter: Recruiter;
 

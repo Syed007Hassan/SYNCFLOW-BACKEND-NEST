@@ -37,6 +37,7 @@ export class Recruiter {
 
   @ManyToOne((type) => Company, (company) => company.recruiters, {
     cascade: true,
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'companyId' })
   company: Company;

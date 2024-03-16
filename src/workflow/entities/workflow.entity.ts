@@ -23,7 +23,10 @@ export class WorkFlow {
   @OneToMany(() => Stage, (stage) => stage.workflow)
   stages: Stage[];
 
-  @OneToOne((type) => Job, (job) => job.workflow, { cascade: true })
+  @OneToOne((type) => Job, (job) => job.workflow, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'jobId' })
   job: Job;
 }

@@ -20,7 +20,10 @@ export class StageAssignee {
   @PrimaryGeneratedColumn()
   stageAssigneeId: number;
 
-  @ManyToOne(() => Stage, (stage) => stage.assignees, { cascade: true })
+  @ManyToOne(() => Stage, (stage) => stage.assignees, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'stageId' })
   stage: Stage;
 
