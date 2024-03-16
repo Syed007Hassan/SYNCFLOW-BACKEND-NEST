@@ -12,7 +12,7 @@ import {
 import { JobService } from './job.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 @ApiTags('Job')
 @Controller('job')
 export class JobController {
@@ -72,6 +72,27 @@ export class JobController {
   async findTotalJobsByCompanyId(@Param('id') id: string) {
     try {
       const job = await this.jobService.findTotalJobsByCompanyId(+id);
+      return { success: true, data: job };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Patch('updateJobStatus/:jobId')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string' },
+      },
+    },
+  })
+  async updateJobStatus(
+    @Param('jobId') jobId: string,
+    @Body('status') status: string,
+  ) {
+    try {
+      const job = await this.jobService.updateJobStatus(+jobId, status);
       return { success: true, data: job };
     } catch (err) {
       return { success: false, message: err.message };

@@ -108,6 +108,19 @@ export class JobService {
     return totalJobs;
   }
 
+  async updateJobStatus(jobId: number, status: string) {
+    const job = await this.jobRepo.findOne({
+      where: { jobId: jobId },
+    });
+
+    if (!job) {
+      throw new Error('Job not found');
+    }
+
+    job.jobStatus = status;
+    return await this.jobRepo.save(job);
+  }
+
   async findActiveJobsByCompanyId(id: number) {
     const activeJobs = await this.jobRepo.count({
       where: { company: { companyId: id }, jobStatus: 'active' },
