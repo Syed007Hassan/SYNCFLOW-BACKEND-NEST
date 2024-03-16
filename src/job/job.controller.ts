@@ -109,7 +109,7 @@ export class JobController {
     }
   }
 
-  @Get('findJobsInAMonthByCompanyId/:id')
+  @Get('findJobsCountInAllMonthsByCompanyId/:id')
   async findJobsInAMonthByCompanyId(@Param('id') id: string) {
     try {
       const job =

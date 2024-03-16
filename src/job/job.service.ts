@@ -164,6 +164,10 @@ export class JobService {
       where: { job: { company: { companyId: companyId } } },
     });
 
+    if (applications.length === 0) {
+      throw new Error('No applications found');
+    }
+
     const applicationCountsByMonth = applications.reduce((acc, application) => {
       const date = new Date(application.applicationDate);
       const year = date.getFullYear();
@@ -183,7 +187,33 @@ export class JobService {
     return applicationCountsByMonth;
   }
 
-  async findApplicationsInLastFiveJobsByCompanyId(companyId: number) {}
+  async findApplicationsInLastFiveJobsByCompanyId(companyId: number) {
+    const jobs = await this.jobRepo.find({
+      where: { company: { companyId: companyId } },
+      order: { jobId: 'DESC' },
+      take: 5,
+    });
+
+    if (jobs.length === 0) {
+      throw new Error('No jobs found');
+    }
+
+    const applications = await Promise.all(
+      jobs.map(async (job) => {
+        const applications = await this.applicationRepo.find({
+          where: { job: { jobId: job.jobId } },
+        });
+
+        return {
+          jobId: job.jobId,
+          jobTitle: job.jobTitle,
+          applications: applications.length,
+        };
+      }),
+    );
+
+    return applications;
+  }
 
   findOne(id: number) {
     return `This action returns a #${id} job`;
