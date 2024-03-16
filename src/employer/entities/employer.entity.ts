@@ -35,7 +35,9 @@ export class Recruiter {
   @Column({ nullable: true })
   designation: string;
 
-  @ManyToOne((type) => Company, (company) => company.recruiters)
+  @ManyToOne((type) => Company, (company) => company.recruiters, {
+    cascade: true,
+  })
   @JoinColumn({ name: 'companyId' })
   company: Company;
 

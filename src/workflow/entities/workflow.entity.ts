@@ -20,10 +20,10 @@ export class WorkFlow {
   @PrimaryGeneratedColumn()
   workflowId: number;
 
-  @OneToMany(() => Stage, (stage) => stage.workflow, { cascade: true })
+  @OneToMany(() => Stage, (stage) => stage.workflow)
   stages: Stage[];
 
-  @OneToOne((type) => Job, (job) => job.workflow)
+  @OneToOne((type) => Job, (job) => job.workflow, { cascade: true })
   @JoinColumn({ name: 'jobId' })
   job: Job;
 }
