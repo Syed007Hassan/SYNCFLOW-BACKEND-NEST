@@ -8,6 +8,7 @@ import { Job } from './entities/job.entity';
 import { CreateJobDto } from './dto/create-job.dto';
 import { Company } from 'src/company/entities/company.entity';
 import { Recruiter } from 'src/employer/entities/employer.entity';
+import { Application } from 'src/application/entities/application.entity';
 import { getMonth, getYear, getDate } from 'date-fns';
 
 @Injectable()
@@ -19,6 +20,8 @@ export class JobService {
     public readonly companyRepo: Repository<Company>,
     @InjectRepository(Recruiter)
     public readonly recruiterRepo: Repository<Recruiter>,
+    @InjectRepository(Application)
+    public readonly applicationRepo: Repository<Application>,
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
@@ -108,6 +111,19 @@ export class JobService {
     return totalJobs;
   }
 
+  async updateJobStatus(jobId: number, status: string) {
+    const job = await this.jobRepo.findOne({
+      where: { jobId: jobId },
+    });
+
+    if (!job) {
+      throw new Error('Job not found');
+    }
+
+    job.jobStatus = status;
+    return await this.jobRepo.save(job);
+  }
+
   async findActiveJobsByCompanyId(id: number) {
     const activeJobs = await this.jobRepo.count({
       where: { company: { companyId: id }, jobStatus: 'active' },
@@ -141,6 +157,62 @@ export class JobService {
     }, {});
 
     return jobCountsByMonth;
+  }
+
+  async findApplicationsCountInAllMonthsByCompanyId(companyId: number) {
+    const applications = await this.applicationRepo.find({
+      where: { job: { company: { companyId: companyId } } },
+    });
+
+    if (applications.length === 0) {
+      throw new Error('No applications found');
+    }
+
+    const applicationCountsByMonth = applications.reduce((acc, application) => {
+      const date = new Date(application.applicationDate);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1; // getMonth() returns month index starting from 0
+
+      const key = `${year}-${month < 10 ? '0' + month : month}`; // key format: YYYY-MM
+
+      if (!acc[key]) {
+        acc[key] = 0;
+      }
+
+      acc[key]++;
+
+      return acc;
+    }, {});
+
+    return applicationCountsByMonth;
+  }
+
+  async findApplicationsInLastFiveJobsByCompanyId(companyId: number) {
+    const jobs = await this.jobRepo.find({
+      where: { company: { companyId: companyId } },
+      order: { jobId: 'DESC' },
+      take: 5,
+    });
+
+    if (jobs.length === 0) {
+      throw new Error('No jobs found');
+    }
+
+    const applications = await Promise.all(
+      jobs.map(async (job) => {
+        const applications = await this.applicationRepo.find({
+          where: { job: { jobId: job.jobId } },
+        });
+
+        return {
+          jobId: job.jobId,
+          jobTitle: job.jobTitle,
+          applications: applications.length,
+        };
+      }),
+    );
+
+    return applications;
   }
 
   findOne(id: number) {

@@ -26,15 +26,17 @@ export class Application {
   })
   applicationDate: Date;
 
-  @ManyToOne(() => Applicant, (applicant) => applicant.applications)
+  @ManyToOne(() => Applicant, (applicant) => applicant.applications, {
+    cascade: true,
+  })
   @JoinColumn({ name: 'id' })
   applicant: Applicant;
 
-  @ManyToOne(() => Job, (job) => job.applications)
+  @ManyToOne(() => Job, (job) => job.applications, { cascade: true })
   @JoinColumn({ name: 'jobId' })
   job: Job;
 
-  @ManyToOne(() => Stage, (stage) => stage.applications)
+  @ManyToOne(() => Stage, (stage) => stage.applications, { cascade: true })
   @JoinColumn({ name: 'stageId' })
   stage: Stage;
 

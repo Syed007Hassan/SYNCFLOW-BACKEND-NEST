@@ -27,7 +27,10 @@ export class Stage {
   @Column()
   category: string;
 
-  @ManyToOne(() => WorkFlow, (workflow) => workflow.stages)
+  @ManyToOne(() => WorkFlow, (workflow) => workflow.stages, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'workflowId' })
   workflow: WorkFlow;
 
