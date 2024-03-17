@@ -19,6 +19,9 @@ export class Application {
   @Column({ nullable: false, default: 'pending' })
   status: string;
 
+  @Column({ nullable: true })
+  applicationFeedback: string;
+
   @Column({
     nullable: false,
     type: 'timestamp',

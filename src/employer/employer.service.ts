@@ -237,6 +237,7 @@ export class EmployerService {
     // Filter jobs where the recruiter is assigned
     const filteredJobs = jobs.filter((job) => {
       return (
+        job.jobStatus === 'active' &&
         job.workflow &&
         job.workflow.stages &&
         job.workflow.stages.some((stage) => {
@@ -245,7 +246,10 @@ export class EmployerService {
             stage.assignees.some((assignee) => {
               return (
                 assignee.assignees &&
-                assignee.assignees.some((a) => a.recruiterId === recruiterId)
+                assignee.assignees.some(
+                  (a) =>
+                    a.recruiterId === recruiterId && a.name === recruiter.name,
+                )
               );
             })
           );

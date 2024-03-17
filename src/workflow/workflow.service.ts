@@ -29,21 +29,37 @@ export class WorkflowService {
     if (!job) {
       throw new Error('Job not found');
     }
-
-    // Map stages from DTO to Stage entities
-    const stages = createWorkFlowDto.stages.map((stageDto) => {
-      const stage = new Stage();
-      stage.stageName = stageDto.stageName;
-      stage.category = stageDto.category;
-      return stage;
-    });
-
     const newWorkflow = await this.workflowRepo.create({
-      stages: stages,
       job: job,
     });
 
-    return await this.workflowRepo.save(newWorkflow);
+    const savedWorkflow = await this.workflowRepo.save(newWorkflow);
+
+    if (!savedWorkflow) {
+      throw new Error('Workflow not created');
+    }
+
+    const stages = createWorkFlowDto.stages.map((stage) => {
+      return this.stageRepo.create({
+        stageName: stage.stageName,
+        category: stage.category,
+        description: stage.description,
+        workflow: savedWorkflow,
+      });
+    });
+
+    const savedStages = await this.stageRepo.save(stages);
+
+    if (!savedStages) {
+      throw new Error('Stages not created');
+    }
+
+    const createdWorkflow = await this.workflowRepo.findOne({
+      relations: ['stages', 'job'],
+      where: { workflowId: savedWorkflow.workflowId },
+    });
+
+    return createdWorkflow;
   }
 
   async assignStage(
