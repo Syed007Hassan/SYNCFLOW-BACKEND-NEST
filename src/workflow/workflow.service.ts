@@ -35,6 +35,7 @@ export class WorkflowService {
       const stage = new Stage();
       stage.stageName = stageDto.stageName;
       stage.category = stageDto.category;
+      stage.description = stageDto.description;
       return stage;
     });
 
