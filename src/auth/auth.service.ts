@@ -117,7 +117,7 @@ export class AuthService {
         email: user.email,
         password: user.password,
         phone: user.phone,
-        designation: user.designation,
+        designation: 'Head HR',
         role: Role.Employer,
       },
       company,
@@ -129,7 +129,20 @@ export class AuthService {
   async registerCompanyEmployee(
     user: AddCompanyEmployeeDto,
     companyId: number,
+    recruiterId: number,
   ) {
+    const existingHeadHr = await this.employerRepo.findOne({
+      where: { recruiterId },
+    });
+
+    if (!existingHeadHr) {
+      throw new Error('Head HR not found');
+    }
+
+    if (existingHeadHr.designation != 'Head HR') {
+      throw new Error('You are not authorized to add employees');
+    }
+
     const findUser = await this.employerService.findOneByEmail(user.email);
     if (findUser) {
       throw new Error('Company employee already exists with this email');
