@@ -21,11 +21,14 @@ export class Stage {
   @PrimaryGeneratedColumn()
   stageId: number;
 
-  @Column()
+  @Column({ nullable: true })
   stageName: string;
 
-  @Column()
+  @Column({ nullable: true })
   category: string;
+
+  @Column({ nullable: true })
+  description: string;
 
   @ManyToOne(() => WorkFlow, (workflow) => workflow.stages, {
     cascade: true,
