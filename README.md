@@ -3,6 +3,11 @@
 - Create a **``` .env ```** file 
 
 ```
+# Google OAuth
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+CALLBACK_URL_RECRUITER=http://localhost:5000/api/auth/google/callback/recruiter
+
 MONGODB_URI=
 JWT_SECRET=secret
 jwt_secret=secretjwt4565
@@ -21,6 +26,12 @@ POSTGRES_PASSWORD=postgres
 POSTGRES_DB=postgres
 PGADMIN_DEFAULT_EMAIL=admin@pgadmin.com
 PGADMIN_DEFAULT_PASSWORD=admin
+
+# AWS
+AWS_BUCKET_NAME=syncflow-bucket
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_KEY=
+AWS_S3_REGION=
 ```
 
 2- `docker-compose build --no-cache`

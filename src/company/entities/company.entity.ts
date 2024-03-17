@@ -41,6 +41,7 @@ export class Company {
   @OneToMany(
     (type) => HiredApplicant,
     (hiredApplicant) => hiredApplicant.company,
+    { cascade: true },
   )
   hiredApplicants: HiredApplicant[];
 }

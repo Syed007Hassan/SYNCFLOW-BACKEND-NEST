@@ -9,6 +9,7 @@ import { HiredApplicant } from './entities/hiredApplicant.entity';
 import { Interview } from './entities/interview.entity';
 import { Company } from 'src/company/entities/company.entity';
 import { Recruiter } from 'src/employer/entities/employer.entity';
+import { Application } from 'src/application/entities/application.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -19,6 +20,7 @@ import { Recruiter } from 'src/employer/entities/employer.entity';
       Assessment,
       HiredApplicant,
       Interview,
+      Application,
     ]),
   ],
   controllers: [JobController],

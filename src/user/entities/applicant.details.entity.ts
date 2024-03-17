@@ -54,7 +54,10 @@ export class ApplicantDetails {
   languages: string;
 
   //
-  @OneToOne(() => Applicant, (applicant) => applicant.applicantDetails)
+  @OneToOne(() => Applicant, (applicant) => applicant.applicantDetails, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'id' })
   applicant: Applicant;
 }

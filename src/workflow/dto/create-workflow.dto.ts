@@ -16,6 +16,10 @@ class StageDto {
   @ApiProperty()
   @IsString()
   category: string;
+
+  @ApiProperty()
+  @IsString()
+  description: string;
 }
 
 export class CreateWorkFlowDto {
