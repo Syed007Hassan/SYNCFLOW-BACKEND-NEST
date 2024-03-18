@@ -143,6 +143,26 @@ export class EmployerController {
     }
   }
 
+  @Delete('deleteRegisteredEmployee/:recruiterId/:employeeId')
+  @HttpCode(HttpStatus.OK)
+  async deleteRegisteredEmployee(
+    @Param('recruiterId') recruiterId: string,
+    @Param('employeeId') employeeId: string,
+  ) {
+    try {
+      const user = await this.employerService.deleteRegisteredEmployee(
+        +recruiterId,
+        +employeeId,
+      );
+      return { success: true, data: user };
+    } catch (err) {
+      throw new HttpException(
+        { success: false, message: err.message },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
   @Get('findAllTheStagesAssignedToRecruiter/:recruiterId')
   @HttpCode(HttpStatus.OK)
   async findAllTheStagesAssignedToRecruiter(
