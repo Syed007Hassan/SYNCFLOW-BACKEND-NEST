@@ -12,6 +12,7 @@ import { CreateWorkFlowDto } from './dto/create-workflow.dto';
 import { UpdateWorkflowDto } from './dto/update-workflow.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AssignStageDto } from './dto/stage-assign.dto';
+import { UpdateStageDto } from './dto/update-stage.dto';
 
 @ApiTags('Workflow')
 @Controller('workflow')
@@ -98,16 +99,47 @@ export class WorkflowController {
     }
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateWorkflowDto: UpdateWorkflowDto,
+  @Patch('updateStage/:workflowId/:stageId')
+  async updateStage(
+    @Param('workflowId') workflowId: string,
+    @Param('stageId') stageId: string,
+    @Body() updateStageDto: UpdateStageDto,
   ) {
-    return this.workflowService.update(+id, updateWorkflowDto);
+    try {
+      const workflow = await this.workflowService.updateWorkflowStage(
+        +workflowId,
+        +stageId,
+        updateStageDto,
+      );
+      return { success: true, data: workflow };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.workflowService.remove(+id);
+  @Delete('removeStage/:workflowId/:stageId')
+  async removeStage(
+    @Param('workflowId') workflowId: string,
+    @Param('stageId') stageId: string,
+  ) {
+    try {
+      const workflow = await this.workflowService.removeStage(
+        +workflowId,
+        +stageId,
+      );
+      return { success: true, data: workflow };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Delete('removeWorkflow/:workflowId')
+  async removeWorkflow(@Param('workflowId') workflowId: string) {
+    try {
+      const workflow = await this.workflowService.removeWorkflow(+workflowId);
+      return { success: true, data: workflow };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 }

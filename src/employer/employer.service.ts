@@ -210,6 +210,81 @@ export class EmployerService {
     return await this.employerRepo.save(updatedRecruiter);
   }
 
+  async updateRegisteredEmployee(
+    recruiterId: number,
+    employeeId: number,
+    updateUserDto: UpdateEmployerDto,
+  ) {
+    const recruiter = await this.employerRepo.findOne({
+      where: { recruiterId },
+      relations: ['company'],
+    });
+
+    if (!recruiter) {
+      throw new NotFoundException(`Recruiter with ID ${recruiterId} not found`);
+    }
+
+    if (recruiter.designation !== 'Head HR') {
+      throw new Error('Only Head HR can update employee details');
+    }
+
+    const employee = await this.employerRepo.findOne({
+      where: { recruiterId: employeeId },
+      relations: ['company'],
+    });
+
+    if (!employee) {
+      throw new NotFoundException(`Employee with ID ${employeeId} not found`);
+    }
+
+    const ifExistingEmployeeWithSameEmail = await this.employerRepo.findOne({
+      where: { email: updateUserDto.email },
+    });
+
+    if (ifExistingEmployeeWithSameEmail) {
+      throw new Error(
+        'Employee with ' + updateUserDto.email + ' already exists',
+      );
+    }
+
+    const saltRounds = 10;
+    const hash = bcrypt.hashSync(updateUserDto.password, saltRounds);
+
+    const updatedEmployee = {
+      ...employee,
+      ...updateUserDto,
+      password: hash,
+    };
+
+    return await this.employerRepo.save(updatedEmployee);
+  }
+
+  async deleteRegisteredEmployee(recruiterId: number, employeeId: number) {
+    const recruiter = await this.employerRepo.findOne({
+      where: { recruiterId },
+      relations: ['company'],
+    });
+
+    if (!recruiter) {
+      throw new NotFoundException(`Recruiter with ID ${recruiterId} not found`);
+    }
+
+    if (recruiter.designation !== 'Head HR') {
+      throw new Error('Only Head HR can delete employee');
+    }
+
+    const employee = await this.employerRepo.findOne({
+      where: { recruiterId: employeeId },
+      relations: ['company'],
+    });
+
+    if (!employee) {
+      throw new NotFoundException(`Employee with ID ${employeeId} not found`);
+    }
+
+    return await this.employerRepo.remove(employee);
+  }
+
   async findAllTheStagesAssignedToRecruiter(recruiterId: number) {
     // Find the recruiter
     const recruiter = await this.employerRepo.findOne({
