@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateWorkFlowDto } from './dto/create-workflow.dto';
 import { UpdateWorkflowDto } from './dto/update-workflow.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,6 +8,7 @@ import { Job } from '../job/entities/job.entity';
 import { Stage } from './entities/stage.entity';
 import { StageAssignee } from './entities/stageAssignee';
 import { AssignStageDto } from './dto/stage-assign.dto';
+import { UpdateStageDto } from './dto/update-stage.dto';
 @Injectable()
 export class WorkflowService {
   constructor(
@@ -165,6 +166,33 @@ export class WorkflowService {
       throw new Error('No workflows found for this job');
     }
     return allWorkflows;
+  }
+
+  async updateWorkflowStage(
+    workflowId: number,
+    stageId: number,
+    updateStageDto: UpdateStageDto,
+  ) {
+    const existingWorkflow = await this.workflowRepo.findOne({
+      where: { workflowId: workflowId },
+    });
+
+    if (!existingWorkflow) {
+      throw new NotFoundException('Workflow not found with ' + workflowId);
+    }
+
+    const stage = await this.stageRepo.findOne({
+      where: { stageId: stageId, workflow: { workflowId: workflowId } },
+      relations: ['workflow'],
+    });
+
+    if (stage == null) {
+      throw new NotFoundException('Stage not found with ' + stageId);
+    }
+
+    const updatedStage = await this.stageRepo.merge(stage, updateStageDto);
+    await this.stageRepo.save(updatedStage);
+    return updatedStage;
   }
 
   findOne(id: number) {
