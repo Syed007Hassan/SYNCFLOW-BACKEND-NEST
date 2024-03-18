@@ -195,15 +195,40 @@ export class WorkflowService {
     return updatedStage;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} workflow`;
+  async removeStage(workflowId: number, stageId: number) {
+    const existingWorkflow = await this.workflowRepo.findOne({
+      where: { workflowId: workflowId },
+    });
+
+    if (!existingWorkflow) {
+      throw new NotFoundException('Workflow not found with ' + workflowId);
+    }
+
+    const stage = await this.stageRepo.findOne({
+      where: { stageId: stageId, workflow: { workflowId: workflowId } },
+      relations: ['workflow'],
+    });
+
+    if (stage == null) {
+      throw new NotFoundException('Stage not found with ' + stageId);
+    }
+
+    await this.stageRepo.remove(stage);
+
+    return stage;
   }
 
-  update(id: number, updateWorkflowDto: UpdateWorkflowDto) {
-    return `This action updates a #${id} workflow`;
-  }
+  async removeWorkflow(workflowId: number) {
+    const existingWorkflow = await this.workflowRepo.findOne({
+      where: { workflowId: workflowId },
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} workflow`;
+    if (!existingWorkflow) {
+      throw new NotFoundException('Workflow not found with ' + workflowId);
+    }
+
+    await this.workflowRepo.remove(existingWorkflow);
+
+    return existingWorkflow;
   }
 }

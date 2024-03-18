@@ -117,8 +117,29 @@ export class WorkflowController {
     }
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.workflowService.remove(+id);
+  @Delete('removeStage/:workflowId/:stageId')
+  async removeStage(
+    @Param('workflowId') workflowId: string,
+    @Param('stageId') stageId: string,
+  ) {
+    try {
+      const workflow = await this.workflowService.removeStage(
+        +workflowId,
+        +stageId,
+      );
+      return { success: true, data: workflow };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Delete('removeWorkflow/:workflowId')
+  async removeWorkflow(@Param('workflowId') workflowId: string) {
+    try {
+      const workflow = await this.workflowService.removeWorkflow(+workflowId);
+      return { success: true, data: workflow };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 }
