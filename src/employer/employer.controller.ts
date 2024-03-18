@@ -121,6 +121,28 @@ export class EmployerController {
     }
   }
 
+  @Patch('updateRegisteredEmployee/:recruiterId/:employeeId')
+  @HttpCode(HttpStatus.OK)
+  async updateRegisteredEmployee(
+    @Param('recruiterId') recruiterId: string,
+    @Param('employeeId') employeeId: string,
+    @Body() updateUserDto: UpdateEmployerDto,
+  ) {
+    try {
+      const user = await this.employerService.updateRegisteredEmployee(
+        +recruiterId,
+        +employeeId,
+        updateUserDto,
+      );
+      return { success: true, data: user };
+    } catch (err) {
+      throw new HttpException(
+        { success: false, message: err.message },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
   @Get('findAllTheStagesAssignedToRecruiter/:recruiterId')
   @HttpCode(HttpStatus.OK)
   async findAllTheStagesAssignedToRecruiter(
