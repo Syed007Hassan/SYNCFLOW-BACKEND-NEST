@@ -224,7 +224,7 @@ export class EmployerService {
       throw new NotFoundException(`Recruiter with ID ${recruiterId} not found`);
     }
 
-    if (recruiter.designation !== 'Head HR') {
+    if (recruiter.designation.toLocaleLowerCase() !== 'head hr') {
       throw new Error('Only Head HR can update employee details');
     }
 
@@ -269,7 +269,7 @@ export class EmployerService {
       throw new NotFoundException(`Recruiter with ID ${recruiterId} not found`);
     }
 
-    if (recruiter.designation !== 'Head HR') {
+    if (recruiter.designation.toLocaleLowerCase() !== 'head hr') {
       throw new Error('Only Head HR can delete employee');
     }
 
