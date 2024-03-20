@@ -139,7 +139,7 @@ export class AuthService {
       throw new Error('Head HR not found');
     }
 
-    if (existingHeadHr.designation != 'Head HR') {
+    if (existingHeadHr.designation.toLocaleLowerCase() != 'head hr') {
       throw new Error('You are not authorized to add employees');
     }
 
