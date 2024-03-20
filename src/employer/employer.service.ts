@@ -312,23 +312,25 @@ export class EmployerService {
     // Filter jobs where the recruiter is assigned
     const filteredJobs = jobs.filter((job) => {
       return (
-        job.jobStatus === 'active' &&
-        job.workflow &&
-        job.workflow.stages &&
-        job.workflow.stages.some((stage) => {
-          return (
-            stage.assignees &&
-            stage.assignees.some((assignee) => {
-              return (
-                assignee.assignees &&
-                assignee.assignees.some(
-                  (a) =>
-                    a.recruiterId === recruiterId && a.name === recruiter.name,
-                )
-              );
-            })
-          );
-        })
+        job.jobStatus.toLowerCase() === 'active' ||
+        (job.jobStatus.toLowerCase() === 'evaluating' &&
+          job.workflow &&
+          job.workflow.stages &&
+          job.workflow.stages.some((stage) => {
+            return (
+              stage.assignees &&
+              stage.assignees.some((assignee) => {
+                return (
+                  assignee.assignees &&
+                  assignee.assignees.some(
+                    (a) =>
+                      a.recruiterId === recruiterId &&
+                      a.name.toLowerCase() === recruiter.name.toLowerCase(),
+                  )
+                );
+              })
+            );
+          }))
       );
     });
 
