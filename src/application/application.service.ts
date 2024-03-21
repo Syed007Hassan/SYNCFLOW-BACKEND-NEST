@@ -65,11 +65,6 @@ export class ApplicationService {
       order: { stageId: 'ASC' },
     });
 
-    console.log(
-      JSON.stringify(existingFirstStageInWorkflow) +
-        'existingFirstStageInWorkflow',
-    );
-
     if (!existingFirstStageInWorkflow) {
       throw new Error('First stage not found');
     }
