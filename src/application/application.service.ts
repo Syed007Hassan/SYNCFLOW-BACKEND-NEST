@@ -79,6 +79,22 @@ export class ApplicationService {
     return await this.applicationRepo.save(newApplication);
   }
 
+  async findOne(applicationId: number) {
+    const application = await this.applicationRepo.findOne({
+      where: { applicationId: applicationId },
+      relations: ['applicant'],
+    });
+
+    if (!application) {
+      throw new Error('No application found');
+    }
+
+    //delete the password from the response
+    delete application.applicant.password;
+
+    return application;
+  }
+
   async findAll() {
     const applications = await this.applicationRepo.find({
       relations: ['applicant', 'job', 'stage'],
@@ -95,6 +111,8 @@ export class ApplicationService {
 
     return applications;
   }
+
+  async rateApplication(applicationId: number, applicantId: number) {}
 
   async findByJobId(jobId: number) {
     const applications = await this.applicationRepo.find({
