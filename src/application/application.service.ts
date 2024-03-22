@@ -76,7 +76,29 @@ export class ApplicationService {
       stage: existingFirstStageInWorkflow,
     });
 
+    await this.rateApplication(newApplication);
+
     return await this.applicationRepo.save(newApplication);
+  }
+
+  async rateApplication(application: Application) {
+    console.log(JSON.stringify(application) + 'application');
+    const applicant = await this.applicantRepo.findOne({
+      where: { id: application.applicant.id },
+      relations: ['applicantDetails'],
+    });
+
+    if (!applicant) {
+      throw new Error('Applicant not found');
+    }
+
+    if (!applicant.applicantDetails) {
+      throw new Error('Applicant details not found');
+    }
+
+    const applicantSkills = applicant.applicantDetails.skills;
+
+    const jobDescription = application.job.jobDescription;
   }
 
   async findOne(applicationId: number) {
@@ -111,8 +133,6 @@ export class ApplicationService {
 
     return applications;
   }
-
-  async rateApplication(applicationId: number, applicantId: number) {}
 
   async findByJobId(jobId: number) {
     const applications = await this.applicationRepo.find({
