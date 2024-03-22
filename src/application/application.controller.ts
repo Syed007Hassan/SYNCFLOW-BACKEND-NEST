@@ -35,6 +35,16 @@ export class ApplicationController {
     }
   }
 
+  @Get('findOneById/:applicationId')
+  async findOne(@Param('applicationId') applicationId: string) {
+    try {
+      const application = await this.applicationService.findOne(+applicationId);
+      return { success: true, data: application };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
   @Get('findAll')
   async findAll() {
     try {

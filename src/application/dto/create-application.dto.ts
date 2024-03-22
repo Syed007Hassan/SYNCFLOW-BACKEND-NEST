@@ -11,4 +11,9 @@ export class CreateApplicationDto {
   @IsNotEmpty()
   @IsString()
   applicationFeedback: string;
+
+  @ApiProperty({ default: '0%' })
+  @IsNotEmpty()
+  @IsString()
+  applicationRating: string;
 }
