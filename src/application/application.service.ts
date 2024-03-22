@@ -65,11 +65,6 @@ export class ApplicationService {
       order: { stageId: 'ASC' },
     });
 
-    console.log(
-      JSON.stringify(existingFirstStageInWorkflow) +
-        'existingFirstStageInWorkflow',
-    );
-
     if (!existingFirstStageInWorkflow) {
       throw new Error('First stage not found');
     }
@@ -81,7 +76,71 @@ export class ApplicationService {
       stage: existingFirstStageInWorkflow,
     });
 
+    await this.rateApplication(newApplication);
+
     return await this.applicationRepo.save(newApplication);
+  }
+
+  async rateApplication(application: Application) {
+    const applicant = await this.applicantRepo.findOne({
+      where: { id: application.applicant.id },
+      relations: ['applicantDetails'],
+    });
+
+    if (!applicant) {
+      throw new Error('Applicant not found');
+    }
+
+    if (!applicant.applicantDetails) {
+      throw new Error('Applicant details not found');
+    }
+
+    const applicantSkills = new Set(
+      applicant.applicantDetails.skills.map((skill) => skill.toLowerCase()),
+    );
+    const jobSkills = new Set(
+      application.job.jobSkills.map((skill) => skill.toLowerCase()),
+    );
+
+    if (applicantSkills.size === 0 || jobSkills.size === 0) {
+      application.applicationRating = '0';
+      await this.applicationRepo.save(application);
+      return;
+    }
+
+    let matches = 0;
+
+    for (let jobSkill of jobSkills) {
+      for (let skill of applicantSkills) {
+        if (skill.includes(jobSkill)) {
+          matches++;
+          break;
+        }
+      }
+    }
+
+    const percentage = Math.round((matches / jobSkills.size) * 100);
+    application.applicationRating = percentage.toString();
+
+    await this.applicationRepo.save(application);
+
+    return percentage;
+  }
+
+  async findOne(applicationId: number) {
+    const application = await this.applicationRepo.findOne({
+      where: { applicationId: applicationId },
+      relations: ['applicant'],
+    });
+
+    if (!application) {
+      throw new Error('No application found');
+    }
+
+    //delete the password from the response
+    delete application.applicant.password;
+
+    return application;
   }
 
   async findAll() {

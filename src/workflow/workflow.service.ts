@@ -30,6 +30,15 @@ export class WorkflowService {
     if (!job) {
       throw new Error('Job not found');
     }
+
+    const ifExistingWorkflow = await this.workflowRepo.findOne({
+      where: { job: { jobId: jobId } },
+    });
+
+    if (ifExistingWorkflow) {
+      throw new Error('Workflow already exists for jobId: ' + jobId);
+    }
+
     const newWorkflow = await this.workflowRepo.create({
       job: job,
     });

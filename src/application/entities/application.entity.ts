@@ -22,6 +22,9 @@ export class Application {
   @Column({ nullable: true })
   applicationFeedback: string;
 
+  @Column({ nullable: true })
+  applicationRating: string;
+
   @Column({
     nullable: false,
     type: 'timestamp',
