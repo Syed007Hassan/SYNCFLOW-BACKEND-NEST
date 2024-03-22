@@ -82,7 +82,6 @@ export class ApplicationService {
   }
 
   async rateApplication(application: Application) {
-    console.log(JSON.stringify(application) + 'application');
     const applicant = await this.applicantRepo.findOne({
       where: { id: application.applicant.id },
       relations: ['applicantDetails'],
@@ -96,9 +95,36 @@ export class ApplicationService {
       throw new Error('Applicant details not found');
     }
 
-    const applicantSkills = applicant.applicantDetails.skills;
+    const applicantSkills = new Set(
+      applicant.applicantDetails.skills.map((skill) => skill.toLowerCase()),
+    );
+    const jobSkills = new Set(
+      application.job.jobSkills.map((skill) => skill.toLowerCase()),
+    );
 
-    const jobDescription = application.job.jobDescription;
+    if (applicantSkills.size === 0 || jobSkills.size === 0) {
+      application.applicationRating = '0';
+      await this.applicationRepo.save(application);
+      return;
+    }
+
+    let matches = 0;
+
+    for (let jobSkill of jobSkills) {
+      for (let skill of applicantSkills) {
+        if (skill.includes(jobSkill)) {
+          matches++;
+          break;
+        }
+      }
+    }
+
+    const percentage = Math.round((matches / jobSkills.size) * 100);
+    application.applicationRating = percentage.toString();
+
+    await this.applicationRepo.save(application);
+
+    return percentage;
   }
 
   async findOne(applicationId: number) {
