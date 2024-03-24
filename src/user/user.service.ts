@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { Applicant } from './entities/user.entity';
 import { ApplicantDetails } from './entities/applicant.details.entity';
 import { Repository } from 'typeorm';
-import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
 import { ApplicantDetailsDto } from './dto/applicantDetails.dto';
+import { Application } from 'src/application/entities/application.entity';
+import { Job } from 'src/job/entities/job.entity';
+import { WorkFlow } from 'src/workflow/entities/workflow.entity';
+import { Stage } from 'src/workflow/entities/stage.entity';
 @Injectable()
 export class UserService {
   constructor(
@@ -18,6 +18,14 @@ export class UserService {
     private readonly userRepo: Repository<Applicant>,
     @InjectRepository(ApplicantDetails)
     private readonly applicantDetailsRepo: Repository<ApplicantDetails>,
+    @InjectRepository(Application)
+    private readonly applicationRepo: Repository<Application>,
+    @InjectRepository(Job)
+    private readonly jobRepo: Repository<Job>,
+    @InjectRepository(WorkFlow)
+    private readonly workflowRepo: Repository<WorkFlow>,
+    @InjectRepository(Stage)
+    private readonly stageRepo: Repository<Stage>,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<Applicant> {
