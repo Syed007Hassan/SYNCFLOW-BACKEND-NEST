@@ -182,6 +182,25 @@ export class UserService {
     return await this.applicantDetailsRepo.save(updatedUser);
   }
 
+  async findAllJobApplications(id: number) {
+    const user = await this.userRepo.findOneBy({ id });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const applications = await this.applicationRepo.find({
+      where: { applicant: { id: id } },
+      relations: ['applicant', 'job', 'stage'],
+    });
+
+    if (!applications) {
+      throw new Error('No applications found');
+    }
+
+    return applications;
+  }
+
   remove(id: number) {
     return `#${id} user deleted`;
   }
