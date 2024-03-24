@@ -121,6 +121,36 @@ export class ApplicationController {
     }
   }
 
+  @Patch('updateApplicationFeedback/:jobId/:applicantId')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        applicationFeedback: {
+          type: 'string',
+          description: 'The feedback for the application',
+        },
+      },
+    },
+  })
+  async updateApplicationFeedback(
+    @Param('jobId') jobId: string,
+    @Param('applicantId') applicantId: string,
+    @Body('applicationFeedback') applicationFeedback: string,
+  ) {
+    try {
+      const application =
+        await this.applicationService.updateApplicationFeedback(
+          +jobId,
+          +applicantId,
+          applicationFeedback,
+        );
+      return { success: true, data: application };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
   // a patch request to update the application status, status will be send in the body
   @Patch('updateApplicationStatus/:jobId/:applicantId')
   @ApiBody({
