@@ -234,6 +234,17 @@ export class UserController {
     }
   }
 
+  @Get('findAllJobApplicationsByMonth/:id')
+  async findAllJobApplicationsByMonth(@Param('id') id: string) {
+    try {
+      const applications =
+        await this.userService.findAllJobApplicationsByMonth(+id);
+      return { success: true, data: applications };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
   @Delete('delete/:id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);

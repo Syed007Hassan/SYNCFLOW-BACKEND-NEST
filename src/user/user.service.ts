@@ -263,6 +263,38 @@ export class UserService {
     return mappedApplications;
   }
 
+  async findAllJobApplicationsByMonth(id: number) {
+    const user = await this.userRepo.findOneBy({ id });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const applications = await this.applicationRepo.find({
+      where: { applicant: { id: id } },
+      relations: ['applicant', 'job', 'stage'],
+    });
+
+    if (!applications) {
+      throw new Error('No applications found');
+    }
+
+    const applicationsByMonth = applications.reduce((acc, application) => {
+      const date = new Date(application.applicationDate);
+      const yearMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`; // getMonth() returns a zero-based value (0-11)
+
+      if (!acc[yearMonth]) {
+        acc[yearMonth] = 0;
+      }
+
+      acc[yearMonth]++;
+
+      return acc;
+    }, {});
+
+    return applicationsByMonth;
+  }
+
   remove(id: number) {
     return `#${id} user deleted`;
   }
