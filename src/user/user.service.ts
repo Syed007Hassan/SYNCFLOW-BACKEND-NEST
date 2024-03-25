@@ -244,7 +244,23 @@ export class UserService {
       throw new Error('No applications found');
     }
 
-    return applications;
+    const mappedApplications = applications.map((application) => ({
+      jobTitle: application.job.jobTitle,
+      jobLocation: application.job.jobLocation,
+      jobSkills: application.job.jobSkills,
+      applicationStatus: application.status,
+      applicationDate:
+        new Date(application.applicationDate).getDate() +
+        '/' +
+        new Date(application.applicationDate).getMonth() +
+        '/' +
+        new Date(application.applicationDate).getFullYear(),
+      applicationFeedback: application.applicationFeedback,
+      applicationRating: application.applicationRating,
+      stageName: application.stage.stageName,
+      stageCategory: application.stage.category,
+    }));
+    return mappedApplications;
   }
 
   remove(id: number) {

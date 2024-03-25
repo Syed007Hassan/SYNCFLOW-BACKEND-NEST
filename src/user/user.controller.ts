@@ -212,7 +212,7 @@ export class UserController {
     }
   }
 
-  @Get('findRecentJobApplicationsWithFeedbackCount/:id')
+  @Get('findRecentJobApplicationsWithFeedback/:id')
   async findRecentJobApplicationsWithFeedback(@Param('id') id: string) {
     try {
       const applications =
