@@ -240,6 +240,25 @@ export class ApplicationService {
     return await this.applicationRepo.save(application);
   }
 
+  async updateApplicationFeedback(
+    jobId: number,
+    applicantId: number,
+    applicationFeedback: string,
+  ) {
+    const application = await this.applicationRepo.findOne({
+      where: { job: { jobId: jobId }, applicant: { id: applicantId } },
+      relations: ['applicant', 'job', 'stage'],
+    });
+
+    if (!application) {
+      throw new Error('No application found for this job and applicant');
+    }
+
+    application.applicationFeedback = applicationFeedback;
+
+    return await this.applicationRepo.save(application);
+  }
+
   async updateApplicationStatus(
     jobId: number,
     applicantId: number,
