@@ -9,16 +9,24 @@ import {
   HttpCode,
   HttpStatus,
   HttpException,
+  UseGuards,
 } from '@nestjs/common';
 import { JobService } from './job.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { HasRoles } from 'src/auth/decorators/has-roles.decorator';
+import { Role } from 'src/auth/model/role.enum';
+import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RoleGuard } from 'src/auth/guards/role-auth.guard';
 @ApiTags('Job')
 @Controller('job')
 export class JobController {
   constructor(private readonly jobService: JobService) {}
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Post('/createJob/:recruiterId/:companyId')
   @HttpCode(HttpStatus.CREATED)
   async create(
