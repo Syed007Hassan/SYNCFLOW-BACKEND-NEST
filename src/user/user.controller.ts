@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -192,6 +193,20 @@ export class UserController {
     try {
       const user = await this.userService.updateSkills(+id, updateUserDto);
       return { success: true, data: user };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Get('findAllJobApplicationsByStatus/:id/:status')
+  async findAllJobApplicationsByStatus(
+    @Query('id') id: string,
+    @Param('status') status: string,
+  ) {
+    try {
+      const applications =
+        await this.userService.findAllJobApplicationsByStatus(+id, status);
+      return { success: true, data: applications };
     } catch (err) {
       return { success: false, message: err.message };
     }

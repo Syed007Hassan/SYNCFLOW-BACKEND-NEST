@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Applicant } from './entities/user.entity';
 import { ApplicantDetails } from './entities/applicant.details.entity';
-import { Repository } from 'typeorm';
+import { Repository, Raw } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ApplicantDetailsDto } from './dto/applicantDetails.dto';
@@ -195,6 +195,30 @@ export class UserService {
     });
 
     if (!applications) {
+      throw new Error('No applications found');
+    }
+
+    return applications;
+  }
+
+  async findAllJobApplicationsByStatus(id: number, status: string) {
+    const user = await this.userRepo.findOneBy({ id });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const applications = await this.applicationRepo.find({
+      where: {
+        applicant: { id: id },
+        status: Raw((columnAlias) => `LOWER(${columnAlias}) = LOWER(:status)`, {
+          status,
+        }),
+      },
+      relations: ['applicant', 'job', 'stage'],
+    });
+
+    if (applications.length === 0) {
       throw new Error('No applications found');
     }
 
