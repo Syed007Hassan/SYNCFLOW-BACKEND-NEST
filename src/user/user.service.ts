@@ -182,7 +182,7 @@ export class UserService {
     return await this.applicantDetailsRepo.save(updatedUser);
   }
 
-  async findAllJobApplications(id: number) {
+  async findAllJobApplicationsCount(id: number) {
     const user = await this.userRepo.findOneBy({ id });
 
     if (!user) {
@@ -198,10 +198,10 @@ export class UserService {
       throw new Error('No applications found');
     }
 
-    return applications;
+    return applications.length;
   }
 
-  async findAllJobApplicationsByStatus(id: number, status: string) {
+  async findAllJobApplicationsByStatusCount(id: number, status: string) {
     const user = await this.userRepo.findOneBy({ id });
 
     if (!user) {
@@ -214,6 +214,28 @@ export class UserService {
         status: Raw((columnAlias) => `LOWER(${columnAlias}) = LOWER(:status)`, {
           status,
         }),
+      },
+      relations: ['applicant', 'job', 'stage'],
+    });
+
+    if (applications.length === 0) {
+      throw new Error('No applications found');
+    }
+
+    return applications.length;
+  }
+
+  async findRecentJobApplicationsWithFeedback(id: number) {
+    const user = await this.userRepo.findOneBy({ id });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const applications = await this.applicationRepo.find({
+      where: {
+        applicant: { id: id },
+        applicationFeedback: Raw((columnAlias) => `${columnAlias} IS NOT NULL`),
       },
       relations: ['applicant', 'job', 'stage'],
     });

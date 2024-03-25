@@ -198,24 +198,36 @@ export class UserController {
     }
   }
 
-  @Get('findAllJobApplicationsByStatus/:id/:status')
+  @Get('findAllJobApplicationsByStatusCount/:id/:status')
   async findAllJobApplicationsByStatus(
     @Query('id') id: string,
     @Param('status') status: string,
   ) {
     try {
       const applications =
-        await this.userService.findAllJobApplicationsByStatus(+id, status);
+        await this.userService.findAllJobApplicationsByStatusCount(+id, status);
       return { success: true, data: applications };
     } catch (err) {
       return { success: false, message: err.message };
     }
   }
 
-  @Get('findAllJobApplications/:id')
+  @Get('findRecentJobApplicationsWithFeedbackCount/:id')
+  async findRecentJobApplicationsWithFeedback(@Param('id') id: string) {
+    try {
+      const applications =
+        await this.userService.findRecentJobApplicationsWithFeedback(+id);
+      return { success: true, data: applications };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @Get('findAllJobApplicationsCount/:id')
   async findAllJobApplications(@Param('id') id: string) {
     try {
-      const applications = await this.userService.findAllJobApplications(+id);
+      const applications =
+        await this.userService.findAllJobApplicationsCount(+id);
       return { success: true, data: applications };
     } catch (err) {
       return { success: false, message: err.message };
