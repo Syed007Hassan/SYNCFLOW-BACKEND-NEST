@@ -11,18 +11,32 @@ import {
   UseInterceptors,
   MaxFileSizeValidator,
   FileTypeValidator,
+  UseGuards,
 } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { CreateUploadDto } from './dto/create-upload.dto';
 import { UpdateUploadDto } from './dto/update-upload.dto';
-import { ApiBody, ApiConsumes, ApiProperty, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiProperty,
+  ApiTags,
+} from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { HasRoles } from 'src/auth/decorators/has-roles.decorator';
+import { Role } from 'src/auth/model/role.enum';
+import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RoleGuard } from 'src/auth/guards/role-auth.guard';
 
 @ApiTags('Upload')
 @Controller('upload')
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employee)
+  @UseGuards(JwtGuard, RoleGuard)
   @Post(':id/profilePicture')
   @UseInterceptors(FileInterceptor('file'))
   async profilePicture(
@@ -45,6 +59,9 @@ export class UploadController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employee)
+  @UseGuards(JwtGuard, RoleGuard)
   @Post(':id/resume')
   @UseInterceptors(FileInterceptor('file'))
   async resume(
@@ -67,6 +84,9 @@ export class UploadController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Post(':companyId/companyProfilePicture')
   @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')

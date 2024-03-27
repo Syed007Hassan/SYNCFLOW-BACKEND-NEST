@@ -6,17 +6,25 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ApplicationService } from './application.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
-import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { HasRoles } from 'src/auth/decorators/has-roles.decorator';
+import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RoleGuard } from 'src/auth/guards/role-auth.guard';
+import { Role } from 'src/auth/model/role.enum';
 
 @ApiTags('Application')
 @Controller('application')
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employee)
+  @UseGuards(JwtGuard, RoleGuard)
   @Post('/createApplication/:jobId/:applicantId')
   async create(
     @Param('jobId') jobId: string,
@@ -103,6 +111,9 @@ export class ApplicationController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Patch('updateApplicationStage/:jobId/:applicantId/:stageId')
   async updateApplicationStage(
     @Param('jobId') jobId: string,
@@ -121,6 +132,9 @@ export class ApplicationController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Patch('updateApplicationFeedback/:jobId/:applicantId')
   @ApiBody({
     schema: {
@@ -151,7 +165,9 @@ export class ApplicationController {
     }
   }
 
-  // a patch request to update the application status, status will be send in the body
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Patch('updateApplicationStatus/:jobId/:applicantId')
   @ApiBody({
     schema: {
