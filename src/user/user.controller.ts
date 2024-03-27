@@ -220,7 +220,7 @@ export class UserController {
 
   @Get('findAllJobApplicationsByStatusCount/:id/:status')
   async findAllJobApplicationsByStatus(
-    @Query('id') id: string,
+    @Param('id') id: string,
     @Param('status') status: string,
   ) {
     try {
