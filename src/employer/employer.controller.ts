@@ -10,20 +10,28 @@ import {
   HttpCode,
   HttpStatus,
   HttpException,
+  UseGuards,
 } from '@nestjs/common';
 import { EmployerService } from './employer.service';
 import { CreateEmployerDto } from './dto/create-employer.dto';
 import { UpdateEmployerDto } from './dto/update-employer.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { HttpService } from '@nestjs/axios';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER, CacheTTL } from '@nestjs/cache-manager';
+import { HasRoles } from 'src/auth/decorators/has-roles.decorator';
+import { Role } from 'src/auth/model/role.enum';
+import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RoleGuard } from 'src/auth/guards/role-auth.guard';
 
 @ApiTags('Employer/Recruiter')
 @Controller('recruiter')
 export class EmployerController {
   constructor(private readonly employerService: EmployerService) {}
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createUserDto: CreateEmployerDto) {
@@ -107,6 +115,9 @@ export class EmployerController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Patch('updateRecruiter')
   @HttpCode(HttpStatus.OK)
   async update(@Body() updateUserDto: UpdateEmployerDto) {
@@ -121,6 +132,9 @@ export class EmployerController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Patch('updateRegisteredEmployee/:recruiterId/:employeeId')
   @HttpCode(HttpStatus.OK)
   async updateRegisteredEmployee(
@@ -143,6 +157,9 @@ export class EmployerController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Delete('deleteRegisteredEmployee/:recruiterId/:employeeId')
   @HttpCode(HttpStatus.OK)
   async deleteRegisteredEmployee(
@@ -182,6 +199,9 @@ export class EmployerController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Delete('delete/:id')
   remove(@Param('id') id: string) {
     return this.employerService.remove(+id);
