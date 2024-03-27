@@ -104,6 +104,9 @@ export class JobController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Patch('updateJobStatus/:jobId')
   @HttpCode(HttpStatus.OK)
   @ApiBody({
@@ -193,11 +196,17 @@ export class JobController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Patch('updateJobById:id')
   update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
     return this.jobService.update(+id, updateJobDto);
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Delete('deleteJobById:id')
   @HttpCode(HttpStatus.ACCEPTED)
   async remove(@Param('id') id: string) {
