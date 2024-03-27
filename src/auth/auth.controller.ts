@@ -73,6 +73,9 @@ export class AuthController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Post('registerCompanyEmployee/:companyId/:recruiterId')
   async createCompanyEmployee(
     @Body() existingUserDto: AddCompanyEmployeeDto,
