@@ -29,9 +29,6 @@ import { RoleGuard } from 'src/auth/guards/role-auth.guard';
 export class EmployerController {
   constructor(private readonly employerService: EmployerService) {}
 
-  @ApiBearerAuth()
-  @HasRoles(Role.Employer)
-  @UseGuards(JwtGuard, RoleGuard)
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createUserDto: CreateEmployerDto) {
