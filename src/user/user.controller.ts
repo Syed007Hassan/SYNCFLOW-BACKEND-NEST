@@ -7,12 +7,17 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { ApplicantDetailsDto } from './dto/applicantDetails.dto';
+import { HasRoles } from 'src/auth/decorators/has-roles.decorator';
+import { Role } from 'src/auth/model/role.enum';
+import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RoleGuard } from 'src/auth/guards/role-auth.guard';
 
 @ApiTags('User/Candidate')
 @Controller('user')
@@ -54,6 +59,9 @@ export class UserController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employee)
+  @UseGuards(JwtGuard, RoleGuard)
   @Post('createApplicantDetails/:id')
   async createApplicantDetails(
     @Param('id') id: string,
@@ -80,6 +88,9 @@ export class UserController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employee)
+  @UseGuards(JwtGuard, RoleGuard)
   @Patch('updateContactDetails/:id')
   @ApiBody({
     schema: {
@@ -108,6 +119,9 @@ export class UserController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employee)
+  @UseGuards(JwtGuard, RoleGuard)
   @Patch('updateEducationDetails/:id')
   @ApiBody({
     schema: {
@@ -140,6 +154,9 @@ export class UserController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employee)
+  @UseGuards(JwtGuard, RoleGuard)
   @Patch('updateExperienceDetails/:id')
   @ApiBody({
     schema: {
@@ -176,6 +193,9 @@ export class UserController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employee)
+  @UseGuards(JwtGuard, RoleGuard)
   @Patch('updateSkillDetails/:id')
   @ApiBody({
     schema: {
