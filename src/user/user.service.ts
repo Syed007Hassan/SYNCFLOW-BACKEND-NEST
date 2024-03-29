@@ -235,7 +235,9 @@ export class UserService {
     const applications = await this.applicationRepo.find({
       where: {
         applicant: { id: id },
-        status: 'rejected',
+        status: Raw((columnAlias) => `LOWER(${columnAlias}) = LOWER(:status)`, {
+          status: 'rejected',
+        }),
         applicationFeedback: Raw((columnAlias) => `${columnAlias} IS NOT NULL`),
       },
       relations: ['applicant', 'job', 'stage'],
