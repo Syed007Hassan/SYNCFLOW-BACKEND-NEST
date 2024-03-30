@@ -8,17 +8,25 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { Role } from 'src/auth/model/role.enum';
+import { RoleGuard } from 'src/auth/guards/role-auth.guard';
+import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
+import { HasRoles } from 'src/auth/decorators/has-roles.decorator';
 
 @ApiTags('Company')
 @Controller('company')
 export class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Post('/create')
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createCompanyDto: CreateCompanyDto) {
@@ -60,6 +68,9 @@ export class CompanyController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Patch('updateCompanyById/:id')
   async update(
     @Param('id') id: number,
