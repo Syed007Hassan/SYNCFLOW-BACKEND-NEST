@@ -48,6 +48,19 @@ export class JobService {
       recruiter: recruiter,
     });
 
+    // Invalidate the cache
+    await this.cacheService.del(`all_jobs`);
+    await this.cacheService.del(`jobs_by_company_${companyId}`);
+    await this.cacheService.del(`total_jobs_by_company_${companyId}`);
+    await this.cacheService.del(`active_jobs_by_company_${companyId}`);
+    await this.cacheService.del(`job_counts_by_month_company_${companyId}`);
+    await this.cacheService.del(
+      `application_counts_by_month_company_${companyId}`,
+    );
+    await this.cacheService.del(
+      `applications_in_last_five_jobs_by_company_${companyId}`,
+    );
+
     return await this.jobRepo.save(newJob);
   }
 
@@ -77,6 +90,16 @@ export class JobService {
   }
 
   async findOneByCompanyId(id: number) {
+    // create a cache key:
+    const cacheKey = `jobs_by_company_${id}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const allJobs = await this.jobRepo.find({
       relations: ['company'],
       where: { company: { companyId: id } },
@@ -85,10 +108,23 @@ export class JobService {
     if (allJobs.length === 0) {
       throw new Error('No jobs found');
     }
+
+    // set the cache:
+    await this.cacheService.set(cacheKey, allJobs);
     return allJobs;
   }
 
   async findOneByJobId(id: number) {
+    // create a cache key:
+    const cacheKey = `job_${id}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const job = await this.jobRepo.findOne({
       relations: ['company', 'recruiter'],
       where: { jobId: id },
@@ -97,10 +133,23 @@ export class JobService {
     if (!job) {
       throw new Error('No job found');
     }
+
+    // set the cache:
+    await this.cacheService.set(cacheKey, job);
     return job;
   }
 
   async findTotalJobsByCompanyId(id: number) {
+    // create a cache key:
+    const cacheKey = `total_jobs_by_company_${id}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const totalJobs = await this.jobRepo.count({
       where: { company: { companyId: id } },
     });
@@ -108,6 +157,9 @@ export class JobService {
     if (totalJobs === 0) {
       throw new Error('No jobs found');
     }
+
+    // set the cache:
+    await this.cacheService.set(cacheKey, totalJobs);
     return totalJobs;
   }
 
@@ -121,10 +173,41 @@ export class JobService {
     }
 
     job.jobStatus = status;
+
+    // Invalidate the cache
+    await this.cacheService.del(`all_jobs`);
+    await this.cacheService.del(`jobs_by_company_${job.company.companyId}`);
+    await this.cacheService.del(
+      `total_jobs_by_company_${job.company.companyId}`,
+    );
+    await this.cacheService.del(
+      `active_jobs_by_company_${job.company.companyId}`,
+    );
+    await this.cacheService.del(
+      `job_counts_by_month_company_${job.company.companyId}`,
+    );
+    await this.cacheService.del(`job_${jobId}`);
+    await this.cacheService.del(
+      `application_counts_by_month_company_${job.company.companyId}`,
+    );
+    await this.cacheService.del(
+      `applications_in_last_five_jobs_by_company_${job.company.companyId}`,
+    );
+
     return await this.jobRepo.save(job);
   }
 
   async findActiveJobsByCompanyId(id: number) {
+    // create a cache key:
+    const cacheKey = `active_jobs_by_company_${id}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const activeJobs = await this.jobRepo.count({
       where: { company: { companyId: id }, jobStatus: 'active' },
     });
@@ -132,14 +215,27 @@ export class JobService {
     if (activeJobs === 0) {
       throw new Error('No active jobs found');
     }
+
+    // set the cache:
+    await this.cacheService.set(cacheKey, activeJobs);
     return activeJobs;
   }
 
   async findJobsCountInAllMonthsByCompanyId(id: number) {
-    // Assuming jobs is the array of job objects
+    // create a cache key:
+    const cacheKey = `job_counts_by_month_company_${id}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const jobs = await this.jobRepo.find({
       where: { company: { companyId: id } },
     });
+
     const jobCountsByMonth = jobs.reduce((acc, job) => {
       const date = new Date(job.jobCreatedAt);
       const year = date.getFullYear();
@@ -156,10 +252,23 @@ export class JobService {
       return acc;
     }, {});
 
+    // set the cache:
+    await this.cacheService.set(cacheKey, jobCountsByMonth);
     return jobCountsByMonth;
   }
 
   async findApplicationsCountInAllMonthsByCompanyId(companyId: number) {
+    // create a cache key:
+    const cacheKey = `application_counts_by_month_company_${companyId}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      console.log(`Getting data from cache!`);
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const applications = await this.applicationRepo.find({
       where: { job: { company: { companyId: companyId } } },
     });
@@ -184,10 +293,22 @@ export class JobService {
       return acc;
     }, {});
 
+    // set the cache:
+    await this.cacheService.set(cacheKey, applicationCountsByMonth);
     return applicationCountsByMonth;
   }
 
   async findApplicationsInLastFiveJobsByCompanyId(companyId: number) {
+    // create a cache key:
+    const cacheKey = `applications_in_last_five_jobs_by_company_${companyId}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const jobs = await this.jobRepo.find({
       where: { company: { companyId: companyId } },
       order: { jobId: 'DESC' },
@@ -212,6 +333,8 @@ export class JobService {
       }),
     );
 
+    // set the cache:
+    await this.cacheService.set(cacheKey, applications);
     return applications;
   }
 
