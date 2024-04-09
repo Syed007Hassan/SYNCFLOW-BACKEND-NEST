@@ -165,6 +165,7 @@ export class JobController {
     }
   }
 
+  @CacheTTL(30)
   @Get('findApplicationsCountInAllMonthsByCompanyId/:companyId')
   @HttpCode(HttpStatus.OK)
   async findApplicationsCountInAllMonthsByCompanyId(

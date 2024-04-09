@@ -54,6 +54,12 @@ export class JobService {
     await this.cacheService.del(`total_jobs_by_company_${companyId}`);
     await this.cacheService.del(`active_jobs_by_company_${companyId}`);
     await this.cacheService.del(`job_counts_by_month_company_${companyId}`);
+    await this.cacheService.del(
+      `application_counts_by_month_company_${companyId}`,
+    );
+    await this.cacheService.del(
+      `applications_in_last_five_jobs_by_company_${companyId}`,
+    );
 
     return await this.jobRepo.save(newJob);
   }
@@ -180,6 +186,13 @@ export class JobService {
     await this.cacheService.del(
       `job_counts_by_month_company_${job.company.companyId}`,
     );
+    await this.cacheService.del(`job_${jobId}`);
+    await this.cacheService.del(
+      `application_counts_by_month_company_${job.company.companyId}`,
+    );
+    await this.cacheService.del(
+      `applications_in_last_five_jobs_by_company_${job.company.companyId}`,
+    );
 
     return await this.jobRepo.save(job);
   }
@@ -245,6 +258,17 @@ export class JobService {
   }
 
   async findApplicationsCountInAllMonthsByCompanyId(companyId: number) {
+    // create a cache key:
+    const cacheKey = `application_counts_by_month_company_${companyId}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      console.log(`Getting data from cache!`);
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const applications = await this.applicationRepo.find({
       where: { job: { company: { companyId: companyId } } },
     });
@@ -269,10 +293,22 @@ export class JobService {
       return acc;
     }, {});
 
+    // set the cache:
+    await this.cacheService.set(cacheKey, applicationCountsByMonth);
     return applicationCountsByMonth;
   }
 
   async findApplicationsInLastFiveJobsByCompanyId(companyId: number) {
+    // create a cache key:
+    const cacheKey = `applications_in_last_five_jobs_by_company_${companyId}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const jobs = await this.jobRepo.find({
       where: { company: { companyId: companyId } },
       order: { jobId: 'DESC' },
@@ -297,6 +333,8 @@ export class JobService {
       }),
     );
 
+    // set the cache:
+    await this.cacheService.set(cacheKey, applications);
     return applications;
   }
 
