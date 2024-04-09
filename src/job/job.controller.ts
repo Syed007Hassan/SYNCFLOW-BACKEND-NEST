@@ -94,6 +94,7 @@ export class JobController {
     }
   }
 
+  @CacheTTL(30)
   @Get('findTotalJobsByCompanyId/:id')
   @HttpCode(HttpStatus.OK)
   async findTotalJobsByCompanyId(@Param('id') id: string) {
@@ -133,6 +134,7 @@ export class JobController {
     }
   }
 
+  @CacheTTL(30)
   @Get('findActiveJobsByCompanyId/:id')
   @HttpCode(HttpStatus.OK)
   async findActiveJobsByCompanyId(@Param('id') id: string) {
@@ -147,6 +149,7 @@ export class JobController {
     }
   }
 
+  @CacheTTL(30)
   @Get('findJobsCountInAllMonthsByCompanyId/:id')
   @HttpCode(HttpStatus.OK)
   async findJobsInAMonthByCompanyId(@Param('id') id: string) {
