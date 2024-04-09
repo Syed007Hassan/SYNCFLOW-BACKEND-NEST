@@ -19,6 +19,7 @@ import { HasRoles } from 'src/auth/decorators/has-roles.decorator';
 import { Role } from 'src/auth/model/role.enum';
 import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RoleGuard } from 'src/auth/guards/role-auth.guard';
+import { CacheTTL } from '@nestjs/cache-manager';
 @ApiTags('Job')
 @Controller('job')
 export class JobController {
@@ -46,6 +47,7 @@ export class JobController {
     }
   }
 
+  @CacheTTL(30)
   @Get('findAll')
   @HttpCode(HttpStatus.OK)
   async findAll() {
@@ -60,6 +62,7 @@ export class JobController {
     }
   }
 
+  @CacheTTL(30)
   @Get('findOneByCompanyId/:id')
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string) {
@@ -75,6 +78,7 @@ export class JobController {
     }
   }
 
+  @CacheTTL(30)
   @Get('findOneByJobId/:jobId')
   @HttpCode(HttpStatus.OK)
   async findOneByJobId(@Param('jobId') jobId: string) {

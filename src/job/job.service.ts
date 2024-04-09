@@ -48,6 +48,9 @@ export class JobService {
       recruiter: recruiter,
     });
 
+    // Invalidate the cache
+    await this.cacheService.del(`all_jobs`);
+
     return await this.jobRepo.save(newJob);
   }
 
@@ -77,6 +80,16 @@ export class JobService {
   }
 
   async findOneByCompanyId(id: number) {
+    // create a cache key:
+    const cacheKey = `jobs_by_company_${id}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const allJobs = await this.jobRepo.find({
       relations: ['company'],
       where: { company: { companyId: id } },
@@ -85,6 +98,9 @@ export class JobService {
     if (allJobs.length === 0) {
       throw new Error('No jobs found');
     }
+
+    // set the cache:
+    await this.cacheService.set(cacheKey, allJobs);
     return allJobs;
   }
 
