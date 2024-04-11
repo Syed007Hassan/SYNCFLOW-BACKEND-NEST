@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateWorkFlowDto } from './dto/create-workflow.dto';
 import { UpdateWorkflowDto } from './dto/update-workflow.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,6 +9,8 @@ import { Stage } from './entities/stage.entity';
 import { StageAssignee } from './entities/stageAssignee';
 import { AssignStageDto } from './dto/stage-assign.dto';
 import { UpdateStageDto } from './dto/update-stage.dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 @Injectable()
 export class WorkflowService {
   constructor(
@@ -20,6 +22,7 @@ export class WorkflowService {
     public readonly stageRepo: Repository<Stage>,
     @InjectRepository(StageAssignee)
     public readonly stageAssigneeRepo: Repository<StageAssignee>,
+    @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
   async createWorkFlow(jobId: number, createWorkFlowDto: CreateWorkFlowDto) {
@@ -69,6 +72,11 @@ export class WorkflowService {
       where: { workflowId: savedWorkflow.workflowId },
     });
 
+    // invalidate cache
+    await this.cacheService.del(`workflows_by_job_${jobId}`); // delete cache
+    await this.cacheService.del(`all_workflows`); // delete cache
+    await this.cacheService.del(`workflow_${savedWorkflow.workflowId}`); // delete cache
+
     return createdWorkflow;
   }
 
@@ -77,6 +85,9 @@ export class WorkflowService {
     stageId: number,
     assignStageDto: AssignStageDto,
   ) {
+    // invalidate cache
+    await this.cacheService.del(`assigned_stage_${workflowId}_${stageId}`); // delete cache
+
     const existingWorkflow = await this.workflowRepo.findOne({
       where: { workflowId: workflowId },
     });
@@ -114,6 +125,15 @@ export class WorkflowService {
   }
 
   async getAssignedStage(workflowId: number, stageId: number) {
+    // create a cache key:
+    const cacheKey = `assigned_stage_${workflowId}_${stageId}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
     const existingWorkflow = await this.workflowRepo.findOne({
       where: { workflowId: workflowId },
     });
@@ -139,10 +159,22 @@ export class WorkflowService {
       throw new Error('Stage Assignees not found for this stage');
     }
 
+    // set the cache:
+    await this.cacheService.set(cacheKey, assignedStage);
     return assignedStage;
   }
 
   async findAll() {
+    // create a cache key:
+    const cacheKey = `all_workflows`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const allWorkflows = await this.workflowRepo.find({
       relations: ['job', 'stages'],
     });
@@ -150,10 +182,23 @@ export class WorkflowService {
     if (allWorkflows.length === 0) {
       throw new Error('No workflows found');
     }
+
+    // set the cache:
+    await this.cacheService.set(cacheKey, allWorkflows);
     return allWorkflows;
   }
 
   async findWorkFlowById(workflowId: number) {
+    // create a cache key:
+    const cacheKey = `workflow_${workflowId}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const workflow = await this.workflowRepo.findOne({
       relations: ['job', 'stages', 'stages.assignees'],
       where: { workflowId: workflowId },
@@ -162,10 +207,23 @@ export class WorkflowService {
     if (!workflow) {
       throw new Error('Workflow not found');
     }
+
+    // set the cache:
+    await this.cacheService.set(cacheKey, workflow);
     return workflow;
   }
 
   async findOneByJobId(id: number) {
+    // create a cache key:
+    const cacheKey = `workflows_by_job_${id}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const allWorkflows = await this.workflowRepo.find({
       relations: ['job', 'stages'],
       where: { job: { jobId: id } },
@@ -174,6 +232,9 @@ export class WorkflowService {
     if (allWorkflows.length === 0) {
       throw new Error('No workflows found for this job');
     }
+
+    // set the cache:
+    await this.cacheService.set(cacheKey, allWorkflows);
     return allWorkflows;
   }
 
@@ -182,6 +243,10 @@ export class WorkflowService {
     stageId: number,
     updateStageDto: UpdateStageDto,
   ) {
+    // invalidate cache
+    await this.cacheService.del(`assigned_stage_${workflowId}_${stageId}`); // delete cache
+    await this.cacheService.del(`workflow_${workflowId}`); // delete cache
+
     const existingWorkflow = await this.workflowRepo.findOne({
       where: { workflowId: workflowId },
     });
@@ -205,6 +270,10 @@ export class WorkflowService {
   }
 
   async removeStage(workflowId: number, stageId: number) {
+    // invalidate cache
+    await this.cacheService.del(`assigned_stage_${workflowId}_${stageId}`); // delete cache
+    await this.cacheService.del(`workflow_${workflowId}`); // delete cache
+
     const existingWorkflow = await this.workflowRepo.findOne({
       where: { workflowId: workflowId },
     });
@@ -228,9 +297,16 @@ export class WorkflowService {
   }
 
   async removeWorkflow(workflowId: number) {
+    // invalidate cache
+    await this.cacheService.del(`workflow_${workflowId}`); // delete cache
+
     const existingWorkflow = await this.workflowRepo.findOne({
       where: { workflowId: workflowId },
     });
+
+    await this.cacheService.del(
+      `workflows_by_job_${existingWorkflow.job.jobId}`,
+    ); // delete cache
 
     if (!existingWorkflow) {
       throw new NotFoundException('Workflow not found with ' + workflowId);
