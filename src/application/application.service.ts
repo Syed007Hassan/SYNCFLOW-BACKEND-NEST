@@ -136,6 +136,17 @@ export class ApplicationService {
   }
 
   async findOne(applicationId: number) {
+    // create a cache key:
+    const cacheKey = `application_${applicationId}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      console.log(`Getting data from cache!`);
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const application = await this.applicationRepo.findOne({
       where: { applicationId: applicationId },
       relations: ['applicant'],
@@ -145,18 +156,31 @@ export class ApplicationService {
       throw new Error('No application found');
     }
 
-    //delete the password from the response
+    // delete the password from the response
     delete application.applicant.password;
 
+    // set the cache:
+    await this.cacheService.set(cacheKey, application);
     return application;
   }
 
   async findAll() {
+    // create a cache key:
+    const cacheKey = `all_applications`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      console.log(`Getting data from cache!`);
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const applications = await this.applicationRepo.find({
       relations: ['applicant', 'job', 'stage'],
     });
 
-    //delete the password from the response
+    // delete the password from the response
     applications.forEach((application) => {
       delete application.applicant.password;
     });
@@ -165,64 +189,106 @@ export class ApplicationService {
       throw new Error('No applications found');
     }
 
+    // set the cache:
+    await this.cacheService.set(cacheKey, applications);
     return applications;
   }
 
   async findByJobId(jobId: number) {
+    // create a cache key:
+    const cacheKey = `applications_by_job_${jobId}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      console.log(`Getting data from cache!`);
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const applications = await this.applicationRepo.find({
       where: { job: { jobId: jobId } },
       relations: ['applicant', 'job', 'applicant.applicantDetails', 'stage'],
     });
 
-    console.log(JSON.stringify(applications) + 'applications');
-
     if (applications.length === 0) {
       throw new Error('No applications found');
     }
 
-    //delete the password from the response
+    // delete the password from the response
     applications.forEach((application) => {
       delete application.applicant.password;
     });
 
+    // set the cache:
+    await this.cacheService.set(cacheKey, applications);
     return applications;
   }
 
   async findByApplicantId(applicantId: number) {
+    // create a cache key:
+    const cacheKey = `applications_by_applicant_${applicantId}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      console.log(`Getting data from cache!`);
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const applications = await this.applicationRepo.find({
       where: { applicant: { id: applicantId } },
       relations: ['applicant', 'job', 'stage'],
     });
 
-    //delete the password from the response
+    if (applications.length === 0) {
+      throw new Error('No applications found');
+    }
+
+    // delete the password from the response
     applications.forEach((application) => {
       delete application.applicant.password;
     });
 
-    if (!applications) {
-      throw new Error('No applications found');
-    }
-
+    // set the cache:
+    await this.cacheService.set(cacheKey, applications);
     return applications;
   }
 
   async findByJobIdAndApplicantId(jobId: number, applicantId: number) {
+    // create a cache key:
+    const cacheKey = `application_by_job_${jobId}_and_applicant_${applicantId}`;
+
+    // check if data is in cache:
+    const cachedData = await this.cacheService.get<any>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // if not, fetch data from the database:
     const application = await this.applicationRepo.findOne({
       where: { job: { jobId: jobId }, applicant: { id: applicantId } },
       relations: ['applicant', 'job', 'stage'],
     });
 
-    //delete the password from the response
-    delete application.applicant.password;
-
     if (!application) {
       throw new Error('No application found');
     }
 
+    // delete the password from the response
+    delete application.applicant.password;
+
+    // set the cache:
+    await this.cacheService.set(cacheKey, application);
     return application;
   }
 
   async updateApplication(jobId: number, applicantId: number, stageId: number) {
+    await this.cacheService.del('all_applications');
+    await this.cacheService.del(`applications_by_job_${jobId}`);
+    await this.cacheService.del(`applications_by_applicant_${applicantId}`);
+
     const application = await this.applicationRepo.findOne({
       where: { job: { jobId: jobId }, applicant: { id: applicantId } },
       relations: ['applicant', 'job', 'stage'],
@@ -253,6 +319,10 @@ export class ApplicationService {
     applicantId: number,
     applicationFeedback: string,
   ) {
+    await this.cacheService.del('all_applications');
+    await this.cacheService.del(`applications_by_job_${jobId}`);
+    await this.cacheService.del(`applications_by_applicant_${applicantId}`);
+
     const application = await this.applicationRepo.findOne({
       where: { job: { jobId: jobId }, applicant: { id: applicantId } },
       relations: ['applicant', 'job', 'stage'],
@@ -272,6 +342,10 @@ export class ApplicationService {
     applicantId: number,
     status: string,
   ) {
+    await this.cacheService.del('all_applications');
+    await this.cacheService.del(`applications_by_job_${jobId}`);
+    await this.cacheService.del(`applications_by_applicant_${applicantId}`);
+
     const application = await this.applicationRepo.findOne({
       where: { job: { jobId: jobId }, applicant: { id: applicantId } },
       relations: ['applicant', 'job', 'stage'],

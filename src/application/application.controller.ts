@@ -55,6 +55,7 @@ export class ApplicationController {
     }
   }
 
+  @CacheTTL(30)
   @Get('findAll')
   async findAll() {
     try {
@@ -65,6 +66,7 @@ export class ApplicationController {
     }
   }
 
+  @CacheTTL(30)
   @Get('findByJobId/:jobId')
   @ApiOperation({
     summary: 'Find application by job ID, for recruiter use only',
@@ -78,6 +80,7 @@ export class ApplicationController {
     }
   }
 
+  @CacheTTL(30)
   @Get('findByApplicantId/:applicantId')
   @ApiOperation({
     summary: 'Find all applications by applicant ID, for applicant use only',
@@ -92,6 +95,7 @@ export class ApplicationController {
     }
   }
 
+  @CacheTTL(30)
   @Get('findByJobIdAndApplicantId/:jobId/:applicantId')
   @ApiOperation({
     summary:
