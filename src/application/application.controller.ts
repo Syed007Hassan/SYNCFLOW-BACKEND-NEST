@@ -16,6 +16,7 @@ import { HasRoles } from 'src/auth/decorators/has-roles.decorator';
 import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RoleGuard } from 'src/auth/guards/role-auth.guard';
 import { Role } from 'src/auth/model/role.enum';
+import { CacheTTL } from '@nestjs/cache-manager';
 
 @ApiTags('Application')
 @Controller('application')
@@ -43,6 +44,7 @@ export class ApplicationController {
     }
   }
 
+  @CacheTTL(30)
   @Get('findOneById/:applicationId')
   async findOne(@Param('applicationId') applicationId: string) {
     try {

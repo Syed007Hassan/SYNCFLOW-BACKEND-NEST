@@ -78,6 +78,14 @@ export class ApplicationService {
 
     await this.rateApplication(newApplication);
 
+    // Invalidate the cache
+    await this.cacheService.del(
+      `application_counts_by_month_company_${job.company.companyId}`,
+    );
+    await this.cacheService.del(
+      `applications_in_last_five_jobs_by_company_${job.company.companyId}`,
+    );
+
     return await this.applicationRepo.save(newApplication);
   }
 
