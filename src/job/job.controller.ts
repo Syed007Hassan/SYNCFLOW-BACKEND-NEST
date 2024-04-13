@@ -185,6 +185,7 @@ export class JobController {
     }
   }
 
+  @CacheTTL(30)
   @Get('findApplicationsInLastFiveJobsByCompanyId/:companyId')
   @HttpCode(HttpStatus.OK)
   async findApplicationsInLastFiveJobsByCompanyId(
