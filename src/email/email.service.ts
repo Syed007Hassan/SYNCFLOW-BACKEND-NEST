@@ -7,14 +7,14 @@ import { MailerService } from '@nestjs-modules/mailer';
 export class EmailService {
   constructor(private readonly mailerService: MailerService) {}
 
-  async create(createEmailDto: CreateEmailDto) {
+  async createEmail(createEmailDto: CreateEmailDto) {
     try {
       await this.mailerService.sendMail({
-        to: 'alisyedmuhammed@gmail.com',
-        from: 'alisyedmuhammed@gmail.com',
-        subject: 'Hello world!',
-        text: 'Testing email',
-        html: '<b>Testing email</b>',
+        to: createEmailDto.to,
+        from: createEmailDto.from,
+        subject: createEmailDto.subject,
+        text: createEmailDto.text,
+        html: createEmailDto.html,
       });
       return 'Email sent successfully';
     } catch (e) {

@@ -19,6 +19,6 @@ export class EmailController {
 
   @Post('test-email')
   async create(@Body() createEmailDto: CreateEmailDto) {
-    return await this.emailService.create(createEmailDto);
+    return await this.emailService.createEmail(createEmailDto);
   }
 }
