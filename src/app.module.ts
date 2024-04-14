@@ -33,7 +33,7 @@ import { EmailModule } from './email/email.module';
       max: 10,
     }),
     TypeOrmModule.forRoot(PostgreSqlDataSource),
-    MongooseModule.forRoot(process.env.MONGODB_URI),
+    // MongooseModule.forRoot(process.env.MONGODB_URI),
     AuthModule,
     UserModule,
     EmployerModule,
