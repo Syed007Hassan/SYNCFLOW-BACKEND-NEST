@@ -10,7 +10,10 @@ import { Job } from 'src/job/entities/job.entity';
 import { Applicant } from 'src/user/entities/user.entity';
 import { WorkFlow } from 'src/workflow/entities/workflow.entity';
 import { Stage } from 'src/workflow/entities/stage.entity';
-
+import { EmailService } from '../email/email.service';
+import * as fs from 'fs';
+import * as ejs from 'ejs';
+import * as path from 'path';
 @Injectable()
 export class ApplicationService {
   constructor(
@@ -25,6 +28,7 @@ export class ApplicationService {
     @InjectRepository(Stage)
     public readonly stageRepo: Repository<Stage>,
     @Inject(CACHE_MANAGER) private cacheService: Cache,
+    private emailService: EmailService,
   ) {}
 
   async create(
@@ -34,6 +38,7 @@ export class ApplicationService {
   ) {
     const job = await this.jobRepo.findOne({
       where: { jobId: jobId },
+      relations: ['company'],
     });
 
     const applicant = await this.applicantRepo.findOne({
@@ -77,6 +82,33 @@ export class ApplicationService {
     });
 
     await this.rateApplication(newApplication);
+
+    //Read the template file
+    const templatePath = path.join(
+      __dirname,
+      '../email/templates/application.ejs',
+    );
+    const templateString = fs.readFileSync(templatePath, 'utf-8');
+
+    //Dynamic data to be passed to the template
+    const dataInTemplate = {
+      candidateName: applicant.name,
+      jobTitle: job.jobTitle,
+      companyName: job.company.companyName,
+      companyWebsite: job.company.companyWebsite,
+      companyWebsiteUrl: job.company.companyWebsite,
+    };
+
+    // Render HTML string
+    const html = ejs.render(templateString, dataInTemplate);
+
+    const emailResponse = await this.emailService.createEmail({
+      to: applicant.email,
+      from: 'abc@gmail.com',
+      subject: `Application Received For ${job.jobTitle}`,
+      text: `Your application for the job ${job.jobTitle} has been received`,
+      html: html,
+    });
 
     // Invalidate the cache
     await this.cacheService.del(
@@ -291,7 +323,7 @@ export class ApplicationService {
 
     const application = await this.applicationRepo.findOne({
       where: { job: { jobId: jobId }, applicant: { id: applicantId } },
-      relations: ['applicant', 'job', 'stage'],
+      relations: ['applicant', 'job', 'stage', 'job.company'],
     });
 
     if (!application) {
@@ -311,6 +343,37 @@ export class ApplicationService {
 
     application.stage = stage;
 
+    // Send email to the applicant using template engine and email service
+
+    //Read the template file
+    const templatePath = path.join(
+      __dirname,
+      '../email/templates/applicationStage.ejs',
+    );
+
+    const templateString = fs.readFileSync(templatePath, 'utf-8');
+
+    //Dynamic data to be passed to the template
+
+    const dataInTemplate = {
+      candidateName: application.applicant.name,
+      jobTitle: application.job.jobTitle,
+      stageName: stage.stageName,
+      companyName: application.job.company.companyName,
+      companyWebsite: application.job.company.companyWebsite,
+    };
+
+    // Render HTML string
+    const html = ejs.render(templateString, dataInTemplate);
+
+    const emailResponse = await this.emailService.createEmail({
+      to: application.applicant.email,
+      from: '',
+      subject: `Application Stage Update For ${application.job.jobTitle}`,
+      text: `Your application for the job ${application.job.jobTitle} has been updated`,
+      html: html,
+    });
+
     return await this.applicationRepo.save(application);
   }
 
@@ -325,7 +388,7 @@ export class ApplicationService {
 
     const application = await this.applicationRepo.findOne({
       where: { job: { jobId: jobId }, applicant: { id: applicantId } },
-      relations: ['applicant', 'job', 'stage'],
+      relations: ['applicant', 'job', 'stage', 'job.company'],
     });
 
     if (!application) {
@@ -333,6 +396,35 @@ export class ApplicationService {
     }
 
     application.applicationFeedback = applicationFeedback;
+
+    // Send email to the applicant using template engine and email service
+
+    //Read the template file
+    const templatePath = path.join(
+      __dirname,
+      '../email/templates/applicationFeedback.ejs',
+    );
+    const templateString = fs.readFileSync(templatePath, 'utf-8');
+
+    //Dynamic data to be passed to the template
+    const dataInTemplate = {
+      candidateName: application.applicant.name,
+      jobTitle: application.job.jobTitle,
+      applicationFeedback,
+      companyName: application.job.company.companyName,
+      companyWebsite: application.job.company.companyWebsite,
+    };
+
+    // Render HTML string
+    const html = ejs.render(templateString, dataInTemplate);
+
+    const emailResponse = await this.emailService.createEmail({
+      to: application.applicant.email,
+      from: '',
+      subject: `Application Update For ${application.job.jobTitle}`,
+      text: `Your application for the job ${application.job.jobTitle} has been updated`,
+      html: html,
+    });
 
     return await this.applicationRepo.save(application);
   }
@@ -348,7 +440,7 @@ export class ApplicationService {
 
     const application = await this.applicationRepo.findOne({
       where: { job: { jobId: jobId }, applicant: { id: applicantId } },
-      relations: ['applicant', 'job', 'stage'],
+      relations: ['applicant', 'job', 'stage', 'job.company'],
     });
 
     if (!application) {
@@ -356,6 +448,36 @@ export class ApplicationService {
     }
 
     application.status = status;
+
+    // Send email to the applicant using template engine and email service
+
+    //Read the template file
+    const templatePath = path.join(
+      __dirname,
+      '../email/templates/applicationStatus.ejs',
+    );
+
+    const templateString = fs.readFileSync(templatePath, 'utf-8');
+
+    //Dynamic data to be passed to the template
+    const dataInTemplate = {
+      candidateName: application.applicant.name,
+      jobTitle: application.job.jobTitle,
+      status,
+      companyName: application.job.company.companyName,
+      companyWebsite: application.job.company.companyWebsite,
+    };
+
+    // Render HTML string
+    const html = ejs.render(templateString, dataInTemplate);
+
+    const emailResponse = await this.emailService.createEmail({
+      to: application.applicant.email,
+      from: '',
+      subject: `Application Status Update For ${application.job.jobTitle}`,
+      text: `Your application for the job ${application.job.jobTitle} has been updated`,
+      html: html,
+    });
 
     return await this.applicationRepo.save(application);
   }
