@@ -3,6 +3,7 @@ import { EmailService } from './email.service';
 import { EmailController } from './email.controller';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
         },
       },
       template: {
-        dir: __dirname + '/templates',
+        dir: join(__dirname, 'templates'),
         adapter: new EjsAdapter(),
         options: {
           strict: true,
