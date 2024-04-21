@@ -17,7 +17,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class EmailController {
   constructor(private readonly emailService: EmailService) {}
 
-  @Post('test-email')
+  @Post('sendEmail')
   async create(@Body() createEmailDto: CreateEmailDto) {
     return await this.emailService.createEmail(createEmailDto);
   }
