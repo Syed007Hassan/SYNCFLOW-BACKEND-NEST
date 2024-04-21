@@ -323,7 +323,7 @@ export class ApplicationService {
 
     const application = await this.applicationRepo.findOne({
       where: { job: { jobId: jobId }, applicant: { id: applicantId } },
-      relations: ['applicant', 'job', 'stage'],
+      relations: ['applicant', 'job', 'stage', 'job.company'],
     });
 
     if (!application) {
@@ -342,6 +342,37 @@ export class ApplicationService {
     }
 
     application.stage = stage;
+
+    // Send email to the applicant using template engine and email service
+
+    //Read the template file
+    const templatePath = path.join(
+      __dirname,
+      '../email/templates/applicationStage.ejs',
+    );
+
+    const templateString = fs.readFileSync(templatePath, 'utf-8');
+
+    //Dynamic data to be passed to the template
+
+    const dataInTemplate = {
+      candidateName: application.applicant.name,
+      jobTitle: application.job.jobTitle,
+      stageName: stage.stageName,
+      companyName: application.job.company.companyName,
+      companyWebsite: application.job.company.companyWebsite,
+    };
+
+    // Render HTML string
+    const html = ejs.render(templateString, dataInTemplate);
+
+    const emailResponse = await this.emailService.createEmail({
+      to: application.applicant.email,
+      from: '',
+      subject: `Application Stage Update For ${application.job.jobTitle}`,
+      text: `Your application for the job ${application.job.jobTitle} has been updated`,
+      html: html,
+    });
 
     return await this.applicationRepo.save(application);
   }
