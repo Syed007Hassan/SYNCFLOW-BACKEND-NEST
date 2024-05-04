@@ -34,6 +34,7 @@ export class Application {
 
   @ManyToOne(() => Applicant, (applicant) => applicant.applications, {
     cascade: true,
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'id' })
   applicant: Applicant;
