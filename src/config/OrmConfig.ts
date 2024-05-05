@@ -19,6 +19,7 @@ export const PostgreSqlDataSource: TypeOrmModuleOptions = {
   autoLoadEntities: true,
   synchronize: true,
   logging: true,
+  ssl: true,
 };
 
 // For Docker Use
