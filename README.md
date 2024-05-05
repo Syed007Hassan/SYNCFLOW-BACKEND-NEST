@@ -42,6 +42,7 @@ AWS_S3_REGION=
 - `docker-compose exec nestapp npm run migration:generate --name=Employee`
 
 ### Pushing Images to DockerHub
+
 #### Step 1: Tag the Docker image
 `docker tag nestjs syed007hassan/nestjs`
 
@@ -50,3 +51,7 @@ AWS_S3_REGION=
 
 #### Step 3: Push the Docker image to Docker Hub
 `docker push syed007hassan/nestjs`
+
+### To access the remote azure vm 
+
+ssh -i "C:/Users/Syed Hassan/Downloads/fyp_nest_key_pair.pem" smhsyed61smh@40.76.250.183
