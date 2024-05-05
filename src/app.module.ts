@@ -16,7 +16,9 @@ import { PostgreSqlDataSource } from './config/OrmConfig';
 import { WorkflowModule } from './workflow/workflow.module';
 import { UploadModule } from './upload/upload.module';
 import { EmailModule } from './email/email.module';
+import { configDotenv } from 'dotenv';
 
+configDotenv();
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,10 +29,12 @@ import { EmailModule } from './email/email.module';
     CacheModule.register({
       isGlobal: true,
       store: redisStore,
-      host: 'redis',
-      port: 6379,
+      host: process.env.REDISHOST,
+      port: process.env.REDISPORT,
       ttl: 15,
       max: 10,
+      auth_pass: process.env.REDISKEY , // Update the password here
+      tls: { rejectUnauthorized: false }, // This is needed to connect to Azure Redis over SSL
     }),
     TypeOrmModule.forRoot(PostgreSqlDataSource),
     // MongooseModule.forRoot(process.env.MONGODB_URI),
