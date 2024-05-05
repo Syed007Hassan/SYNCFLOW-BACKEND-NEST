@@ -27,45 +27,52 @@ jobs:
           npm install
           npm run build
 
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+      # - name: Zip artifact for deployment
+      #   run: zip release.zip ./* -r
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
-        with:
-          name: node-app
-          path: release.zip
+      # - name: Upload artifact for deployment job
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: node-app
+      #     path: release.zip
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
-
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: node-app
-
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
-      
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C4D10768458F46FA96DE15F61DB16ABE }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B25499DA95EC479982975E451C23764F }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CEC5F3B8572D476C926AFA5AA7E2214F }}
-
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'fyp-nest'
           slot-name: 'Production'
           package: .
+
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   environment:
+  #     name: 'Production'
+  #     url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+  #   permissions:
+  #     id-token: write #This is required for requesting the JWT
+
+  #   steps:
+  #     - name: Download artifact from build job
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: node-app
+
+  #     - name: Unzip artifact for deployment
+  #       run: unzip release.zip
+      
+  #     - name: Login to Azure
+  #       uses: azure/login@v1
+  #       with:
+  #         client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C4D10768458F46FA96DE15F61DB16ABE }}
+  #         tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B25499DA95EC479982975E451C23764F }}
+  #         subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CEC5F3B8572D476C926AFA5AA7E2214F }}
+
+  #     - name: 'Deploy to Azure Web App'
+  #       id: deploy-to-webapp
+  #       uses: azure/webapps-deploy@v2
+  #       with:
+  #         app-name: 'fyp-nest'
+  #         slot-name: 'Production'
+  #         package: .
           
