@@ -7,13 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
 
     steps:
       - uses: actions/checkout@v4
@@ -29,6 +24,17 @@ jobs:
           npm install
           npm run build
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write #This is required for requesting the JWT
+
+    steps:
+      
       - name: Login to Azure
         uses: azure/login@v1
         with:
@@ -37,8 +43,8 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CEC5F3B8572D476C926AFA5AA7E2214F }}
 
       - name: 'Deploy to Azure Web App'
+        id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
-        id : deploy-to-webapp
         with:
           app-name: 'fyp-nest'
           slot-name: 'Production'
