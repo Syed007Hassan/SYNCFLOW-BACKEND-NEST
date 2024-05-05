@@ -166,6 +166,7 @@ export class JobService {
   async updateJobStatus(jobId: number, status: string) {
     const job = await this.jobRepo.findOne({
       where: { jobId: jobId },
+      relations: ['company'],
     });
 
     if (!job) {
