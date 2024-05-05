@@ -13,6 +13,10 @@ export class CreateCompanyDto {
 
   @ApiProperty()
   @IsString()
+  companyProfile: string;
+
+  @ApiProperty()
+  @IsString()
   companyWebsite: string;
 
   @ApiProperty()

@@ -6,18 +6,27 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { WorkflowService } from './workflow.service';
 import { CreateWorkFlowDto } from './dto/create-workflow.dto';
 import { UpdateWorkflowDto } from './dto/update-workflow.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AssignStageDto } from './dto/stage-assign.dto';
+import { UpdateStageDto } from './dto/update-stage.dto';
+import { HasRoles } from 'src/auth/decorators/has-roles.decorator';
+import { Role } from 'src/auth/model/role.enum';
+import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RoleGuard } from 'src/auth/guards/role-auth.guard';
 
 @ApiTags('Workflow')
 @Controller('workflow')
 export class WorkflowController {
   constructor(private readonly workflowService: WorkflowService) {}
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Post('/createWorkFlow/:jobId')
   async createWorkFlow(
     @Param('jobId') jobId: string,
@@ -34,6 +43,9 @@ export class WorkflowController {
     }
   }
 
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
   @Post('/assignStage/:workflowId/:stageId')
   async assignStage(
     @Param('stageId') stageId: string,
@@ -98,16 +110,56 @@ export class WorkflowController {
     }
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateWorkflowDto: UpdateWorkflowDto,
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Patch('updateStage/:workflowId/:stageId')
+  async updateStage(
+    @Param('workflowId') workflowId: string,
+    @Param('stageId') stageId: string,
+    @Body() updateStageDto: UpdateStageDto,
   ) {
-    return this.workflowService.update(+id, updateWorkflowDto);
+    try {
+      const workflow = await this.workflowService.updateWorkflowStage(
+        +workflowId,
+        +stageId,
+        updateStageDto,
+      );
+      return { success: true, data: workflow };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.workflowService.remove(+id);
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Delete('removeStage/:workflowId/:stageId')
+  async removeStage(
+    @Param('workflowId') workflowId: string,
+    @Param('stageId') stageId: string,
+  ) {
+    try {
+      const workflow = await this.workflowService.removeStage(
+        +workflowId,
+        +stageId,
+      );
+      return { success: true, data: workflow };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  }
+
+  @ApiBearerAuth()
+  @HasRoles(Role.Employer)
+  @UseGuards(JwtGuard, RoleGuard)
+  @Delete('removeWorkflow/:workflowId')
+  async removeWorkflow(@Param('workflowId') workflowId: string) {
+    try {
+      const workflow = await this.workflowService.removeWorkflow(+workflowId);
+      return { success: true, data: workflow };
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
   }
 }

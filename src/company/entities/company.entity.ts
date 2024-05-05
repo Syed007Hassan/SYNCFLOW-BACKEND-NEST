@@ -21,6 +21,9 @@ export class Company {
   companyEmail: string;
 
   @Column({ nullable: true })
+  companyProfile: string;
+
+  @Column({ nullable: true })
   companyWebsite: string;
 
   @Column({ nullable: true })
@@ -38,6 +41,7 @@ export class Company {
   @OneToMany(
     (type) => HiredApplicant,
     (hiredApplicant) => hiredApplicant.company,
+    { cascade: true },
   )
   hiredApplicants: HiredApplicant[];
 }

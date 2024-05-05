@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Logger } from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
 import * as dotenv from 'dotenv';
 import helmet from 'helmet';
 
@@ -11,7 +12,21 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors();
+  app.enableCors({
+    origin: '*',
+    allowedHeaders: '*',
+  });
+
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header(
+      'Access-Control-Allow-Methods',
+      'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+    );
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
+    next();
+  });
+
   app.use(helmet());
   dotenv.config();
   app.setGlobalPrefix('api');
@@ -29,12 +44,6 @@ async function bootstrap() {
 
   (app as any).set('etag', false);
 
-  app.use((req, res, next) => {
-    res.removeHeader('x-powered-by');
-    res.removeHeader('date');
-    next();
-  });
-
   const config = new DocumentBuilder()
     .setTitle('NEST FYP BACKEND')
     .setDescription('SYNCFLOW RECRUITMENT SYSTEM API')
@@ -51,6 +60,7 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(process.env.PORT || 5000);
+  await app.listen(process.env.PORT || 8000);
+
 }
 bootstrap();

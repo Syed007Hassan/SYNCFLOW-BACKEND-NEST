@@ -14,7 +14,11 @@ import { JobModule } from './job/job.module';
 import { ApplicationModule } from './application/application.module';
 import { PostgreSqlDataSource } from './config/OrmConfig';
 import { WorkflowModule } from './workflow/workflow.module';
+import { UploadModule } from './upload/upload.module';
+import { EmailModule } from './email/email.module';
+import { configDotenv } from 'dotenv';
 
+configDotenv();
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,13 +29,15 @@ import { WorkflowModule } from './workflow/workflow.module';
     CacheModule.register({
       isGlobal: true,
       store: redisStore,
-      host: 'redis',
-      port: 6379,
+      host: process.env.REDISHOST,
+      port: process.env.REDISPORT,
       ttl: 15,
       max: 10,
+      auth_pass: process.env.REDISKEY , // Update the password here
+      tls: { rejectUnauthorized: false }, // This is needed to connect to Azure Redis over SSL
     }),
     TypeOrmModule.forRoot(PostgreSqlDataSource),
-    MongooseModule.forRoot(process.env.MONGODB_URI),
+    // MongooseModule.forRoot(process.env.MONGODB_URI),
     AuthModule,
     UserModule,
     EmployerModule,
@@ -39,6 +45,8 @@ import { WorkflowModule } from './workflow/workflow.module';
     JobModule,
     ApplicationModule,
     WorkflowModule,
+    UploadModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
