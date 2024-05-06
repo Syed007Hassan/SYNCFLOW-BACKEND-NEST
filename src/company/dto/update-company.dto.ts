@@ -20,6 +20,6 @@ export class UpdateCompanyDto {
   companyAddress: string;
 
   @ApiProperty()
-  @IsNumber()
-  companyPhone: number;
+  @IsString()
+  companyPhone: string;
 }
