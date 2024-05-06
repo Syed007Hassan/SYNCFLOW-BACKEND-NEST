@@ -24,6 +24,6 @@ export class CreateCompanyDto {
   companyAddress: string;
 
   @ApiProperty()
-  @IsNumber()
-  companyPhone: number;
+  @IsString()
+  companyPhone: string;
 }

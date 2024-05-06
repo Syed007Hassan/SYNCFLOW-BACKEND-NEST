@@ -71,7 +71,7 @@ export class AuthService {
       companyEmail: ' ',
       companyAddress: ' ',
       companyProfile: ' ',
-      companyPhone: 0,
+      companyPhone: "",
       companyWebsite: ' ',
     });
 
@@ -106,7 +106,7 @@ export class AuthService {
         companyEmail: '',
         companyProfile: '',
         companyAddress: '',
-        companyPhone: 0,
+        companyPhone: "",
         companyWebsite: '',
       });
     }

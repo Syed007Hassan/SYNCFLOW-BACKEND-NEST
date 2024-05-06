@@ -30,7 +30,7 @@ export class Company {
   companyAddress: string;
 
   @Column({ nullable: true })
-  companyPhone: number;
+  companyPhone: string;
 
   @OneToMany((type) => Recruiter, (recruiter) => recruiter.company)
   recruiters: Recruiter[];
