@@ -302,6 +302,7 @@ export class WorkflowService {
 
     const existingWorkflow = await this.workflowRepo.findOne({
       where: { workflowId: workflowId },
+      relations: ['job']
     });
 
     await this.cacheService.del(
