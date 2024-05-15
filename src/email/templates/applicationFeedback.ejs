@@ -1,61 +1,64 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Job Application Update</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            color: #333;
-        }
-        p {
-            margin-bottom: 20px;
-        }
-        .btn {
-            display: inline-block;
-            background: #007bff;
-            color: #fff;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-        }
-        .footer {
-            margin-top: 20px;
-            border-top: 1px solid #ccc;
-            padding-top: 20px;
-            font-size: 14px;
-            color: #666;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        color: #333;
+      }
+      p {
+        margin-bottom: 20px;
+      }
+      .btn {
+        display: inline-block;
+        background: #80bdff; /* Lighter blue */
+        color: #003c71;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+      }
+      .footer {
+        margin-top: 20px;
+        border-top: 1px solid #ccc;
+        padding-top: 20px;
+        font-size: 14px;
+        color: #666;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h2>Job Application Feedback Update</h2>
-        <p>Dear <%= candidateName %>,</p>
-        <p>We wanted to give you a feedback on your application for the position of <%= jobTitle %> at <%= companyName %>.</p>
-        <p><%= applicationFeedback %></p>
-        <p>If you have any questions, feel free to contact us.</p>
-        <a href="<%= companyWebsite %>" class="btn">Visit Our Website</a>
-        <div class="footer">
-            <p>Best regards,</p>
-            <p>Head HR</p>
-            <p><%= companyName %></p>
-        </div>
+      <h2>Job Application Feedback Update</h2>
+      <p>Dear <%= candidateName %>,</p>
+      <p>
+        We wanted to give you a feedback on your application for the position of
+        <%= jobTitle %> at <%= companyName %>.
+      </p>
+      <p><%= applicationFeedback %></p>
+      <p>If you have any questions, feel free to contact us.</p>
+      <a href="<%= companyWebsite %>" class="btn">Visit Our Website</a>
+      <div class="footer">
+        <p>Best regards,</p>
+        <p>Head HR</p>
+        <p><%= companyName %></p>
+      </div>
     </div>
-</body>
+  </body>
 </html>
