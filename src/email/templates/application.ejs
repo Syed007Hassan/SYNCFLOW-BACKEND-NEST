@@ -1,62 +1,71 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Job Application Confirmation</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            color: #333;
-        }
-        p {
-            margin-bottom: 20px;
-        }
-        .btn {
-            display: inline-block;
-            background: #007bff;
-            color: #fff;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-        }
-        .footer {
-            margin-top: 20px;
-            border-top: 1px solid #ccc;
-            padding-top: 20px;
-            font-size: 14px;
-            color: #666;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        color: #333;
+      }
+      p {
+        margin-bottom: 20px;
+      }
+      .btn {
+        display: inline-block;
+        background: #80bdff; /* Lighter blue */
+        color: #003c71;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+      }
+      .footer {
+        margin-top: 20px;
+        border-top: 1px solid #ccc;
+        padding-top: 20px;
+        font-size: 14px;
+        color: #666;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h2>Job Application Confirmation</h2>
-        <p>Dear <%= candidateName %>,</p>
-        <p>Thank you for your interest in the position of <%= jobTitle %> at <%= companyName %>. We have received your application and are currently reviewing it.</p>
-        <p>If your qualifications meet our requirements, we will contact you to proceed with the next steps of the selection process.</p>
-        <p>In the meantime, feel free to explore more about our company and the work we do on our website.</p>
-        <a href="<%= companyWebsiteUrl %>" class="btn">Visit Our Website</a>
-        <div class="footer">
-            <p>Best regards,</p>
-            <p>Head HR</p>
-            <p><%= companyName %></p>
-        </div>
+      <h2>Job Application Confirmation</h2>
+      <p>Dear <%= candidateName %>,</p>
+      <p>
+        Thank you for your interest in the position of <%= jobTitle %> at <%=
+        companyName %>. We have received your application and are currently
+        reviewing it.
+      </p>
+      <p>
+        If your qualifications meet our requirements, we will contact you to
+        proceed with the next steps of the selection process.
+      </p>
+      <p>
+        In the meantime, feel free to explore more about our company and the
+        work we do on our website.
+      </p>
+      <a href="<%= companyWebsiteUrl %>" class="btn">Visit Our Website</a>
+      <div class="footer">
+        <p>Best regards,</p>
+        <p>Head HR</p>
+        <p><%= companyName %></p>
+      </div>
     </div>
-</body>
+  </body>
 </html>
